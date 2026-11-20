@@ -45,7 +45,10 @@
         <i class="wall"></i><div class="floor"></div>
         <i class="o-shadow"></i>
         <div class="crt" aria-label="Agentomatens ansikte i en gammal dator">
+          <i class="crt-shell"></i>
+          <div class="crt-parts">${Array.from({ length: 18 }, (_, i) => `<i class="part p${i % 6}" style="--i:${i}"></i>`).join("")}</div>
           <div class="crt-case">
+            <i class="crt-p crt-top"></i><i class="crt-p crt-left"></i><i class="crt-p crt-right"></i>
             <div class="crt-bezel"><div class="crt-screen">
               <video src="assets/agentomaten-face.mp4" poster="assets/agentomaten-face.jpg" muted loop autoplay playsinline></video>
               <i class="crt-scan"></i><i class="crt-glare"></i>
@@ -54,6 +57,8 @@
             <div class="crt-panel"><span class="crt-badge">MISS PRYM · 1.0</span><i class="crt-led"></i><i class="crt-knob"></i><i class="crt-knob"></i></div>
           </div>
           <div class="crt-foot"></div>
+          <div class="crt-kb">${Array.from({ length: 36 }, () => "<b></b>").join("")}</div>
+          <i class="crt-mouse"></i>
         </div>
         <figure class="o-frame"><video src="${C.film}" poster="${C.filmPoster}" muted loop autoplay playsinline preload="metadata" aria-label="Miss Prym – film"></video></figure>
         <div class="statue st-l"><img src="${C.fig}statue-justitia.webp" alt="Staty: Justitia vid Norra Hamngatan"><i class="plinth"></i></div>
@@ -64,7 +69,8 @@
         <p class="o-meta o-meta--r">${C.hero.metaR}</p>
       </div>
       <p class="o-hint"><span>scroll</span><i></i></p>`,
-    init(el) { this.cam = $(".cam", el); this.title = $(".o-title", el); this.fade = $$(".o-quote, .o-meta, .o-hint, .o-frame", el); this.st = $$(".statue img", el); this.crt = $(".crt", el); this.scr = $(".crt-screen", el); },
+    init(el) { this.cam = $(".cam", el); this.title = $(".o-title", el); this.fade = $$(".o-quote, .o-meta, .o-hint, .o-frame", el); this.st = $$(".statue img", el); this.crt = $(".crt", el); this.scr = $(".crt-screen", el);
+      this.pan = $$(".crt-p, .crt-panel, .crt-foot", el); this.shell = $(".crt-shell", el); this.parts = $$(".part", el); this.kb = $(".crt-kb", el); this.mouse = $(".crt-mouse", el); this.bez = $(".crt-bezel", el); },
     layout() {
       // mät skärmens mitt utan kamerarörelse, så att vi kan åka rakt in i glaset
       const tr = this.cam.style.transform; this.cam.style.transform = "none";
@@ -74,8 +80,21 @@
       this.cam.style.transform = tr; this.crt.style.transform = crt;
     },
     update(p, t) {
-      // in i skärmen (som Netlights dator): kameran centrerar och zoomar tills glaset fyller bilden
-      const z = easeIO(seg(p, .06, .95)), sc = this.sc || { x: innerWidth / 2, y: innerHeight / 2, w: 300, h: 220 };
+      // först sprängs datorn isär (chassit, kretsarna, sladdarna), tangentbord och mus glider fram
+      const ex = easeIO(seg(p, .02, .34)), back = seg(p, .34, .5);
+      const dirs = { "crt-top": [0, -1, -14], "crt-left": [-1, .1, -10], "crt-right": [1, .1, 12], "crt-panel": [0, 1, 6], "crt-foot": [0, 1.4, -4] };
+      this.pan.forEach(e => { const d = dirs[[...e.classList].find(c => dirs[c])] || [0, 1, 0]; e.style.transform = `translate(${d[0] * ex * 34}%, ${d[1] * ex * 60}%) rotate(${d[2] * ex}deg)`; e.style.opacity = 1 - back; });
+      this.shell.style.transform = `translate(-50%, -50%) scale(${1 - ex * .25}) translateZ(-80px)`; this.shell.style.opacity = .9 - ex * .6 - back * .3;
+      this.parts.forEach((pt, i) => {
+        const a = i / this.parts.length * Math.PI * 2 + i * .7, r = ex * (60 + (i * 53) % 80);
+        pt.style.transform = `translate(calc(-50% + ${Math.cos(a) * r * .22}vw), calc(-50% + ${Math.sin(a) * r * .2}vh)) rotate(${ex * (i % 2 ? 1 : -1) * (90 + i * 23) + Math.sin(t + i) * 4 * ex}deg)`;
+        pt.style.opacity = Math.min(1, ex * 3) * (1 - back);
+      });
+      this.kb.style.transform = `translate(-50%, ${(1 - ex) * 40}px) perspective(400px) rotateX(${50 - ex * 10}deg)`; this.kb.style.opacity = ex * (1 - back);
+      this.mouse.style.transform = `translate(${(1 - ex) * -60}px, 0)`; this.mouse.style.opacity = ex * (1 - back);
+      this.bez.style.transform = `scale(${1 + ex * .06})`;
+      // sedan åker kameran in i skärmen tills glaset fyller bilden
+      const z = easeIO(seg(p, .36, .96)), sc = this.sc || { x: innerWidth / 2, y: innerHeight / 2, w: 300, h: 220 };
       const S = Math.max(innerWidth / sc.w, innerHeight / sc.h) * 1.12;
       const s = 1 + z * (S - 1), tx = (innerWidth / 2 - sc.x) * z, ty = (innerHeight / 2 - sc.y) * z;
       this.cam.style.transformOrigin = `${sc.x}px ${sc.y}px`;
@@ -229,6 +248,35 @@
         const a = .14 + i * .27, b = a + .27;
         const kk = ease(seg(p, a, a + .05)) * (i === n - 1 ? 1 : 1 - easeIO(seg(p, b - .04, b)));
         fadeIn(c, kk);
+      });
+    }
+  });
+
+  // 6b. "Tänk dig…" – stor text i mitten, kort med hela laget och figurerna svävar förbi (som Netlights sektion)
+  const FL = [...C.shifts.map(x => ({ img: C.img + x.img, bg: x.room })), { img: C.fig + "bird-crow.webp", bg: "#a9b2c3" }, { img: C.fig + "puppet-man.webp", bg: "#ffecaa" }, { img: C.fig + "bird-owl.webp", bg: "#f0bad9" }, { img: C.fig + "statue-venus.webp", bg: "#b9bee9" }, { img: C.fig + "bird-robin.webp", bg: "#f7eaad" }, { img: C.fig + "statue-justitia.webp", bg: "#d9646a" }, { img: C.fig + "purpose-woman.webp", bg: "#ffc2e3" }, { img: C.fig + "exp-flasks.webp", bg: "#e65564" }];
+  const team = C.expertise.words.map((w, i) => ({ word: w, bg: ["#d9646a", "#f7eaad", "#b9bee9", "#f0bad9", "#3a4650", "#f2cd5c", "#69b488", "#cb9cf8", "#5d9dc5", "#fc4109"][i] }));
+  const floaters = [];
+  for (let i = 0; i < 22; i++) floaters.push(i % 2 ? team[(i >> 1) % team.length] : FL[(i >> 1) % FL.length]);
+  scene({
+    id: "together", t: "together", hud: "light", len: 4, wipe: "circle", card: { glyph: "∞", room: "#f4efe8" },
+    html: `
+      <div class="swarm">${floaters.map((f, i) => {
+        const x = [6, 74, 18, 60, 38, 84, 2, 48, 28, 70, 90, 12, 56, 34, 80, 8, 64, 44, 22, 76, 52, 30][i], d = [1, .7, .45, .9, .6, 1, .5, .8, .35, .95, .55, .75, .4, 1, .65, .5, .85, .45, .7, .9, .6, .8][i];
+        return `<figure class="fl" style="--x:${x}%;--d:${d};--o:${i * .043};--bg:${f.bg}">${f.img ? `<img src="${f.img}" alt="" loading="lazy">` : `<span>${f.word}</span>`}</figure>`;
+      }).join("")}</div>
+      <p class="big-say s1">${lines(["We provide our clients", "with open-minded", "consultants…"])}</p>
+      <p class="big-say s2">${lines(["…who create more together", "than any individual", "could achieve alone."])}</p>`,
+    init(el) { this.fl = $$(".fl", el); this.s1 = $(".s1", el); this.s2 = $(".s2", el); },
+    update(p, t) {
+      reveal(this.s1, p, .02, .16);
+      const out1 = seg(p, .42, .5); this.s1.style.opacity = 1 - out1; this.s1.style.transform = `translate(-50%, calc(-50% - ${out1 * 30}px))`;
+      reveal(this.s2, p, .5, .64);
+      this.fl.forEach(f => {
+        const d = +f.style.getPropertyValue("--d"), o = +f.style.getPropertyValue("--o");
+        // korten stiger genom bilden; närmare kort rör sig snabbare och är skarpare
+        const y = 115 - ((p * 1.6 + o) % 1.15) * 170 * (0.6 + d * .5);
+        f.style.transform = `translate3d(0, ${y}vh, 0) scale(${.45 + d * .6}) rotate(${Math.sin(t * .5 + o * 9) * 3}deg)`;
+        f.style.filter = `blur(${(1 - d) * 5}px)`; f.style.opacity = .35 + d * .65;
       });
     }
   });
@@ -570,7 +618,7 @@
   });
 
   // baksida på indexkorten: en rad ur innehållet
-  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
+  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
   S.forEach(x => (x.back = backs[x.id] || (C.shifts[+x.id.split("-")[1] - 1] || {}).p || ""));
 
   /* ================= bygg scenen ================= */
