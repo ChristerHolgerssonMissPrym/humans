@@ -44,7 +44,17 @@
       <div class="cam">
         <i class="wall"></i><div class="floor"></div>
         <i class="o-shadow"></i>
-        <figure class="o-face"><video src="assets/agentomaten-face.mp4" poster="assets/agentomaten-face.jpg" muted loop autoplay playsinline aria-label="Agentomatens ansikte som ler"></video><figcaption>${esc(C.agentomaten.lead)}</figcaption></figure>
+        <div class="crt" aria-label="Agentomatens ansikte i en gammal dator">
+          <div class="crt-case">
+            <div class="crt-bezel"><div class="crt-screen">
+              <video src="assets/agentomaten-face.mp4" poster="assets/agentomaten-face.jpg" muted loop autoplay playsinline></video>
+              <i class="crt-scan"></i><i class="crt-glare"></i>
+              <p class="crt-text">&gt; ${C.agentomaten.listen}<b class="crt-cur"></b></p>
+            </div></div>
+            <div class="crt-panel"><span class="crt-badge">MISS PRYM · 1.0</span><i class="crt-led"></i><i class="crt-knob"></i><i class="crt-knob"></i></div>
+          </div>
+          <div class="crt-foot"></div>
+        </div>
         <figure class="o-frame"><video src="${C.film}" poster="${C.filmPoster}" muted loop autoplay playsinline preload="metadata" aria-label="Miss Prym – film"></video></figure>
         <div class="statue st-l"><img src="${C.fig}statue-justitia.webp" alt="Staty: Justitia vid Norra Hamngatan"><i class="plinth"></i></div>
         <div class="statue st-r"><img src="${C.fig}statue-venus.webp" alt="Staty med venussymbol vid Norra Hamngatan"><i class="plinth"></i></div>
@@ -54,10 +64,25 @@
         <p class="o-meta o-meta--r">${C.hero.metaR}</p>
       </div>
       <p class="o-hint"><span>scroll</span><i></i></p>`,
-    init(el) { this.cam = $(".cam", el); this.title = $(".o-title", el); this.fade = $$(".o-quote, .o-meta, .o-hint", el); this.st = $$(".statue img", el); },
+    init(el) { this.cam = $(".cam", el); this.title = $(".o-title", el); this.fade = $$(".o-quote, .o-meta, .o-hint, .o-frame", el); this.st = $$(".statue img", el); this.crt = $(".crt", el); this.scr = $(".crt-screen", el); },
+    layout() {
+      // mät skärmens mitt utan kamerarörelse, så att vi kan åka rakt in i glaset
+      const tr = this.cam.style.transform; this.cam.style.transform = "none";
+      const crt = this.crt.style.transform; this.crt.style.transform = "none";
+      const r = this.scr.getBoundingClientRect();
+      this.sc = { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width, h: r.height };
+      this.cam.style.transform = tr; this.crt.style.transform = crt;
+    },
     update(p, t) {
-      const z = easeIO(seg(p, .1, 1));
-      this.cam.style.transform = `scale(${1 + z * 2.4})`;
+      // in i skärmen (som Netlights dator): kameran centrerar och zoomar tills glaset fyller bilden
+      const z = easeIO(seg(p, .06, .95)), sc = this.sc || { x: innerWidth / 2, y: innerHeight / 2, w: 300, h: 220 };
+      const S = Math.max(innerWidth / sc.w, innerHeight / sc.h) * 1.12;
+      const s = 1 + z * (S - 1), tx = (innerWidth / 2 - sc.x) * z, ty = (innerHeight / 2 - sc.y) * z;
+      this.cam.style.transformOrigin = `${sc.x}px ${sc.y}px`;
+      this.cam.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+      // datorn lutar sig mot pekaren, rätas ut när vi åker in
+      const ax = (mx / innerWidth - .5), ay = (my / innerHeight - .5), free = 1 - z;
+      this.crt.style.transform = `perspective(900px) rotateY(${ax * 14 * free}deg) rotateX(${-ay * 8 * free}deg)`;
       // statyerna "andas" och vänder sig lite mot betraktaren när man scrollar
       this.st.forEach((im, i) => (im.style.transform = `rotate(${Math.sin(t * .7 + i * 2) * .6}deg) scale(${1 + Math.sin(t * 1.3 + i) * .006}) translateX(${(i ? 1 : -1) * ease(seg(p, 0, .5)) * 30}vw)`));
       this.title.style.transform = `translate(-50%, ${-ease(seg(p, 0, .55)) * 40}vh)`;

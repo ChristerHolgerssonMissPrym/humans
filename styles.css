@@ -602,13 +602,6 @@ body.index-open .index { clip-path: circle(150% at calc(100% - 64px) 44px); visi
 body:not(.is-loading) .o-title .ch.hop { animation: chhop .52s var(--ease); }
 @keyframes chhop { 0% { transform: none; } 35% { transform: translateY(-14%) scaleY(1.06); } 60% { transform: translateY(2%) scaleY(.94); } 100% { transform: none; } }
 
-/* Agentomatens ansikte – det första man ser */
-.o-face { position: absolute; left: 53vw; top: 33vh; height: 44vh; aspect-ratio: 900 / 1300; margin: 0; padding: clamp(8px, .8vw, 14px); background: var(--card); transform: rotate(-1.5deg); box-shadow: 0 22px 40px rgba(0,0,0,.38); }
-.o-face video { display: block; width: 100%; height: 100%; object-fit: cover; outline: 1.5px solid var(--cardred); outline-offset: -1.5px; background: #1a1410; }
-.o-face::before { content: ""; position: absolute; left: 50%; top: -46px; width: 1px; height: 46px; background: rgba(0,0,0,.45); }
-.o-face::after { content: ""; position: absolute; left: calc(50% - 4px); top: -52px; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); }
-.o-face figcaption { position: absolute; left: 0; right: 0; top: calc(100% + 10px); font-family: var(--f-mono); font-size: clamp(10px, .8vw, 13px); color: var(--ink); text-align: center; line-height: 1.3; }
-@media (orientation: portrait) { .o-face { left: 34vw; top: 38vh; height: 30vh; } .o-face figcaption { display: none; } .o-frame { display: none; } }
 
 /* labbet: kamera ner i källaren */
 .labcam { position: absolute; left: 0; right: 0; top: 0; height: 200%; will-change: transform; }
@@ -649,3 +642,24 @@ body:not(.is-loading) .o-title .ch.hop { animation: chhop .52s var(--ease); }
 .mate b { font-family: var(--f-serif); font-style: italic; font-weight: 400; color: var(--fg); font-size: clamp(12px, 1.05vw, 19px); text-align: center; line-height: 1; padding: 0 10%; }
 .team-net { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .team-net path { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 1; stroke-dashoffset: 1; }
+
+/* Agentomatens ansikte i en gammal dator (som Netlights CRT) */
+.crt { position: absolute; left: 51vw; bottom: 21vh; width: clamp(240px, 27vw, 500px); transform-style: preserve-3d; will-change: transform; z-index: 1; }
+.crt-case { position: relative; padding: 7% 7% 4%; border-radius: 18px 18px 14px 14px; background: linear-gradient(160deg, #efe7d6, #d9cfba 55%, #c4b89f); box-shadow: inset 0 3px 0 rgba(255,255,255,.7), inset 0 -6px 10px rgba(0,0,0,.12), 0 26px 40px rgba(0,0,0,.35); }
+.crt-bezel { padding: 5.5%; border-radius: 14px; background: linear-gradient(#3b3631, #26221f); box-shadow: inset 0 0 0 2px rgba(0,0,0,.4), inset 0 6px 14px rgba(0,0,0,.6); }
+.crt-screen { position: relative; aspect-ratio: 4 / 3; border-radius: 9% / 12%; overflow: hidden; background: #0d0b09; box-shadow: inset 0 0 40px rgba(0,0,0,.85), 0 0 22px rgba(255,200,140,.25); animation: crton 1.4s cubic-bezier(.2,.8,.2,1) .6s both; }
+.crt-screen video { position: absolute; inset: -4%; width: 108%; height: 108%; object-fit: cover; object-position: 50% 60%; filter: saturate(1.15) contrast(1.08) brightness(1.05); animation: crtflick 4s infinite steps(1); }
+.crt-scan { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,.28) 0 1px, transparent 1px 3px), radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.7)); mix-blend-mode: multiply; pointer-events: none; }
+.crt-glare { position: absolute; inset: 0; background: radial-gradient(120% 70% at 25% 8%, rgba(255,255,255,.22), transparent 45%); pointer-events: none; }
+.crt-text { position: absolute; left: 7%; bottom: 7%; margin: 0; font-family: var(--f-mono); color: #ffd765; font-size: clamp(9px, .8vw, 14px); letter-spacing: .1em; text-shadow: 0 0 6px rgba(255,200,80,.8); }
+.crt-cur { display: inline-block; width: .6em; height: 1em; margin-left: .3em; vertical-align: -.15em; background: #ffd765; animation: agblink .9s steps(2, end) infinite; }
+.crt-panel { display: flex; align-items: center; gap: 4%; padding: 4% 2% 0; }
+.crt-badge { margin-right: auto; font-family: var(--f-mono); font-size: clamp(8px, .65vw, 12px); letter-spacing: .14em; color: #8a7d64; }
+.crt-led { width: 7px; height: 7px; border-radius: 50%; background: #7cff8a; box-shadow: 0 0 8px #7cff8a; animation: agblink 2.4s steps(2, end) infinite; }
+.crt-knob { width: clamp(10px, 1.1vw, 18px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #f5efe2, #a99b80); box-shadow: 0 2px 3px rgba(0,0,0,.3); }
+.crt-foot { width: 46%; height: clamp(10px, 1.6vw, 24px); margin: 0 auto; background: linear-gradient(#cfc4ad, #a99c83); border-radius: 0 0 10px 10px; box-shadow: 0 14px 20px rgba(0,0,0,.3); }
+@keyframes crton { 0% { clip-path: inset(50% 0 50% 0); filter: brightness(3); } 35% { clip-path: inset(49.5% 0 49.5% 0); filter: brightness(3); } 70% { clip-path: inset(0 0 0 0); filter: brightness(1.6); } 100% { clip-path: inset(0 0 0 0); filter: none; } }
+@keyframes crtflick { 0%, 96%, 100% { opacity: 1; } 97% { opacity: .82; } 98% { opacity: .95; } }
+@media (orientation: portrait) { .crt { left: 15vw; width: 70vw; bottom: 30vh; } }
+
+.o-title { z-index: 2; }
