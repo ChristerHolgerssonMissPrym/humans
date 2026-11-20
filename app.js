@@ -172,22 +172,32 @@
 
   // 6. Who we are – långt bord som panoreras, Christer rullar in
   scene({
-    id: "who", t: C.who.h, hud: "light", len: 5, wipe: "circle", card: { fig: "christer.webp", glyph: "W", room: "#c7963c" },
+    id: "who", t: C.who.h, hud: "light", len: 5, wipe: "circle", card: { glyph: "W", room: "#c7963c" },
     html: `
       <i class="wall"></i><div class="cloth"></div>
-      <div class="strip"><figure class="roll"><img src="${C.fig}christer.webp" alt="Christer Holgersson"></figure>${C.shifts.map((s, i) => `<figure class="easel" style="--a:${tilt[i + 4]}deg;--room:${s.room}"><img src="${C.img}${s.img}" alt="" loading="lazy"><span>${i + 1}</span><b>from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}</b></figure>`).join("")}</div>
+      <div class="strip"><div class="team">${C.expertise.words.map((w, i) => `<span class="mate" style="--c:${["#d9646a", "#f7eaad", "#b9bee9", "#f0bad9", "#3a4650", "#f2cd5c", "#69b488", "#cb9cf8", "#5d9dc5", "#fc4109"][i]};--fg:${[4, 0].includes(i % 5) ? "#f4efe8" : "#201e1f"}"><b>${w}</b></span>`).join("")}<svg class="team-net" aria-hidden="true"><path pathLength="1"/></svg></div>${C.shifts.map((s, i) => `<figure class="easel" style="--a:${tilt[i + 4]}deg;--room:${s.room}"><img src="${C.img}${s.img}" alt="" loading="lazy"><span>${i + 1}</span><b>from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}</b></figure>`).join("")}</div>
       <h2 class="chap"><span class="md">##</span>${lines([rich(C.who.head)])}</h2>
       <div class="cap-wrap">${C.who.p.map(t => `<p class="cap">${esc(t)}</p>`).join("")}</div>`,
-    init(el) { this.chap = $(".chap", el); this.strip = $(".strip", el); this.caps = $$(".cap", el); this.roll = $(".roll", el); this.easels = $$(".easel", el); },
+    init(el) { this.chap = $(".chap", el); this.strip = $(".strip", el); this.caps = $$(".cap", el); this.mates = $$(".mate", el); this.net = $(".team-net path", el); this.team = $(".team", el); this.easels = $$(".easel", el); },
     update(p, t) {
       reveal(this.chap, p, .03, .12);
       const max = this.strip.scrollWidth - innerWidth;
       const x = -easeIO(seg(p, .08, 1)) * max;
       this.strip.style.transform = `translateX(${x}px)`;
-      // Christer rullar in från höger och stannar; rotationen följer sträckan
-      const k = easeIO(seg(p, 0, .14)), r = this.roll.offsetWidth / 2 || 100;
-      const dx = (1 - k) * innerWidth * .9;
-      this.roll.style.transform = `translateX(${dx}px) rotate(${(dx + x * 0) / r * 57.3}deg)`;
+      // hela laget rullar in ett i taget och binds ihop till ett nätverk
+      const r = (this.mates[0]?.offsetWidth || 120) / 2;
+      this.mates.forEach((m, i) => {
+        const k = easeIO(seg(p, .01 + i * .012, .1 + i * .012)), dx = (1 - k) * innerWidth * 1.1;
+        const bob = k >= 1 ? Math.sin(t * 1.4 + i) * 3 : 0;
+        m.style.transform = `translate(${dx}px, ${bob}px) rotate(${dx / r * 57.3}deg)`;
+      });
+      const nk = seg(p, .14, .24);
+      if (this.mates.length && nk > 0) {
+        const tb = this.team.getBoundingClientRect();
+        const pts = this.mates.map(m => { const b = m.getBoundingClientRect(); return [b.left - tb.left + b.width / 2, b.top - tb.top + b.height * .2]; });
+        this.net.setAttribute("d", pts.map((q, i) => (i ? "Q" + ((pts[i - 1][0] + q[0]) / 2) + " " + (Math.min(q[1], pts[i - 1][1]) - 60) + " " : "M") + q[0] + " " + q[1]).join(" "));
+        this.net.style.strokeDashoffset = 1 - nk;
+      } else this.net.style.strokeDashoffset = 1;
       this.easels.forEach((e, i) => (e.style.transform = `rotate(${tilt[i + 4] + Math.sin(t * 1.3 + i) * .8}deg)`));
       const n = this.caps.length;
       this.caps.forEach((c, i) => {
@@ -205,7 +215,7 @@
     "exp-flasks": [1009, 247, 696, 618],
     // fåglarna i nätverksrummet – egen uppställning kring bordet (ramenheter)
     "bird-crow": [1010, 300, 431, 474], "bird-owl": [1560, 290, 261, 487],
-    "bird-bowl": [1290, 690, 274, 149], "bird-robin": [1610, 660, 239, 221], "bird-robin2": [1235, 560, 122, 166]
+    "bird-bowl": [1290, 690, 274, 149], "puppet-man": [1745, 420, 211, 335], "bird-robin": [1610, 660, 239, 221], "bird-robin2": [1235, 560, 122, 166]
   };
   const pc = (name, cls = "") => { const [x, y, w, h] = FIG[name]; return `<img class="pc ${cls}" src="${C.fig}${name}.webp" alt="" style="left:${x / 19.2}%;top:${y / 10.8}%;width:${w / 19.2}%;height:${h / 10.8}%">`; };
   const BUB = Array.from({ length: 16 }, (_, i) => [1110 + (i * 97) % 520, 0.4 + (i * 0.37) % 1, 5 + (i * 7) % 9, (i * .173) % 1]);
@@ -220,8 +230,10 @@
             <ellipse cx="1474" cy="88" rx="16" ry="26" class="bal-h"/>
             <path d="M1490 204 L1510 204 L1500 192 Z" class="bal-k"/>
           </g>
+          <circle class="berry" r="13" cx="0" cy="0"/>
+          <g class="confetti">${Array.from({ length: 18 }, (_, i) => `<rect width="${10 + (i % 3) * 5}" height="${6 + (i % 2) * 6}" rx="2" fill="${["#e83729", "#ffabc8", "#f8d867", "#f4efe8"][i % 4]}"/>`).join("")}</g>
         </svg>
-        ${pc("bird-owl", "a-owl")}${pc("bird-crow", "a-crow")}
+        ${pc("bird-owl", "a-owl")}${pc("bird-crow", "a-crow")}${pc("puppet-man", "a-man")}
       </div>
       <div class="cloth"></div>
       <div class="fig">${pc("bird-bowl", "a-bowl")}${pc("bird-robin2", "a-robin2")}${pc("bird-robin", "a-robin")}</div>`,
@@ -270,6 +282,28 @@
         crow.style.transform = `translateY(${uc * 105}%) rotate(${Math.sin(t * 1.1 + 1) * 1.4}deg)`;
         const dy = uc * 474 * 1.05 - Math.sin(t * 1.1 + 1) * 3;
         g.setAttribute("transform", `translate(0 ${dy - ease(seg(p, .2, .4)) * 12}) rotate(${Math.sin(t * .9) * 5 - uc * 8} 1438 453)`);
+        // gubben reser sig, tar sikte med ett bär och skjuter – ballongen smäller
+        const man = this.q(".a-man"), berry = this.q(".berry"), conf = $$(".confetti rect", this.fig.parentElement);
+        const um = up(.28, .38), aim = seg(p, .6, .66), fly = seg(p, .66, .72), popK = seg(p, .72, .86);
+        man.style.transform = `translateY(${um * 105}%) rotate(${-aim * 6 + (fly > 0 ? Math.sin(fly * Math.PI) * 8 : 0) + Math.sin(t * 1.3) * .8}deg)`;
+        const bx = 1500, by = 118 + dy - ease(seg(p, .2, .4)) * 12, hx = 1760, hy = 650;
+        if (fly > 0 && fly < 1) {
+          const x = hx + (bx - hx) * fly, y = hy + (by - hy) * fly - Math.sin(fly * Math.PI) * 220;
+          berry.setAttribute("cx", x); berry.setAttribute("cy", y); berry.style.opacity = 1;
+        } else berry.style.opacity = 0;
+        const popped = popK > 0;
+        this.q(".bal-b").style.opacity = this.q(".bal-h").style.opacity = this.q(".bal-k").style.opacity = popped ? 0 : 1;
+        // snöret faller när ballongen är borta
+        this.q(".bal-str").style.transform = popped ? `translateY(${ease(popK) * 260}px)` : "";
+        this.q(".bal-str").style.opacity = 1 - seg(p, .78, .86);
+        conf.forEach((c, i) => {
+          const ang = i / conf.length * Math.PI * 2 + i, r = ease(popK) * (90 + (i * 37) % 120), g = popK * popK * 260;
+          c.setAttribute("x", bx + Math.cos(ang) * r); c.setAttribute("y", by + Math.sin(ang) * r + g);
+          c.setAttribute("transform", `rotate(${popK * 540 * (i % 2 ? 1 : -1)} ${bx + Math.cos(ang) * r} ${by + Math.sin(ang) * r + g})`);
+          c.style.opacity = popped ? 1 - seg(popK, .7, 1) : 0;
+        });
+        // kråkan hoppar till av smällen
+        if (popK > 0 && popK < .3) crow.style.transform += ` translateY(${-Math.sin(popK / .3 * Math.PI) * 6}%)`;
         const bowl = this.q(".a-bowl");
         bowl.style.transform = `translateX(${up(.12, .26) * -60}vw)`;
         const hop = (el, a, b, from, dir) => {
@@ -314,7 +348,7 @@
     html: `
       <i class="wall"></i><div class="cloth"></div>
       <h2 class="chap chap--ink"><span class="md">##</span>${lines([C.what.h])}</h2>
-      <div class="plates">${C.what.items.map(it => `<div class="plate"><i class="dish"></i><span class="dish-t">${it.t}</span><span class="cl">${cloche}</span><p class="dish-p">${esc(it.p)}</p></div>`).join("")}</div>`,
+      <div class="plates">${C.what.items.map(it => `<div class="plate"><i class="dish"></i><span class="dish-t">${it.t}</span><span class="cl">${cloche}<img class="cl-hand" src="${C.fig}emp-tophand.webp" alt=""></span><p class="dish-p">${esc(it.p)}</p></div>`).join("")}</div>`,
     init(el) { this.chap = $(".chap", el); this.pl = $$(".plate", el); },
     update(p, t) {
       reveal(this.chap, p, .02, .12);
@@ -324,9 +358,11 @@
         pl.style.transform = `translateY(${(1 - inK) * 60}vh)`;
         const a = .26 + i * .22, lift = easeIO(seg(p, a, a + .1));
         const wob = lift > 0 && lift < 1 ? Math.sin(lift * Math.PI * 3) * 4 : 0;
-        const cl = pl.querySelector(".cl");
-        cl.style.transform = `translate(${lift * 30}%, ${-lift * 150}%) rotate(${lift * 24 + wob}deg)`;
-        cl.style.opacity = 1 - seg(p, a + .14, a + .2);
+        const cl = pl.querySelector(".cl"), hand = pl.querySelector(".cl-hand");
+        // handen kommer ner, greppar knoppen och lyfter kupan
+        const down = ease(seg(p, a - .1, a - .01));
+        hand.style.transform = `translateY(${(1 - down) * -140}vh) rotate(${(1 - down) * -8 + Math.sin(t * 1.5 + i) * (lift >= 1 ? 2 : 0)}deg)`;
+        cl.style.transform = `translate(${lift * 10}%, ${-lift * 190}%) rotate(${lift * 8 + wob * .6}deg)`;
         const txt = pl.querySelector(".dish-p"), tt = pl.querySelector(".dish-t");
         tt.style.transform = `translate(-50%, -50%) scale(${.6 + .4 * ease(seg(p, a + .04, a + .12))})`;
         tt.style.opacity = seg(p, a + .02, a + .08);
