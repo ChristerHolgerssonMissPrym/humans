@@ -37,76 +37,61 @@
   const S = [];
   const scene = o => (S.push(o), o);
 
-  // 1. Öppning
+  // 1. Öppning – i Netlights anda: stor rubrik till vänster, en 3D-dator till höger som sprängs isär när man scrollar
+  const keys = Array.from({ length: 60 }, (_, i) => `<b style="--r:${(Math.sin(i * 12.9898) * 43758.5453 % 1 + 1) % 1}"></b>`).join("");
+  const chips = Array.from({ length: 7 }, (_, i) => `<i class="chip c${i % 3}" style="left:${12 + (i * 37) % 70}%;top:${14 + (i * 23) % 64}%"></i>`).join("");
   scene({
-    id: "top", t: "MISSPRYM.md", hud: "dark", len: 2.2, card: { img: "missp.jpg", n: "M", room: "#ffffff" },
+    id: "top", t: "MISSPRYM.md", hud: "light", len: 2.4, card: { glyph: "▣", room: "#f7f7f7" },
     html: `
-      <div class="cam">
-        <i class="wall"></i><div class="floor"></div>
-        <i class="o-shadow"></i>
-        <div class="crt" aria-label="Agentomatens ansikte i en gammal dator">
-          <i class="crt-shell"></i>
-          <div class="crt-parts">${Array.from({ length: 18 }, (_, i) => `<i class="part p${i % 6}" style="--i:${i}"></i>`).join("")}</div>
-          <div class="crt-case">
-            <i class="crt-p crt-top"></i><i class="crt-p crt-left"></i><i class="crt-p crt-right"></i>
-            <div class="crt-bezel"><div class="crt-screen">
-              <video src="assets/agentomaten-face.mp4" poster="assets/agentomaten-face.jpg" muted loop autoplay playsinline></video>
-              <i class="crt-scan"></i><i class="crt-glare"></i>
-              <p class="crt-text">&gt; ${C.agentomaten.listen}<b class="crt-cur"></b></p>
-            </div></div>
-            <div class="crt-panel"><span class="crt-badge">MISS PRYM · 1.0</span><i class="crt-led"></i><i class="crt-knob"></i><i class="crt-knob"></i></div>
+      <div class="nl">
+        <h1 class="nl-h">${lines(["Technical depth.", "Human", "judgement<span class='nl-dot'></span>"])}</h1>
+        <p class="nl-p">${esc(C.commitment.lead)} ${esc(C.commitment.body.split(". ").slice(-1)[0])}</p>
+        <div class="pc">
+          <div class="rig">
+            <div class="mon">
+              <i class="fc f-back"></i><i class="fc f-left"></i><i class="fc f-right"></i><i class="fc f-top"></i><i class="fc f-bot"></i>
+              <div class="pcb pcb1">${chips}</div><div class="pcb pcb2">${chips}</div><i class="yoke"></i>
+              <div class="tube"><video src="assets/agentomaten-face.mp4" poster="assets/agentomaten-face.jpg" muted loop autoplay playsinline aria-label="Agentomatens ansikte som ler"></video><i class="crt-scan"></i><i class="crt-glare"></i><p class="crt-text">&gt; ${C.agentomaten.listen}<b class="crt-cur"></b></p></div>
+              <div class="fc f-front"><span class="badge">MISS PRYM · 1.0</span><i class="led"></i><i class="slot"></i></div>
+            </div>
+            <div class="base"><i class="fc b-top"></i><i class="fc b-front"></i></div>
+            <div class="kbd"><div class="kb-top">${keys}</div><i class="kb-front"></i></div>
+            <i class="mouse"></i>
+            <svg class="coil" viewBox="0 0 300 120" aria-hidden="true"><path d="${Array.from({ length: 24 }, (_, i) => `${i ? "" : "M10 60 "}C ${14 + i * 11} 30, ${20 + i * 11} 90, ${21 + i * 11} 60`).join(" ")} Q 290 60 290 20"/></svg>
           </div>
-          <div class="crt-foot"></div>
-          <div class="crt-kb">${Array.from({ length: 36 }, () => "<b></b>").join("")}</div>
-          <i class="crt-mouse"></i>
         </div>
-        <figure class="o-frame"><video src="${C.film}" poster="${C.filmPoster}" muted loop autoplay playsinline preload="metadata" aria-label="Miss Prym – film"></video></figure>
-        <div class="statue st-l"><img src="${C.fig}statue-justitia.webp" alt="Staty: Justitia vid Norra Hamngatan"><i class="plinth"></i></div>
-        <div class="statue st-r"><img src="${C.fig}statue-venus.webp" alt="Staty med venussymbol vid Norra Hamngatan"><i class="plinth"></i></div>
-        <h1 class="o-title" aria-label="MISSPRYM.md"><span class="o-mask">${[..."MISSPRYM"].map((c, i) => `<span class="ch" style="--i:${i}">${c}</span>`).join("")}</span><span class="o-mask"><span class="ch" style="--i:8"><i class="o-title__dot"></i></span></span><span class="o-mask o-title__md"><span class="ch" style="--i:9">m</span><span class="ch" style="--i:10">d</span></span></h1>
-        <div class="o-quote">${C.hero.quote.map(q => `<p><b class="md">&gt;</b>${esc(q)}</p>`).join("")}</div>
-        <p class="o-meta o-meta--l">${C.byline}</p>
-        <p class="o-meta o-meta--r">${C.hero.metaR}</p>
-      </div>
-      <p class="o-hint"><span>scroll</span><i></i></p>`,
-    init(el) { this.cam = $(".cam", el); this.title = $(".o-title", el); this.fade = $$(".o-quote, .o-meta, .o-hint, .o-frame", el); this.st = $$(".statue img", el); this.crt = $(".crt", el); this.scr = $(".crt-screen", el);
-      this.pan = $$(".crt-p, .crt-panel, .crt-foot", el); this.shell = $(".crt-shell", el); this.parts = $$(".part", el); this.kb = $(".crt-kb", el); this.mouse = $(".crt-mouse", el); this.bez = $(".crt-bezel", el); },
-    layout() {
-      // mät skärmens mitt utan kamerarörelse, så att vi kan åka rakt in i glaset
-      const tr = this.cam.style.transform; this.cam.style.transform = "none";
-      const crt = this.crt.style.transform; this.crt.style.transform = "none";
-      const r = this.scr.getBoundingClientRect();
-      this.sc = { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width, h: r.height };
-      this.cam.style.transform = tr; this.crt.style.transform = crt;
+        <button class="nl-down" type="button" aria-label="Till nästa del" data-next>↓</button>
+        <div class="marquee" aria-hidden="true"><div class="mq">${Array.from({ length: 6 }, () => `<span>BE PROUD · BE LIKE PRYM · TECHNICAL DEPTH · HUMAN JUDGEMENT · </span>`).join("")}</div></div>
+      </div>`,
+    init(el) {
+      this.nl = $(".nl", el); this.rig = $(".rig", el); this.q = n => $$(n, el); this.mq = $(".marquee", el); this.down = $(".nl-down", el);
+      this.h = $(".nl-h", el); this.keys = $$(".kb-top b", el);
     },
     update(p, t) {
-      // först sprängs datorn isär (chassit, kretsarna, sladdarna), tangentbord och mus glider fram
-      const ex = easeIO(seg(p, .02, .34)), back = seg(p, .34, .5);
-      const dirs = { "crt-top": [0, -1, -14], "crt-left": [-1, .1, -10], "crt-right": [1, .1, 12], "crt-panel": [0, 1, 6], "crt-foot": [0, 1.4, -4] };
-      this.pan.forEach(e => { const d = dirs[[...e.classList].find(c => dirs[c])] || [0, 1, 0]; e.style.transform = `translate(${d[0] * ex * 34}%, ${d[1] * ex * 60}%) rotate(${d[2] * ex}deg)`; e.style.opacity = 1 - back; });
-      this.shell.style.transform = `translate(-50%, -50%) scale(${1 - ex * .25}) translateZ(-80px)`; this.shell.style.opacity = .9 - ex * .6 - back * .3;
-      this.parts.forEach((pt, i) => {
-        const a = i / this.parts.length * Math.PI * 2 + i * .7, r = ex * (60 + (i * 53) % 80);
-        pt.style.transform = `translate(calc(-50% + ${Math.cos(a) * r * .22}vw), calc(-50% + ${Math.sin(a) * r * .2}vh)) rotate(${ex * (i % 2 ? 1 : -1) * (90 + i * 23) + Math.sin(t + i) * 4 * ex}deg)`;
-        pt.style.opacity = Math.min(1, ex * 3) * (1 - back);
-      });
-      this.kb.style.transform = `translate(-50%, ${(1 - ex) * 40}px) perspective(400px) rotateX(${50 - ex * 10}deg)`; this.kb.style.opacity = ex * (1 - back);
-      this.mouse.style.transform = `translate(${(1 - ex) * -60}px, 0)`; this.mouse.style.opacity = ex * (1 - back);
-      this.bez.style.transform = `scale(${1 + ex * .06})`;
-      // sedan åker kameran in i skärmen tills glaset fyller bilden
-      const z = easeIO(seg(p, .36, .96)), sc = this.sc || { x: innerWidth / 2, y: innerHeight / 2, w: 300, h: 220 };
-      const S = Math.max(innerWidth / sc.w, innerHeight / sc.h) * 1.12;
-      const s = 1 + z * (S - 1), tx = (innerWidth / 2 - sc.x) * z, ty = (innerHeight / 2 - sc.y) * z;
-      this.cam.style.transformOrigin = `${sc.x}px ${sc.y}px`;
-      this.cam.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
-      // datorn lutar sig mot pekaren, rätas ut när vi åker in
-      const ax = (mx / innerWidth - .5), ay = (my / innerHeight - .5), free = 1 - z;
-      this.crt.style.transform = `perspective(900px) rotateY(${ax * 14 * free}deg) rotateX(${-ay * 8 * free}deg)`;
-      // statyerna "andas" och vänder sig lite mot betraktaren när man scrollar
-      this.st.forEach((im, i) => (im.style.transform = `rotate(${Math.sin(t * .7 + i * 2) * .6}deg) scale(${1 + Math.sin(t * 1.3 + i) * .006}) translateX(${(i ? 1 : -1) * ease(seg(p, 0, .5)) * 30}vw)`));
-      this.title.style.transform = `translate(-50%, ${-ease(seg(p, 0, .55)) * 40}vh)`;
-      this.title.style.opacity = 1 - seg(p, .25, .5);
-      this.fade.forEach(f => (f.style.opacity = 1 - seg(p, 0, .2)));
+      reveal(this.h, Math.min(1, (performance.now() - (window.__t0 || 0)) / 1400), 0, 1);
+      const e = easeIO(seg(p, .02, .62)), up = easeIO(seg(p, .08, 1));
+      this.nl.style.transform = `translateY(${-up * 62}vh)`;
+      const ax = (mx / innerWidth - .5) * (1 - e);
+      this.rig.style.transform = `rotateX(${-6 - e * 10}deg) rotateY(${-24 + ax * 10 - e * 18}deg) translateZ(${e * -60}px)`;
+      const T = (sel, f) => this.q(sel).forEach(f);
+      const D = "var(--D)", W = "var(--W)", H = "var(--H)";
+      T(".f-front", x => (x.style.transform = `translateZ(calc(${D} / 2 + ${e * 190}px)) translateY(${-e * 24}px)`));
+      T(".f-back", x => (x.style.transform = `translateZ(calc(${D} / -2 - ${e * 170}px)) rotateY(180deg)`));
+      T(".f-left", x => (x.style.transform = `translateX(${-e * 150}px) rotateY(-90deg) translateZ(calc(${W} / 2))`));
+      T(".f-right", x => (x.style.transform = `translateX(${e * 150}px) rotateY(90deg) translateZ(calc(${W} / 2))`));
+      T(".f-top", x => (x.style.transform = `translateY(${-e * 130}px) rotateX(90deg) translateZ(calc(${H} / 2))`));
+      T(".f-bot", x => (x.style.transform = `translateY(${e * 40}px) rotateX(-90deg) translateZ(calc(${H} / 2))`));
+      T(".tube", x => (x.style.transform = `translateZ(calc(${D} / 2 - 6px + ${e * 90}px))`));
+      T(".pcb1", x => (x.style.transform = `translateZ(${e * 10}px)`));
+      T(".pcb2", x => (x.style.transform = `translateZ(${-e * 80}px)`));
+      T(".yoke", x => (x.style.transform = `translateZ(${e * 40}px) translateY(${-e * 30}px)`));
+      T(".chip", (x, i) => (x.style.transform = `translateZ(${e * (20 + (i % 7) * 9)}px) rotate(${e * (i % 2 ? 30 : -30)}deg)`));
+      T(".base", x => (x.style.transform = `translateY(${e * 50}px)`));
+      T(".kbd", x => (x.style.transform = `translateY(${e * 70}px) translateZ(${e * 60}px)`));
+      this.keys.forEach((k, i) => (k.style.transform = `translateZ(${e * (8 + +k.style.getPropertyValue("--r") * 70)}px)`));
+      T(".mouse", x => (x.style.transform = `translate(${e * 60}px, ${e * 40}px)`));
+      // bandet och pilen kommer upp när sidan glider uppåt
+      this.down.style.opacity = 1 - seg(p, .1, .3);
     }
   });
 
@@ -643,6 +628,7 @@
   const crumb = $(".hud-crumb"), crumbT = $(".hud-crumb__t");
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  let clock = 0, pausedFor = 0, pausedAt = 0;
   function render() {
     const target = scrollY;
     cur += (target - cur) * (reduced ? 1 : .14);
@@ -661,7 +647,8 @@
       x.el.classList.toggle("is-top", x === s && visible.length > 1);
       x.el.classList.toggle("is-under", on && x !== s);
     });
-    const T = performance.now() / 1000;
+    if (!body.classList.contains("paused")) clock = performance.now() / 1000 - pausedFor;
+    const T = clock;
     s.update?.(p, T);
     if (visible.length > 1) S[k - 1].update?.(1, T);
 
@@ -812,6 +799,14 @@
     eye.style.setProperty("--ey", (ay / d * Math.min(4, d / 60)).toFixed(1) + "px");
   });
 
+  document.addEventListener("click", e => {
+    const pb = e.target.closest("[data-pause]"); if (!pb) return;
+    const on = !body.classList.contains("paused"); body.classList.toggle("paused", on); pb.setAttribute("aria-pressed", on);
+    if (on) pausedAt = performance.now() / 1000; else pausedFor += performance.now() / 1000 - pausedAt;
+    $$("video").forEach(v => (on ? v.pause() : v.play().catch(() => {})));
+  });
+  document.addEventListener("click", e => { if (e.target.closest("[data-next]")) { const n = S[1]; scrollTo({ top: (n.start + .6) * VH, behavior: "smooth" }); } });
+
   /* ================= ögat blinkar ================= */
   const lid = $(".hud-mark__blink");
   (function blink() { lid?.classList.add("is-on"); setTimeout(() => lid?.classList.remove("is-on"), 140); setTimeout(blink, 2600 + Math.random() * 4200); })();
@@ -819,7 +814,7 @@
   /* ================= start ================= */
   addEventListener("resize", measure);
   let started = false;
-  const start = () => { if (started) return; started = true; measure(); body.classList.remove("is-loading"); requestAnimationFrame(render); };
+  const start = () => { if (started) return; started = true; window.__t0 = performance.now(); measure(); body.classList.remove("is-loading"); requestAnimationFrame(render); };
   (document.fonts?.ready || Promise.resolve()).then(() => setTimeout(start, 100));
   setTimeout(start, 1500);
 })();
