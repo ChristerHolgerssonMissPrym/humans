@@ -204,7 +204,7 @@
     id: "who", t: C.who.h, hud: "light", len: 4.2, wipe: "circle", card: { glyph: "W", room: "#c7963c" },
     html: `
       <i class="wall"></i><div class="cloth"></div>
-      <div class="strip"><div class="team">${C.expertise.words.map((w, i) => `<span class="mate" style="--c:${["#d9646a", "#f7eaad", "#b9bee9", "#f0bad9", "#3a4650", "#f2cd5c", "#69b488", "#cb9cf8", "#5d9dc5", "#fc4109"][i]};--fg:${[4, 0].includes(i % 5) ? "#f4efe8" : "#201e1f"}"><b>${w}</b></span>`).join("")}<svg class="team-net" aria-hidden="true"><path pathLength="1"/></svg></div>${C.shifts.map((s, i) => `<figure class="easel" style="--a:${tilt[i + 4]}deg;--room:${s.room}"><img src="${C.img}${s.img}" alt="" loading="lazy"><span>${i + 1}</span><b>from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}</b></figure>`).join("")}</div>
+      <div class="strip"><div class="team">${C.expertise.words.map((w, i) => { const c = ["#d9646a", "#f7eaad", "#b9bee9", "#f0bad9", "#3a4650", "#f2cd5c", "#69b488", "#cb9cf8", "#5d9dc5", "#fc4109"][i]; return `<span class="mate" style="--c:${c};--fg:${["#3a4650", "#d9646a", "#fc4109"].includes(c) ? "#f4efe8" : "#201e1f"}"><b>${w}</b><i class="eyes"><i></i><i></i></i></span>`; }).join("")}<svg class="team-net" aria-hidden="true"><path pathLength="1"/></svg></div>${C.shifts.map((s, i) => `<figure class="easel" style="--a:${tilt[i + 4]}deg;--room:${s.room}"><img src="${C.img}${s.img}" alt="" loading="lazy"><span>${i + 1}</span><b>from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}</b></figure>`).join("")}</div>
       <h2 class="chap"><span class="md">##</span>${lines([rich(C.who.head)])}</h2>
       <div class="cap-wrap">${C.who.p.map(t => `<p class="cap">${esc(t)}</p>`).join("")}</div>`,
     init(el) { this.chap = $(".chap", el); this.strip = $(".strip", el); this.caps = $$(".cap", el); this.mates = $$(".mate", el); this.net = $(".team-net path", el); this.team = $(".team", el); this.easels = $$(".easel", el); },
@@ -219,12 +219,16 @@
         const k = easeIO(seg(p, .01 + i * .012, .1 + i * .012)), dx = (1 - k) * innerWidth * 1.1;
         const bob = k >= 1 ? Math.sin(t * 1.4 + i) * 3 : 0;
         m.style.transform = `translate(${dx}px, ${bob}px) rotate(${dx / r * 57.3}deg)`;
+        const e = m.lastElementChild, br = m.getBoundingClientRect(), ex = clamp((mx - br.left - br.width / 2) / innerWidth * 6, -1, 1), ey = clamp((my - br.top - br.height / 2) / innerHeight * 6, -1, 1);
+        if (k >= 1) e.style.transform = `translate(${ex * 4}px, ${ey * 3}px)`;
+        e.classList.toggle("blink", (Math.floor(t * .7 + i * 1.7) % 5 === 0) && (t * .7 + i * 1.7) % 1 < .08);
       });
       const nk = seg(p, .14, .24);
       if (this.mates.length && nk > 0) {
         const tb = this.team.getBoundingClientRect();
-        const pts = this.mates.map(m => { const b = m.getBoundingClientRect(); return [b.left - tb.left + b.width / 2, b.top - tb.top + b.height * .2]; });
-        this.net.setAttribute("d", pts.map((q, i) => (i ? "Q" + ((pts[i - 1][0] + q[0]) / 2) + " " + (Math.min(q[1], pts[i - 1][1]) - 60) + " " : "M") + q[0] + " " + q[1]).join(" "));
+        // en mjuk tråd som hänger mellan figurerna – en lös båge under varje par, som garn
+        const pts = this.mates.map(m => { const b = m.getBoundingClientRect(); return [b.left - tb.left + b.width / 2, b.top - tb.top + b.height * .9]; });
+        this.net.setAttribute("d", pts.map((q, i) => { if (!i) return `M${q[0]} ${q[1]}`; const o = pts[i - 1], sag = 18 + Math.sin(t * 1.2 + i) * 4; return `C ${o[0] + (q[0] - o[0]) * .35} ${o[1] + sag}, ${o[0] + (q[0] - o[0]) * .65} ${q[1] + sag}, ${q[0]} ${q[1]}`; }).join(" "));
         this.net.style.strokeDashoffset = 1 - nk;
       } else this.net.style.strokeDashoffset = 1;
       this.easels.forEach((e, i) => (e.style.transform = `rotate(${tilt[i + 4] + Math.sin(t * 1.3 + i) * .8}deg)`));
@@ -439,7 +443,14 @@
     html: `
       <i class="wall"></i><div class="cloth"></div>
       <h2 class="chap chap--ink"><span class="md">##</span>${lines([C.what.h])}</h2>
-      <div class="plates">${C.what.items.map(it => `<div class="plate"><i class="dish"></i><span class="dish-t">${it.t}</span><span class="cl">${cloche}<img class="cl-hand" src="${C.fig}emp-tophand.webp" alt=""></span><p class="dish-p">${esc(it.p)}</p></div>`).join("")}</div>`,
+      <div class="plates">${C.what.items.map((it, i) => `<div class="plate">
+        <svg class="steam" viewBox="0 0 120 160" aria-hidden="true"><path d="M30 150 C 10 120, 50 100, 30 70 S 40 20, 30 0"/><path d="M60 150 C 40 115, 80 95, 60 62 S 70 18, 60 -4"/><path d="M90 150 C 70 120, 110 100, 90 70 S 100 20, 90 0"/></svg>
+        <i class="dish"></i>
+        <img class="serve" src="${C.fig}${["puppet-man.webp", "exp-flasks.webp", "bird-robin.webp"][i]}" alt="">
+        <span class="spark">${Array.from({ length: 8 }, () => "<i></i>").join("")}</span>
+        <span class="cl">${cloche}<img class="cl-hand" src="${C.fig}emp-tophand.webp" alt=""></span>
+        <div class="menu"><span class="menu-h"><span class="md">###</span> ${it.t.toLowerCase()}</span><p>${esc(it.p)}</p></div>
+      </div>`).join("")}</div>`,
     init(el) { this.chap = $(".chap", el); this.pl = $$(".plate", el); },
     update(p, t) {
       reveal(this.chap, p, .02, .12);
@@ -454,10 +465,15 @@
         const down = ease(seg(p, a - .1, a - .01));
         hand.style.transform = `translateY(${(1 - down) * -140}vh) rotate(${(1 - down) * -8 + Math.sin(t * 1.5 + i) * (lift >= 1 ? 2 : 0)}deg)`;
         cl.style.transform = `translate(${lift * 10}%, ${-lift * 190}%) rotate(${lift * 8 + wob * .6}deg)`;
-        const txt = pl.querySelector(".dish-p"), tt = pl.querySelector(".dish-t");
-        tt.style.transform = `translate(-50%, -50%) scale(${.6 + .4 * ease(seg(p, a + .04, a + .12))})`;
-        tt.style.opacity = seg(p, a + .02, a + .08);
-        fadeIn(txt, ease(seg(p, a + .08, a + .16)), 14);
+        // under kupan: rätten reser sig, ångan stiger, det gnistrar – och menykortet viks upp
+        const rev = seg(p, a + .02, a + .12), serve = pl.querySelector(".serve"), steam = pl.querySelector(".steam"), sp = $$(".spark i", pl), menu = pl.querySelector(".menu");
+        serve.style.transform = `translateX(-50%) translateY(${(1 - ease(rev)) * 30}%) scale(${.5 + .5 * ease(rev) + Math.sin(rev * Math.PI) * .12})`;
+        serve.style.opacity = rev > 0 ? 1 : 0;
+        steam.style.opacity = seg(p, a + .02, a + .06) * (.65 + Math.sin(t * 2 + i) * .15);
+        const burst = seg(p, a + .03, a + .11);
+        sp.forEach((s2, j) => { const ang = j / sp.length * Math.PI * 2, r = ease(burst) * 60; s2.style.transform = `translate(${Math.cos(ang) * r}px, ${Math.sin(ang) * r - 20}px) rotate(${ang}rad) scale(${1 - burst})`; s2.style.opacity = burst > 0 && burst < 1 ? 1 : 0; });
+        const mk = easeIO(seg(p, a + .08, a + .18));
+        menu.style.transform = `perspective(600px) rotateX(${(1 - mk) * -95}deg)`; menu.style.opacity = mk > 0 ? 1 : 0;
       });
     }
   });

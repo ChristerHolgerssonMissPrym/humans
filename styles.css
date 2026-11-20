@@ -783,3 +783,40 @@ html.reading .pause { display: none; }
 .bar:nth-child(2) { position: absolute; left: 50%; bottom: 100%; transform-origin: 50% 100%; margin-left: calc(clamp(48px, 5.4vw, 96px) / -2); }
 .gold-tag { position: absolute; left: 50%; bottom: calc(100% + clamp(26px, 2.6vw, 44px)); transform: translateX(-50%); font-family: var(--f-serif); font-style: italic; font-size: clamp(20px, 2vw, 36px); background: var(--paper); border-radius: 999px; padding: .02em .5em .1em; white-space: nowrap; opacity: 0; color: var(--ink); box-shadow: 0 .15em .3em rgba(80,30,40,.18); }
 @media (orientation: portrait) { .gold { left: 8vw; bottom: 40vh; } }
+
+/* laget: läsbart, ögon, mjuk tråd, mobil i två rader */
+.mate b { color: var(--fg); position: relative; z-index: 1; }
+.eyes { position: absolute; left: 50%; top: 22%; display: flex; gap: 14%; width: 46%; margin-left: -23%; justify-content: center; transition: transform .2s; }
+.eyes i { display: block; width: 18%; aspect-ratio: 1; border-radius: 50%; background: var(--fg); transition: transform .08s; }
+.eyes.blink i { transform: scaleY(.1); }
+.mate b { margin-top: 22%; }
+.team-net path { stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; }
+@media (orientation: portrait) {
+  .team { flex-wrap: wrap; width: calc(100vw - 2 * var(--pad)); gap: 2.4vw; justify-content: center; margin: 0 var(--pad) calc(30vh + 2vh) var(--pad); }
+  .mate { width: 17vw; } .mate b { font-size: 3vw; }
+  .L-who .strip { padding-left: 0; }
+}
+
+/* silverfaten i human-md-stil: ånga, rätten, gnistor, menykort */
+.plate { position: relative; }
+.steam { position: absolute; left: 50%; bottom: calc(min(22vw, 34vh) * .3); width: calc(min(22vw, 34vh) * .55); margin-left: calc(min(22vw, 34vh) * -.275); opacity: 0; overflow: visible; pointer-events: none; }
+.steam path { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 22 14; animation: steam 2.6s linear infinite; opacity: .55; }
+.steam path:nth-child(2) { animation-duration: 3.1s; } .steam path:nth-child(3) { animation-duration: 2.2s; }
+@keyframes steam { to { stroke-dashoffset: -72; } }
+.serve { position: absolute; left: 50%; bottom: calc(min(22vw, 34vh) * .14); height: calc(min(22vw, 34vh) * .62); width: auto; max-width: 90%; object-fit: contain; transform-origin: 50% 100%; opacity: 0; filter: drop-shadow(0 6px 6px rgba(60,40,10,.25)); will-change: transform; }
+.spark { position: absolute; left: 50%; bottom: calc(min(22vw, 34vh) * .4); width: 0; height: 0; }
+.spark i { position: absolute; left: -6px; top: -2px; width: 12px; height: 4px; border-radius: 2px; background: var(--accent); opacity: 0; }
+.menu { position: absolute; left: 6%; right: 6%; top: calc(100% + 1.4vh); background: #fffdf6; border: 1px solid rgba(32,30,31,.25); border-radius: 4px; padding: .8em 1em 1em; box-shadow: 0 10px 16px rgba(60,40,10,.15); transform-origin: 50% 0; opacity: 0; font-family: var(--f-mono); color: var(--ink); }
+.menu-h { display: block; font-size: clamp(13px, 1.05vw, 18px); margin-bottom: .45em; }
+.menu p { margin: 0; font-family: var(--f-display); font-size: clamp(11px, .82vw, 14px); line-height: 1.38; }
+.dish-t, .dish-p { display: none !important; }
+@media (orientation: portrait) {
+  .plates { gap: 9vh; } .menu { left: calc(100% + 2vw); right: auto; width: 46vw; top: 0; } .menu p { display: none; }
+  .plate { margin-right: 46vw; } .steam, .serve, .spark { --w: 36vw; }
+}
+
+.L-what .plates { bottom: 30vh; }
+.L-what .cloth { --ch: 36vh; }
+.mate { width: clamp(100px, 10.5vw, 180px); }
+.mate b { font-size: clamp(13px, 1.25vw, 22px); }
+@media (orientation: portrait) { .L-what .plates { bottom: auto; } .mate { width: 17vw; } .mate b { font-size: 3vw; } }
