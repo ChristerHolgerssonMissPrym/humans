@@ -44,6 +44,7 @@
       <div class="cam">
         <i class="wall"></i><div class="floor"></div>
         <i class="o-shadow"></i>
+        <figure class="o-face"><video src="assets/agentomaten-face.mp4" poster="assets/agentomaten-face.jpg" muted loop autoplay playsinline aria-label="Agentomatens ansikte som ler"></video><figcaption>${esc(C.agentomaten.lead)}</figcaption></figure>
         <figure class="o-frame"><video src="${C.film}" poster="${C.filmPoster}" muted loop autoplay playsinline preload="metadata" aria-label="Miss Prym – film"></video></figure>
         <div class="statue st-l"><img src="${C.fig}statue-justitia.webp" alt="Staty: Justitia vid Norra Hamngatan"><i class="plinth"></i></div>
         <div class="statue st-r"><img src="${C.fig}statue-venus.webp" alt="Staty med venussymbol vid Norra Hamngatan"><i class="plinth"></i></div>
@@ -91,11 +92,13 @@
   scene({
     id: "expertise", t: "our expertise", hud: "light", len: 4, wipe: "circle", card: { glyph: "∗", room: "#ffabc8" },
     html: `
-      <i class="wall"></i><div class="cloth"></div>
+      <i class="wall"></i>
+      <div class="crowd">${Array.from({ length: 7 }, (_, i) => `<img class="dude" src="${C.fig}puppet-man.webp" alt="" style="--x:${8 + i * 13.4}%;--f:${i % 2 ? -1 : 1}">`).join("")}</div>
+      <div class="cloth"></div>
       <p class="lead lead--ink l1">${lines(C.expertise.lead)}</p>
       <p class="lead lead--ink l2">${lines(C.expertise.after.map(rich))}</p>
       <div class="pills">${C.expertise.words.map(w => `<span class="tpill">${w}</span>`).join("")}</div>`,
-    init(el) { this.l1 = $(".l1", el); this.l2 = $(".l2", el); this.pills = $$(".tpill", el); },
+    init(el) { this.l1 = $(".l1", el); this.l2 = $(".l2", el); this.pills = $$(".tpill", el); this.dudes = $$(".dude", el); },
     layout() {
       // lägg pillren i rader på bordet, nedifrån och upp
       const W = innerWidth, maxW = W * (portrait() ? .94 : .86), gap = W * .012;
@@ -114,7 +117,18 @@
         });
       });
     },
-    update(p) {
+    update(p, t) {
+      // en figur går in längs bordet – sedan blir de fler och fler (som mannekängerna i human-md)
+      this.dudes.forEach((d, i) => {
+        const f = +d.style.getPropertyValue("--f");
+        if (i === 0) {
+          const w = seg(p, 0, .12), walk = Math.abs(Math.sin(w * Math.PI * 6)) * (w < 1 ? 1 : 0);
+          d.style.transform = `translateX(${(1 - ease(w)) * -40}vw) translateY(${-walk * 3}%) rotate(${Math.sin(t * 1.2) * 1.2 + (w < 1 ? Math.sin(w * Math.PI * 6) * 3 : 0)}deg) scaleX(${f})`;
+        } else {
+          const k = seg(p, .08 + i * .015, .13 + i * .015), pop = k > 0 && k < 1 ? Math.sin(k * Math.PI) * 8 : 0;
+          d.style.transform = `translateY(${(1 - ease(k)) * 105 - pop}%) rotate(${Math.sin(t * 1.2 + i) * 1.2}deg) scaleX(${f})`;
+        }
+      });
       reveal(this.l1, p, .05, .15);
       hide(this.l1, p, .64, .7);
       this.pills.forEach((pl, i) => {
@@ -654,8 +668,13 @@
   /* ================= prick & öga ================= */
   const dot = $(".dot"), eye = $(".hud-mark");
   let dx = mx, dy = my;
+  const tch = $$(".o-title .ch");
   addEventListener("pointermove", e => {
     if (e.pointerType === "touch") return;
+    if (active?.id === "top") tch.forEach(c => {
+      const r = c.getBoundingClientRect(), d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
+      if (d < r.height * .6 && !c.classList.contains("hop")) { c.classList.add("hop"); setTimeout(() => c.classList.remove("hop"), 520); }
+    });
     mx = e.clientX; my = e.clientY;
     dot.classList.toggle("is-big", !!e.target.closest("a, button"));
     const r = eye.getBoundingClientRect(), ax = mx - (r.left + r.width / 2), ay = my - (r.top + r.height / 2), d = Math.hypot(ax, ay) || 1;
