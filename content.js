@@ -5,7 +5,9 @@ window.PRYM = {
   file: "MISSPRYM.md",
   byline: "MISS P AKTIEBOLAG · GÖTEBORG",
   img: "https://www.missprym.com/images/",
-  fig: "assets/figma/",  // friställda figurer från Figma (OneDrive › Marknadsföringsmaterial › FIGMA_)
+  fig: "assets/figma/",
+  film: "https://missprym.tech/assets/miss-prym-hero-bg-2026.mp4",   // filmen från missprym.tech
+  filmPoster: "https://missprym.tech/assets/miss-prym-site-thumb-2026.jpg",  // friställda figurer från Figma (OneDrive › Marknadsföringsmaterial › FIGMA_)
 
   hero: {
     quote: [

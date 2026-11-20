@@ -224,11 +224,11 @@ body:not(.is-loading) .o-title .ch { transform: none; }
 .o-title__dot { display: inline-block; width: .17em; height: .17em; border-radius: 50%; background: var(--accent); margin: 0 .06em 0 .08em; }
 .o-title__md { font-family: var(--f-serif); font-weight: 400; letter-spacing: -.01em; font-size: .86em; }
 .o-frame {
-  position: absolute; left: 66vw; top: 47vh; width: clamp(120px, 15vw, 250px); aspect-ratio: 1;
+  position: absolute; left: 60vw; top: 46vh; width: clamp(150px, 18vw, 300px); aspect-ratio: 4 / 3;
   background: var(--card); padding: clamp(7px, .7vw, 12px); transform: rotate(2.5deg);
   box-shadow: 0 18px 30px rgba(0,0,0,.35);
 }
-.o-frame img { width: 100%; height: 100%; object-fit: cover; outline: 1.5px solid var(--cardred); outline-offset: -1.5px; }
+.o-frame img, .o-frame video { display: block; width: 100%; height: 100%; object-fit: cover; outline: 1.5px solid var(--cardred); outline-offset: -1.5px; background: #000; }
 .o-frame::before { content: ""; position: absolute; left: 50%; top: -38px; width: 1px; height: 38px; background: rgba(0,0,0,.45); }
 .o-frame::after { content: ""; position: absolute; left: calc(50% - 4px); top: -44px; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); }
 .o-shadow { position: absolute; left: 63vw; bottom: 26vh; width: 22vw; height: 3vh; border-radius: 50%; background: rgba(0,0,0,.18); filter: blur(10px); transform: translateY(50%); }
@@ -454,9 +454,14 @@ body.index-open .index { clip-path: circle(150% at calc(100% - 64px) 44px); visi
 }
 .index__track::-webkit-scrollbar { display: none; }
 .icard {
-  position: relative; width: var(--cw); height: calc(236 * var(--u)); text-decoration: none; color: inherit;
+  position: relative; width: var(--cw); height: calc(236 * var(--u)); text-decoration: none; color: inherit; perspective: 1400px;
   transform: rotate(var(--a)); transition: transform .5s var(--ease);
 }
+.icard__in { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .7s var(--ease); }
+.icard:hover .icard__in, .icard:focus-visible .icard__in { transform: rotateY(180deg); }
+.icard__face, .icard__back { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+.icard__back { position: absolute; inset: 0; border-radius: calc(12 * var(--u)); background: var(--room); box-shadow: inset 0 0 0 calc(9 * var(--u)) var(--card); transform: rotateY(180deg); overflow: hidden; }
+.icard__file { display: block; padding: calc(18 * var(--u)) calc(16 * var(--u)); font-family: var(--f-mono); font-size: calc(9 * var(--u)); line-height: 1.45; color: var(--ink); white-space: pre-wrap; }
 .icard:hover, .icard:focus-visible { transform: translateY(calc(-8 * var(--u))) scale(1.06); z-index: 2; outline: none; }
 .icard__face { position: absolute; inset: 0; background: var(--card); border-radius: calc(12 * var(--u)); overflow: hidden; box-shadow: 0 calc(3 * var(--u)) calc(8 * var(--u)) rgba(70,40,0,.18); }
 .icard:hover .icard__face { box-shadow: 0 calc(8 * var(--u)) calc(16 * var(--u)) rgba(70,40,0,.28); }
@@ -527,3 +532,42 @@ body.index-open .index { clip-path: circle(150% at calc(100% - 64px) 44px); visi
 .a-crow, .a-owl { transform-origin: 50% 100%; }
 .a-robin, .a-robin2 { transform-origin: 50% 90%; }
 .L-shift .cloth ~ .fig { z-index: 1; }
+
+/* statyerna på piedestaler i öppningen */
+.statue { position: absolute; bottom: calc(26vh - 2px); display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+.statue img { height: min(46vh, 30vw); width: auto; transform-origin: 50% 100%; filter: drop-shadow(10px 18px 14px rgba(0,0,0,.28)); will-change: transform; }
+.st-r img { height: min(56vh, 36vw); }
+.plinth { display: block; width: 118%; height: 7vh; margin-top: -2px; background: linear-gradient(90deg, #bdb3a3, #e3dbcd 40%, #cfc6b7 70%, #a69b8a); box-shadow: 0 10px 18px rgba(0,0,0,.25); border-top: 4px solid #efe8dc; }
+.st-l { left: 3vw; } .st-r { right: 3vw; }
+@media (orientation: portrait) { .statue img { height: 24vh; } .st-r img { height: 30vh; } .plinth { height: 4vh; } .o-frame { left: 30vw; top: 50vh; } }
+
+/* ögat blinkar */
+.hud-mark__blink { fill: var(--card); transform-origin: 32px 17px; transform: scaleY(0); transition: transform .07s ease-in; }
+.hud-mark__blink.is-on { transform: scaleY(1.02); }
+
+/* what we do: tallrikar och kupor */
+.L-what { background: none; color: var(--ink); --wall: #ffeaa6; }
+.chap--ink { color: var(--ink); }
+.plates { position: absolute; left: var(--pad); right: var(--pad); bottom: 12vh; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3vw; align-items: end; }
+.plate { position: relative; display: flex; flex-direction: column; align-items: center; will-change: transform; }
+.dish { display: block; width: min(22vw, 34vh); aspect-ratio: 1 / .32; border-radius: 50%; background: radial-gradient(closest-side, #ffd765 60%, #f0c54e 62%, #fff 64%, #ece6dc 92%, #d8d1c4); box-shadow: 0 10px 18px rgba(80,60,10,.2); }
+.dish-t { position: absolute; left: 50%; top: calc(min(22vw, 34vh) * -.05); transform: translate(-50%, -50%); font-family: var(--f-serif); font-style: italic; font-size: clamp(24px, 2.8vw, 54px); white-space: nowrap; background: var(--paper); border-radius: 999px; padding: .02em .45em .1em; box-shadow: 0 .15em .3em rgba(80,60,10,.18); opacity: 0; }
+.cl { position: absolute; left: 50%; bottom: calc(min(22vw, 34vh) * .14); width: min(19vw, 30vh); margin-left: calc(min(19vw, 30vh) / -2); transform-origin: 50% 100%; will-change: transform; filter: drop-shadow(0 8px 10px rgba(60,50,30,.25)); }
+.cl-svg { display: block; width: 100%; height: auto; }
+.dish-p { position: absolute; top: calc(100% + 2vh); left: 0; right: 0; text-align: center; font-size: clamp(13px, .95vw, 16px); line-height: 1.4; opacity: 0; }
+@media (orientation: portrait) {
+  .plates { grid-template-columns: 1fr; gap: 7vh; bottom: auto; top: calc(var(--top) + 2.6 * var(--fs-say)); }
+  .dish { width: 36vw; } .cl { width: 30vw; margin-left: -15vw; bottom: 4vw; } .dish-p { display: none; }
+  .dish-t { top: -1vw; font-size: 20px; }
+}
+
+/* work with us: sammetsrep */
+.rope { position: absolute; left: 50%; bottom: 4vh; width: min(70vw, 900px); transform: translateX(-50%); overflow: visible; pointer-events: none; }
+@media (orientation: portrait) { .rope { width: 92vw; bottom: 2vh; } }
+
+/* labbet: kugghjul under ytan */
+.gear { position: absolute; fill: #e4a2c6; stroke: rgba(28,61,36,.25); stroke-width: 2; will-change: transform; }
+.gear circle { fill: #ffc3e5; }
+.g1 { width: 34vh; left: -8vh; bottom: 6vh; }
+.g2 { width: 22vh; left: 21vh; bottom: 24vh; }
+.g3 { width: 40vh; right: -12vh; top: 18vh; }
