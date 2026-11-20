@@ -1010,3 +1010,32 @@ html { text-rendering: optimizeLegibility; font-kerning: normal; }
 .scratch { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,.8); z-index: 4; pointer-events: none; }
 .burn { position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0; background: radial-gradient(circle at 80% 20%, rgba(255,170,60,.9), rgba(160,40,0,.6) 18%, transparent 40%); mix-blend-mode: screen; }
 @media (orientation: portrait) { .walk { height: 28vh; } .title-card::before { inset: 9vh 6vw; } .sun { width: 18vh; height: 18vh; } }
+
+/* 1,01^365 i svart med staplar */
+.L-one-percent { background: #0d0d0d; color: #f4efe8; --wall: #0d0d0d; }
+.L-one-percent .eq { color: #f4efe8; }
+.L-one-percent .eq1 { opacity: .4; }
+.L-one-percent .r2 { color: var(--mp-yellow); }
+.ticks { position: absolute; left: var(--pad); right: var(--pad); bottom: 30vh; height: 40vh; display: flex; align-items: flex-end; justify-content: space-between; }
+.ticks i { display: block; width: 3px; height: 100%; background: #f4efe8; transform-origin: 50% 100%; transform: scaleY(.03); }
+.tick-mark { position: absolute; bottom: calc(30vh - 7vh); margin: 0; transform: translateX(-50%); text-align: center; font-family: var(--f-mono); color: #f4efe8; font-size: clamp(12px, 1vw, 16px); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; }
+.tick-mark b { display: block; font-size: 1.2em; margin-bottom: .3em; }
+.L-one-percent .eq-cap { color: #f4efe8; }
+.L-one-percent .hl-human { color: var(--mp-yellow); }
+@media (orientation: portrait) { .ticks { bottom: 22vh; height: 30vh; } .ticks i { width: 2px; } .tick-mark { bottom: 15vh; } }
+
+/* berättelsens linje */
+.story-line { position: absolute; left: 12vw; right: 12vw; top: 30vh; height: 40vh; width: 76vw; overflow: visible; opacity: 1; pointer-events: none; }
+.story-line path { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-dasharray: 1; stroke-dashoffset: 1; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.story-line circle { fill: var(--accent); opacity: 0; }
+
+/* kontakt: Norra Hamngatan i solnedgång */
+.c-photo { position: absolute; right: 0; top: 0; height: 100%; width: 46vw; object-fit: cover; }
+.c-tint { position: absolute; right: 0; top: 0; height: 100%; width: 46vw; background: linear-gradient(90deg, #e65564, rgba(230,85,100,.15) 40%, rgba(230,85,100,.25)); }
+.L-contact .cradle { z-index: 1; }
+.L-contact .c-lead { max-width: 46vw; }
+@media (orientation: portrait) { .c-photo, .c-tint { width: 100%; height: 42vh; top: auto; bottom: 0; } .c-tint { background: linear-gradient(#e65564, rgba(230,85,100,.2) 45%, rgba(230,85,100,.35)); } .L-contact .c-lead { max-width: none; } }
+
+.tick-mark { font-size: clamp(13px, 1.15vw, 18px); }
+.tm-t { display: block; }
+@media (orientation: landscape) { .L-contact .c-mail { font-size: clamp(28px, 4.4vw, 84px); } }

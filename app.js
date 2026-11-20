@@ -418,24 +418,28 @@
     }
   }));
 
-  // 11a. 1,01^365 – små steg varje dag (passar Experiments)
+  // 11a. 1,01^365 – stapel för stapel; det mesta av resan ser ut att inte ge något alls
+  const NB = 30, bars = Array.from({ length: NB }, (_, i) => Math.pow(1.01, (i + 1) * 365 / NB));
   scene({
-    id: "one-percent", t: "one percent a day", hud: "light", len: 3.2, wipe: "circle", card: { glyph: "%", room: "#f7eaad" },
+    id: "one-percent", t: "one percent a day", hud: "dark", len: 3.6, wipe: "circle", card: { glyph: "%", room: "#111111", light: true },
     html: `
-      <i class="wall"></i>
       <div class="eq eq1"><span class="b">(1.00)</span><sup>365</sup><span class="eqs">=</span><span class="r r1">1.00</span></div>
       <div class="eq eq2"><span class="b">(1.01)</span><sup class="d">0</sup><span class="eqs">=</span><span class="r r2">1.00</span></div>
-      <svg class="curve" viewBox="0 0 1000 300" preserveAspectRatio="none" aria-hidden="true"><path class="flat" d="M0 290 L1000 290"/><path class="grow" pathLength="1" d=""/></svg>
+      <div class="ticks">${bars.map(v => `<i style="--v:${(v - 1) / 36.8}"></i>`).join("")}</div>
+      <p class="tick-mark"><b>▲</b><span class="tm-t">"this is pointless."</span></p>
       <p class="eq-cap">${lines(["Standing still", "<span class='hl-human'>vs.</span>", "one percent better every day."])}</p>`,
-    init(el) { this.d = $(".eq2 .d", el); this.r2 = $(".r2", el); this.g = $(".grow", el); this.cap = $(".eq-cap", el); this.eqs = $$(".eq", el);
-      this.g.setAttribute("d", Array.from({ length: 101 }, (_, i) => `${i ? "L" : "M"}${i * 10} ${290 - (Math.pow(1.01, i * 3.65) - 1) / 36.7 * 280}`).join(" ")); },
+    init(el) { this.d = $(".eq2 .d", el); this.r2 = $(".r2", el); this.bars = $$(".ticks i", el); this.mark = $(".tick-mark", el); this.mt = $(".tm-t", el); this.cap = $(".eq-cap", el); this.eqs = $$(".eq", el); },
     update(p, t) {
       this.eqs.forEach((e, i) => fadeIn(e, ease(seg(p, .02 + i * .06, .14 + i * .06))));
-      const k = seg(p, .18, .7), day = Math.round(k * 365);
+      const k = seg(p, .16, .72), day = Math.round(k * 365), n = this.bars.length;
       this.d.textContent = day; this.r2.textContent = Math.pow(1.01, day).toFixed(day > 300 ? 1 : 2);
-      this.r2.style.transform = `scale(${1 + k * .35})`;
-      this.g.style.strokeDashoffset = 1 - k;
-      reveal(this.cap, p, .7, .9);
+      this.bars.forEach((b, i) => { const on = clamp(k * n - i); b.style.transform = `scaleY(${on * (.03 + +b.style.getPropertyValue("--v") * .97)})`; b.style.opacity = on > 0 ? 1 : .18; });
+      // markören följer dagarna – och står still vid den platta delen, där de flesta ger upp
+      const at = Math.min(k, .7);
+      this.mark.style.left = `calc(var(--pad) + ${at} * (100% - 2 * var(--pad)))`;
+      this.mt.style.opacity = seg(p, .3, .36) * (1 - seg(p, .62, .68));
+      this.mark.style.opacity = seg(p, .14, .2) * (1 - seg(p, .74, .8));
+      reveal(this.cap, p, .76, .92);
     }
   });
   { const i = S.findIndex(x => x.id === "one-percent"), j = S.findIndex(x => x.id === "shift-4"); S.splice(j + 1, 0, ...S.splice(i, 1)); }
@@ -603,6 +607,7 @@
       <p class="lab"><span class="md">##</span>intervjuomaten · missprym.tech</p>
       <div class="pile">${slips.map((w, i) => `<span class="slip" style="--i:${i}">${w}</span>`).join("")}</div>
       <p class="st-a">${lines(["You may only see", "a CV."])}</p>
+      <svg class="story-line" viewBox="0 0 800 400" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M10 380 L80 300 L130 350 L190 320 L240 355 L300 120 L350 260 L400 180 L450 280 L510 110 L560 220 L610 160 L670 330 L720 110 L760 170 L795 20"/><circle cx="795" cy="20" r="7"/></svg>
       <p class="st-b">${lines(["We see a <span class='hl-human'>story.</span>"])}</p>
       <div class="story-card"><span class="md">&gt;</span> ${story.map(esc).join(" ")}<p>Intervjuomaten får hjälpa kandidaten att minnas. Den får aldrig hitta på.</p><a class="cta" href="https://missprym.tech/intervjuomaten/">Testa Intervjuomaten →</a></div>`,
     init(el) { this.sl = $$(".slip", el); this.a = $(".st-a", el); this.b = $(".st-b", el); this.card = $(".story-card", el); this.lab = $(".lab", el); },
@@ -620,10 +625,12 @@
         const lift = Math.sin(sort * Math.PI) * -6;
         e.style.left = x + "%"; e.style.top = (y + lift) + "%";
         e.style.transform = `translate(-50%, -50%) rotate(${rot + (sort < 1 ? Math.sin(t * 2 + i) * 2 * (1 - sort) : 0)}deg)`;
-        e.style.opacity = 1 - seg(p, .66, .74);
+        e.style.opacity = 1 - seg(p, .6, .68);
       });
       reveal(this.b, p, .5, .62);
-      fadeIn(this.card, ease(seg(p, .7, .82)), 30);
+      const sl = this.sline || (this.sline = this.a.parentElement.querySelector(".story-line")), dl = easeIO(seg(p, .66, .8));
+      sl.querySelector("path").style.strokeDashoffset = 1 - dl; sl.querySelector("circle").style.opacity = dl >= 1 ? 1 : 0; sl.style.opacity = portrait() ? 1 - seg(p, .84, .88) : 1;
+      fadeIn(this.card, ease(seg(p, .84, .94)), 30);
     }
   });
 
@@ -700,6 +707,7 @@
   scene({
     id: "contact", t: K.h, hud: "dark", len: 2.2, wipe: "circle", card: { glyph: "@", mono: true, room: "#e65564" },
     html: `
+      <img class="c-photo" src="assets/goteborg-sunset.jpg" alt="Norra Hamngatan i solnedgång"><i class="c-tint"></i>
       <div class="cradle" aria-hidden="true">${[0, 1, 2, 3].map(i => `<span class="pend"><i></i><b></b></span>`).join("")}</div>
       <p class="lab"><span class="md">##</span>${K.h}</p>
       <p class="c-lead">${esc(K.p)}</p>
