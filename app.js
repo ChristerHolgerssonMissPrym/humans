@@ -41,7 +41,7 @@
   const keys = Array.from({ length: 60 }, (_, i) => `<b style="--r:${(Math.sin(i * 12.9898) * 43758.5453 % 1 + 1) % 1}"></b>`).join("");
   const chips = Array.from({ length: 7 }, (_, i) => `<i class="chip c${i % 3}" style="left:${12 + (i * 37) % 70}%;top:${14 + (i * 23) % 64}%"></i>`).join("");
   scene({
-    id: "top", t: "MISSPRYM.md", hud: "light", len: 2.4, card: { glyph: "▣", room: "#f7f7f7" },
+    id: "top", t: "MISSPRYM.md", hud: "light", len: 2.0, card: { glyph: "▣", room: "#f7f7f7" },
     html: `
       <div class="nl">
         <h1 class="nl-h">${lines(["Technical depth.", "Human", "judgement<span class='nl-dot'></span>"])}</h1>
@@ -97,7 +97,7 @@
 
   // 2. "As consultants, we connect technical depth with — human — judgement."
   scene({
-    id: "commitment", t: C.commitment.h, hud: "dark", len: 3.2, wipe: "fade", card: { glyph: "?", room: "#e7bfff" },
+    id: "commitment", t: C.commitment.h, hud: "dark", len: 2.7, wipe: "fade", card: { glyph: "?", room: "#e7bfff" },
     html: `
       <i class="wall"></i>
       <p class="lab"><span class="md">##</span>${C.commitment.h}</p>
@@ -119,7 +119,7 @@
 
   // 3. Bordet: kompetenserna landar som piller
   scene({
-    id: "expertise", t: "our expertise", hud: "light", len: 4, wipe: "circle", card: { glyph: "∗", room: "#ffabc8" },
+    id: "expertise", t: "our expertise", hud: "light", len: 3.4, wipe: "circle", card: { glyph: "∗", room: "#ffabc8" },
     html: `
       <i class="wall"></i>
       <div class="crowd">${Array.from({ length: 7 }, (_, i) => `<img class="dude" src="${C.fig}puppet-man.webp" alt="" style="--x:${8 + i * 13.4}%;--f:${i % 2 ? -1 : 1}">`).join("")}</div>
@@ -173,7 +173,7 @@
 
   // 4. Ord tänds: "Technology should strengthen … less human."
   scene({
-    id: "human", t: "less human", hud: "dark", len: 3, wipe: "circle", card: { glyph: "h", room: "#5578dc" },
+    id: "human", t: "less human", hud: "dark", len: 2.5, wipe: "circle", card: { glyph: "h", room: "#5578dc" },
     html: `<i class="wall"></i><div class="say"><span class="say-lab"><span class="md">##</span>${C.commitment.h}</span><p>${wordsOf(rich(C.commitment.say)).map(w => `<span class="w">${w}</span>`).join(" ")}</p></div>`,
     init(el) { this.w = $$(".w", el); },
     update(p) { const n = this.w.length; this.w.forEach((w, i) => w.style.setProperty("--lit", clamp(seg(p, .08, .8) * n - i).toFixed(3))); }
@@ -181,7 +181,7 @@
 
   // 5. Coelho
   scene({
-    id: "prym", t: "be like prym", hud: "dark", len: 4.6, card: { glyph: "”", room: "#ffabc8" },
+    id: "prym", t: "be like prym", hud: "dark", len: 3.9, card: { glyph: "”", room: "#ffabc8" },
     html: `
       <i class="wall"></i>
       <div class="frags">${C.quote.frags.map(f => `<p class="frag">${esc(f)}</p>`).join("")}<p class="frag frag-end">${esc(C.quote.end)}<i class="p"></i></p></div>
@@ -201,7 +201,7 @@
 
   // 6. Who we are – långt bord som panoreras, Christer rullar in
   scene({
-    id: "who", t: C.who.h, hud: "light", len: 5, wipe: "circle", card: { glyph: "W", room: "#c7963c" },
+    id: "who", t: C.who.h, hud: "light", len: 4.2, wipe: "circle", card: { glyph: "W", room: "#c7963c" },
     html: `
       <i class="wall"></i><div class="cloth"></div>
       <div class="strip"><div class="team">${C.expertise.words.map((w, i) => `<span class="mate" style="--c:${["#d9646a", "#f7eaad", "#b9bee9", "#f0bad9", "#3a4650", "#f2cd5c", "#69b488", "#cb9cf8", "#5d9dc5", "#fc4109"][i]};--fg:${[4, 0].includes(i % 5) ? "#f4efe8" : "#201e1f"}"><b>${w}</b></span>`).join("")}<svg class="team-net" aria-hidden="true"><path pathLength="1"/></svg></div>${C.shifts.map((s, i) => `<figure class="easel" style="--a:${tilt[i + 4]}deg;--room:${s.room}"><img src="${C.img}${s.img}" alt="" loading="lazy"><span>${i + 1}</span><b>from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}</b></figure>`).join("")}</div>
@@ -243,7 +243,7 @@
   const floaters = [];
   for (let i = 0; i < 22; i++) floaters.push(i % 2 ? team[(i >> 1) % team.length] : FL[(i >> 1) % FL.length]);
   scene({
-    id: "together", t: "together", hud: "light", len: 4.4, wipe: "fade", card: { glyph: "∞", room: "#f4efe8" },
+    id: "together", t: "together", hud: "light", len: 3.7, wipe: "fade", card: { glyph: "∞", room: "#f4efe8" },
     html: `
       <div class="swarm">${floaters.map((f, i) => {
         const x = [6, 74, 18, 60, 38, 84, 2, 48, 28, 70, 90, 12, 56, 34, 80, 8, 64, 44, 22, 76, 52, 30][i], d = [1, .7, .45, .9, .6, 1, .5, .8, .35, .95, .55, .75, .4, 1, .65, .5, .85, .45, .7, .9, .6, .8][i];
@@ -280,7 +280,7 @@
   const pc = (name, cls = "") => { const [x, y, w, h] = FIG[name]; return `<img class="pc ${cls}" src="${C.fig}${name}.webp" alt="" style="left:${x / 19.2}%;top:${y / 10.8}%;width:${w / 19.2}%;height:${h / 10.8}%">`; };
   const BUB = Array.from({ length: 16 }, (_, i) => [1110 + (i * 97) % 520, 0.4 + (i * 0.37) % 1, 5 + (i * 7) % 9, (i * .173) % 1]);
   const ART = {
-    woman: () => `<div class="fig">${pc("purpose-woman", "a-woman")}</div>`,
+    woman: () => `<div class="fig">${pc("purpose-woman", "a-woman")}</div><div class="gold" aria-hidden="true">${[0, 1, 2].map(i => `<i class="bar" style="--i:${i}"></i>`).join("")}<span class="gold-tag">profit?</span></div>`,
     net: () => `
       <div class="fig">
         <svg class="balloon" viewBox="0 0 1920 1080" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
@@ -301,7 +301,7 @@
     flasks: () => `<div class="fig">${BUB.map(b => `<i class="bub" style="left:${b[0] / 19.2}%;--s:${b[2]}px"></i>`).join("")}${pc("exp-flasks", "a-flasks")}</div>`
   };
   C.shifts.forEach((s, i) => scene({
-    id: `shift-${i + 1}`, t: `${i + 1}. from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}`, hud: "light", len: s.art === "puppet" ? 4.4 : 3.6, wipe: "circle",
+    id: `shift-${i + 1}`, t: `${i + 1}. from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}`, hud: "light", len: s.art === "puppet" ? 3.8 : 3.1, wipe: "circle",
     card: { img: s.img, n: String(i + 1), room: s.room }, art: s.art,
     style: `--room:${s.room};--floor:${s.floor}`,
     html: `
@@ -332,6 +332,12 @@
         const w = this.q(".a-woman");
         // glider in på golvplankorna och läser – andas, bläddrar med en lätt nick
         w.style.transform = `translateX(${(1 - k) * 45}vw) rotate(${Math.sin(t * .9) * .5 - (1 - k) * 4}deg) scale(${1 + Math.sin(t * 1.8) * .004})`;
+        // frestelsen: guldtackorna glider fram mot henne – hon läser vidare – guldet sjunker genom golvet
+        const g = this.q(".gold"), offer = ease(seg(p, .08, .26)), sink = easeIO(seg(p, .3, .44));
+        g.style.transform = `translate(${(1 - offer) * -60}vw, ${sink * 40}vh)`;
+        g.style.opacity = 1 - seg(p, .4, .46);
+        g.querySelector(".gold-tag").style.opacity = seg(p, .16, .22) * (1 - seg(p, .28, .32));
+        $$(".bar", g).forEach((b, i) => (b.style.transform = `translateY(${Math.sin(t * 3 + i) * (offer < 1 ? 2 : 0)}px) rotate(${(i - 1) * 2}deg)`));
       }
       if (art === "net") {
         // fåglarna reser sig bakom bordet, rödhakarna hoppar in, kråkan håller ballongen
@@ -403,7 +409,7 @@
 
   // 11b. Textrytmen från human-md ("Yet." / "I'm not in that argument" / "I'm in this one") – med Miss Pryms ord
   scene({
-    id: "chaos", t: "we face it together", hud: "dark", len: 3.6, wipe: "circle", card: { glyph: "C", room: "#0b41c2", light: true },
+    id: "chaos", t: "we face it together", hud: "dark", len: 3.1, wipe: "circle", card: { glyph: "C", room: "#0b41c2", light: true },
     html: `
       <i class="wall"></i>
       <p class="chaos-word" aria-label="Chaos.">${[..."Chaos"].map(c => `<span class="ch">${c}</span>`).join("")}<i class="cdot"></i></p>
@@ -429,7 +435,7 @@
   // 12. What we do – tre tallrikar med silverkupor som lyfts (efter Figma-skissen)
   const cloche = `<svg class="cl-svg" viewBox="0 0 200 130" aria-hidden="true"><defs><linearGradient id="clg" x1="0" x2="1"><stop offset="0" stop-color="#9aa0a6"/><stop offset=".35" stop-color="#f4f4f2"/><stop offset=".6" stop-color="#c9cdd0"/><stop offset="1" stop-color="#7e858b"/></linearGradient></defs><path d="M10 118 Q 10 22 100 18 Q 190 22 190 118 Z" fill="url(#clg)" stroke="#5c6369" stroke-width="2"/><rect x="2" y="114" width="196" height="12" rx="6" fill="#b9bec2" stroke="#5c6369" stroke-width="2"/><circle cx="100" cy="12" r="9" fill="url(#clg)" stroke="#5c6369" stroke-width="2"/><path d="M40 40 Q 60 28 80 26" stroke="#fff" stroke-width="6" fill="none" opacity=".7" stroke-linecap="round"/></svg>`;
   scene({
-    id: "what", t: C.what.h, hud: "light", len: 4, wipe: "circle", card: { glyph: "{ }", mono: true, room: "#ffeaa6" },
+    id: "what", t: C.what.h, hud: "light", len: 3.4, wipe: "circle", card: { glyph: "{ }", mono: true, room: "#ffeaa6" },
     html: `
       <i class="wall"></i><div class="cloth"></div>
       <h2 class="chap chap--ink"><span class="md">##</span>${lines([C.what.h])}</h2>
@@ -458,7 +464,7 @@
 
   // 13. Work with us
   scene({
-    id: "work", t: C.work.h, hud: "dark", len: 3, wipe: "circle", card: { glyph: "→", room: "#26512f", light: true },
+    id: "work", t: C.work.h, hud: "dark", len: 2.5, wipe: "circle", card: { glyph: "→", room: "#26512f", light: true },
     html: `
       <i class="wall"></i><div class="floor"></div>
       <h2 class="chap"><span class="md">##</span>${lines([`${C.work.h} <span class="hl-human">(${C.work.sub.toLowerCase()})</span>`])}</h2>
@@ -496,7 +502,7 @@
   // 14. Labbet – ordet faller ner, sedan åker kameran ner under golvet till maskineriet
   const fcls = i => ["f1", "f2", "f3"][(i * 7 + 1) % 3];
   scene({
-    id: "lab", t: C.lab.h, hud: "light", len: 5, wipe: "circle", card: { glyph: "&lt;/&gt;", mono: true, room: "#ffc3e5" },
+    id: "lab", t: C.lab.h, hud: "light", len: 4.2, wipe: "circle", card: { glyph: "&lt;/&gt;", mono: true, room: "#ffc3e5" },
     html: `
       <div class="labcam">
         <div class="lab-top">
@@ -541,7 +547,7 @@
   const AG = C.agentomaten;
   const agMail = `Till: ${AG.mail.to}\nÄmne: ${AG.mail.subject}\n\n${AG.mail.body.map(b => `– ${b}`).join("\n")}\n\n${AG.mail.note}`;
   scene({
-    id: "agentomaten", t: AG.h, hud: "dark", len: 3.6, wipe: "circle", card: { glyph: "✉", room: "#0b41c2", light: true },
+    id: "agentomaten", t: AG.h, hud: "dark", len: 3.1, wipe: "circle", card: { glyph: "✉", room: "#0b41c2", light: true },
     html: `
       <i class="wall"></i>
       <p class="lab"><span class="md">##</span>${AG.h}</p>
@@ -567,7 +573,7 @@
 
   // 15. Event
   scene({
-    id: "events", t: E.h, hud: "light", len: 3, wipe: "circle", card: { glyph: E.next.date, room: "#fc4109" },
+    id: "events", t: E.h, hud: "light", len: 2.5, wipe: "circle", card: { glyph: E.next.date, room: "#fc4109" },
     html: `
       <p class="lab"><span class="md">##</span>${E.h} · kommande</p>
       <p class="ev-date">${lines([E.next.date])}</p>
@@ -590,7 +596,7 @@
     return `<i class="spine" style="--w:${14 + Math.round(r * 22)}px;--h:${55 + Math.round(r2 * 40)}%;--c:${spineCols[i % spineCols.length]}"></i>`;
   }).join("");
   scene({
-    id: "library", t: C.books.h, hud: "dark", len: 3, wipe: "circle", card: { glyph: "B", room: "#1c3d24", light: true },
+    id: "library", t: C.books.h, hud: "dark", len: 2.5, wipe: "circle", card: { glyph: "B", room: "#1c3d24", light: true },
     html: `
       <i class="wall"></i>
       <div class="say"><span class="say-lab"><span class="md">##</span>${C.books.h}</span><p>${wordsOf(rich(C.books.say)).map(w => `<span class="w">${w}</span>`).join(" ")}</p></div>
@@ -607,7 +613,7 @@
 
   // 17. Kontakt – Newtons vagga från Figma-skissen
   scene({
-    id: "contact", t: K.h, hud: "dark", len: 2.6, wipe: "circle", card: { glyph: "@", mono: true, room: "#e65564" },
+    id: "contact", t: K.h, hud: "dark", len: 2.2, wipe: "circle", card: { glyph: "@", mono: true, room: "#e65564" },
     html: `
       <div class="cradle" aria-hidden="true">${[0, 1, 2, 3].map(i => `<span class="pend"><i></i><b></b></span>`).join("")}</div>
       <p class="lab"><span class="md">##</span>${K.h}</p>
@@ -798,7 +804,7 @@
   const step = t => {
     if (!watching) return;
     const dt = last ? Math.min(50, t - last) : 16; last = t;
-    scrollBy(0, dt * VH / 2600);
+    scrollBy(0, dt * VH / 2200);
     if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) return stopWatch();
     requestAnimationFrame(step);
   };
