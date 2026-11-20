@@ -243,19 +243,21 @@
   const floaters = [];
   for (let i = 0; i < 22; i++) floaters.push(i % 2 ? team[(i >> 1) % team.length] : FL[(i >> 1) % FL.length]);
   scene({
-    id: "together", t: "together", hud: "light", len: 4, wipe: "circle", card: { glyph: "∞", room: "#f4efe8" },
+    id: "together", t: "together", hud: "light", len: 4.4, wipe: "fade", card: { glyph: "∞", room: "#f4efe8" },
     html: `
       <div class="swarm">${floaters.map((f, i) => {
         const x = [6, 74, 18, 60, 38, 84, 2, 48, 28, 70, 90, 12, 56, 34, 80, 8, 64, 44, 22, 76, 52, 30][i], d = [1, .7, .45, .9, .6, 1, .5, .8, .35, .95, .55, .75, .4, 1, .65, .5, .85, .45, .7, .9, .6, .8][i];
         return `<figure class="fl" style="--x:${x}%;--d:${d};--o:${i * .043};--bg:${f.bg}">${f.img ? `<img src="${f.img}" alt="" loading="lazy">` : `<span>${f.word}</span>`}</figure>`;
       }).join("")}</div>
-      <p class="big-say s1">${lines(["We provide our clients", "with open-minded", "consultants…"])}</p>
-      <p class="big-say s2">${lines(["…who create more together", "than any individual", "could achieve alone."])}</p>`,
-    init(el) { this.fl = $$(".fl", el); this.s1 = $(".s1", el); this.s2 = $(".s2", el); },
+      <p class="big-say s1">${wordsOf("We provide our clients with open-minded consultants…").map(w => `<span class="w">${w}</span>`).join(" ")}</p>
+      <p class="big-say s2">${wordsOf("…who create more together than any individual could achieve alone.").map(w => `<span class="w">${w}</span>`).join(" ")}</p>`,
+    init(el) { this.fl = $$(".fl", el); this.s1 = $(".s1", el); this.s2 = $(".s2", el); this.w1 = $$(".s1 .w", el); this.w2 = $$(".s2 .w", el); },
     update(p, t) {
-      reveal(this.s1, p, .02, .16);
+      // som hos Netlight: texten står grå och fylls i svart ord för ord
+      const lit = (ws, a, b) => ws.forEach((w, i) => w.style.setProperty("--lit", clamp(seg(p, a, b) * ws.length - i).toFixed(3)));
+      lit(this.w1, .02, .36); lit(this.w2, .52, .86);
       const out1 = seg(p, .42, .5); this.s1.style.opacity = 1 - out1; this.s1.style.transform = `translate(-50%, calc(-50% - ${out1 * 30}px))`;
-      reveal(this.s2, p, .5, .64);
+      const in2 = seg(p, .46, .54); this.s2.style.opacity = in2; this.s2.style.transform = `translate(-50%, calc(-50% + ${(1 - in2) * 30}px))`;
       this.fl.forEach(f => {
         const d = +f.style.getPropertyValue("--d"), o = +f.style.getPropertyValue("--o");
         // korten stiger genom bilden; närmare kort rör sig snabbare och är skarpare
@@ -601,6 +603,8 @@
       });
     }
   });
+
+  { const i = S.findIndex(x => x.id === "together"); S.splice(1, 0, ...S.splice(i, 1)); }
 
   // baksida på indexkorten: en rad ur innehållet
   const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
