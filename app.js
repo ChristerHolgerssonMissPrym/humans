@@ -1,208 +1,387 @@
 (() => {
-  const C = window.PRYM;
+  const C = window.PRYM, E = C.events, K = C.contact;
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const seg = (p, a, b) => clamp((p - a) / (b - a));
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  const easeIO = t => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  // <h>…</h> = mänskligt (serif), <m>…</m> = maskin (mono)
   const rich = s => s.replace(/<h>(.*?)<\/h>/g, '<span class="hl-human">$1</span>').replace(/<m>(.*?)<\/m>/g, '<span class="hl-machine">$1</span>');
   const plain = s => s.replace(/<\/?[hm]>/g, "");
-  const tilt = [-2.2, 1.6, -1, 2.4, -1.8, 1.1, -2.6, 1.9, -.8, 2.1, -1.5, 1.4, -2, .9, 2.6, -1.2];
-  const isMobile = () => matchMedia("(max-width: 900px)").matches;
+  const tilt = [-2.2, 1.6, -1, 2.4, -1.8, 1.1, -2.6, 1.9, -.8, 2.1, -1.5, 1.4, -2, .9, 2.6, -1.2, 1.7, -2.3];
+  const portrait = () => innerHeight > innerWidth;
   const lines = arr => arr.map(t => `<span class="ln-mask"><span class="ln">${t}</span></span>`).join("");
-
-  /* ---------------- scener ---------------- */
-  // Varje scen: id, titel (crumb + index), hud-ton, kort-bild/glyf
-  const scenes = [];
-  const add = (o) => (scenes.push(o), o);
-
-  const titleChars = (s, start = 0) => [...s].map((c, i) => `<span class="ch" style="--i:${i + start}">${c}</span>`).join("");
-
-  add({
-    id: "top", t: "MISSPRYM.md", hud: "dark", card: { img: "missp.jpg", n: "M", room: "#0b41c2" },
-    html: `
-      <section class="S S-open" id="top">
-        <div class="S__in">
-          <i class="wall"></i>
-          <div class="floor"></div>
-          <h1 class="o-title" aria-label="MISSPRYM.md">${titleChars("MISSPRYM")}<span class="ch" style="--i:8"><i class="o-title__dot"></i></span><span class="o-title__md">${titleChars("md", 9)}</span></h1>
-          <figure class="o-frame"><img src="${C.img}missp.jpg" alt="Miss Prym"></figure>
-          <div class="o-quote">${C.hero.quote.map(q => `<p><b class="md">&gt;</b>${esc(q)}</p>`).join("")}</div>
-          <p class="o-meta o-meta--l">${C.byline}</p>
-          <p class="o-meta o-meta--r">${C.hero.metaR}</p>
-          <p class="o-hint"><span>scroll</span><i></i></p>
-        </div>
-      </section>`
-  });
-
-  const sayWords = rich(C.commitment.say).split(/(\s+|<span[^>]*>.*?<\/span>)/).filter(s => s && s.trim())
+  const chars = (s, cls = "") => [...s].map((c, i) => `<span class="ch ${typeof cls === "function" ? cls(i) : cls}">${c === " " ? "&nbsp;" : c}</span>`).join("");
+  const wordsOf = html => html.split(/(\s+|<span[^>]*>.*?<\/span>)/).filter(s => s && s.trim())
     .reduce((a, w) => (/^[.,;:!?]+$/.test(w) && a.length ? (a[a.length - 1] += w) : a.push(w), a), []);
-  add({
-    id: "commitment", t: C.commitment.h, hud: "dark", card: { glyph: "?", room: "#e7bfff" },
+
+  // radvisning styrd av scroll: raderna i el glider upp i tur och ordning mellan a och b
+  const reveal = (el, p, a, b) => {
+    const ls = el.__ln || (el.__ln = $$(".ln", el)), n = ls.length;
+    ls.forEach((l, i) => {
+      const k = ease(seg(p, a + (b - a) * i / n, a + (b - a) * (i + 1) / n));
+      l.style.transform = `translateY(${(1 - k) * 105}%)`;
+    });
+  };
+  const hide = (el, p, a, b) => { // rader glider ut uppåt
+    const k = easeIO(seg(p, a, b));
+    el.style.transform = `translateY(${-k * 30}px)`; el.style.opacity = 1 - k;
+  };
+  const fadeIn = (el, k, dy = 24) => { el.style.opacity = k; el.style.transform = `translateY(${(1 - k) * dy}px)`; };
+
+  /* ================= scener ================= */
+  // len = scenens längd i skärmhöjder. wipe = hur scenen kommer in.
+  const S = [];
+  const scene = o => (S.push(o), o);
+
+  // 1. Öppning
+  scene({
+    id: "top", t: "MISSPRYM.md", hud: "dark", len: 2.2, card: { img: "missp.jpg", n: "M", room: "#ffffff" },
     html: `
-      <section class="S S-commit S-ink" id="commitment">
-        <div class="S__in">
-          <div class="say">
-            <p class="h2"><span class="md">##</span>${C.commitment.h}</p>
-            <p>${sayWords.map(w => `<span class="w">${w}</span>`).join(" ")}</p>
-          </div>
-          <div class="lead">
-            <p>${esc(C.commitment.lead)} ${esc(C.commitment.body)}</p>
-            <div class="ctas">${C.commitment.ctas.map((c, i) => `<a class="cta ${i ? "cta--ghost" : "cta--pink"}" href="${c.href}">${c.t}</a>`).join("")}</div>
-          </div>
-        </div>
-      </section>`
+      <div class="cam">
+        <i class="wall"></i><div class="floor"></div>
+        <i class="o-shadow"></i>
+        <figure class="o-frame"><img src="${C.img}missp.jpg" alt="Miss Prym"></figure>
+        <h1 class="o-title" aria-label="MISSPRYM.md"><span class="o-mask">${[..."MISSPRYM"].map((c, i) => `<span class="ch" style="--i:${i}">${c}</span>`).join("")}</span><span class="o-mask"><span class="ch" style="--i:8"><i class="o-title__dot"></i></span></span><span class="o-mask o-title__md"><span class="ch" style="--i:9">m</span><span class="ch" style="--i:10">d</span></span></h1>
+        <div class="o-quote">${C.hero.quote.map(q => `<p><b class="md">&gt;</b>${esc(q)}</p>`).join("")}</div>
+        <p class="o-meta o-meta--l">${C.byline}</p>
+        <p class="o-meta o-meta--r">${C.hero.metaR}</p>
+      </div>
+      <p class="o-hint"><span>scroll</span><i></i></p>`,
+    init(el) { this.cam = $(".cam", el); this.title = $(".o-title", el); this.fade = $$(".o-quote, .o-meta, .o-hint", el); },
+    update(p) {
+      const z = easeIO(seg(p, .1, 1));
+      this.cam.style.transform = `scale(${1 + z * 2.4})`;
+      this.title.style.transform = `translate(-50%, ${-ease(seg(p, 0, .55)) * 40}vh)`;
+      this.title.style.opacity = 1 - seg(p, .25, .5);
+      this.fade.forEach(f => (f.style.opacity = 1 - seg(p, 0, .2)));
+    }
   });
 
-  add({
-    id: "prym", t: "be like prym", hud: "dark", card: { glyph: "”", room: "#ffabc8" },
+  // 2. "As consultants, we connect technical depth with — human — judgement."
+  scene({
+    id: "commitment", t: C.commitment.h, hud: "dark", len: 3.2, wipe: "fade", card: { glyph: "?", room: "#e7bfff" },
     html: `
-      <section class="S S-quote" id="prym">
-        <div class="S__in">
-          <i class="wall"></i>
-          ${C.quote.frags.map(f => `<p class="frag" style="--on:0"><em>${esc(f)}</em></p>`).join("")}
-          <blockquote class="q-full"><p>”${esc(C.quote.text)}”</p><cite>— ${esc(C.quote.src)}</cite></blockquote>
-        </div>
-      </section>`
+      <i class="wall"></i>
+      <p class="lab"><span class="md">##</span>${C.commitment.h}</p>
+      <div class="lead"><p class="l1">${lines(C.open2.lines)}</p><p class="after">${lines([esc(C.open2.after)])}</p></div>
+      <p class="giant" aria-label="${C.open2.giant}">${chars(C.open2.giant)}</p>`,
+    init(el) { this.l1 = $(".l1", el); this.after = $(".after", el); this.lab = $(".lab", el); this.ch = $$(".giant .ch", el); },
+    update(p) {
+      reveal(this.l1, p, .04, .3);
+      this.lab.style.opacity = seg(p, 0, .08);
+      this.ch.forEach((c, i) => {
+        const k = ease(seg(p, .3 + i * .05, .55 + i * .05));
+        c.style.transform = `translateY(${(1 - k) * 80}%)`;
+      });
+      reveal(this.after, p, .7, .8);
+      const out = easeIO(seg(p, .9, 1));
+      this.ch.forEach(c => (c.style.opacity = 1 - out));
+    }
   });
 
-  add({
-    id: "who", t: C.who.h, hud: "light", card: { glyph: "W", room: "#f8d867" },
+  // 3. Bordet: kompetenserna landar som piller
+  scene({
+    id: "expertise", t: "our expertise", hud: "light", len: 4, wipe: "circle", card: { glyph: "∗", room: "#ffabc8" },
     html: `
-      <section class="S S-who S-paper" id="who">
-        <div class="S__in">
-          <h2 class="i-head"><span class="md">## ${C.who.h}</span>${lines(["An open-minded", "tech &", "engineering", "company."])}</h2>
-          <div class="cap-stack">${C.who.p.map(p => `<p class="cap" style="--on:0">${esc(p)}</p>`).join("")}</div>
-          <p class="laws"><span class="md">&gt;</span>Brooks' law<br><span class="md">&gt;</span>Conway's law</p>
-        </div>
-      </section>`
+      <i class="wall"></i><div class="cloth"></div>
+      <p class="lead lead--ink l1">${lines(C.expertise.lead)}</p>
+      <p class="lead lead--ink l2">${lines(C.expertise.after.map(rich))}</p>
+      <div class="pills">${C.expertise.words.map(w => `<span class="tpill">${w}</span>`).join("")}</div>`,
+    init(el) { this.l1 = $(".l1", el); this.l2 = $(".l2", el); this.pills = $$(".tpill", el); },
+    layout() {
+      // lägg pillren i rader på bordet, nedifrån och upp
+      const W = innerWidth, maxW = W * (portrait() ? .94 : .86), gap = W * .012;
+      let rows = [[]], rw = 0;
+      this.pills.forEach(pl => {
+        const w = pl.offsetWidth;
+        if (rw + w > maxW && rows[rows.length - 1].length) { rows.push([]); rw = 0; }
+        rows[rows.length - 1].push(pl); rw += w + gap;
+      });
+      rows.forEach((r, ri) => {
+        const tw = r.reduce((s, pl) => s + pl.offsetWidth + gap, -gap);
+        let x = (W - tw) / 2;
+        r.forEach((pl, j) => {
+          pl.__x = x; pl.__y = -ri * pl.offsetHeight * .92; pl.__r = tilt[(ri * 5 + j) % tilt.length] * 2;
+          x += pl.offsetWidth + gap;
+        });
+      });
+    },
+    update(p) {
+      reveal(this.l1, p, .05, .15);
+      hide(this.l1, p, .64, .7);
+      this.pills.forEach((pl, i) => {
+        const k = seg(p, .16 + i * .045, .3 + i * .045);
+        const fall = k < 1 ? (1 - Math.pow(1 - k, 2)) : 1; // tyngdkraft
+        const bounce = k > .85 ? Math.sin((k - .85) / .15 * Math.PI) * 10 : 0;
+        const y = pl.__y - (1 - fall) * innerHeight * 1.1 - bounce;
+        pl.style.transform = `translate(${pl.__x}px, ${y}px) rotate(${pl.__r * (k < 1 ? 3 * (1 - k) + 1 : 1)}deg)`;
+      });
+      reveal(this.l2, p, .7, .9);
+    }
   });
 
-  C.shifts.forEach((s, i) => add({
-    id: `shift-${i + 1}`, t: `from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}`, hud: "light",
+  // 4. Ord tänds: "Technology should strengthen … less human."
+  scene({
+    id: "human", t: "less human", hud: "dark", len: 3, wipe: "circle", card: { glyph: "h", room: "#5578dc" },
+    html: `<i class="wall"></i><div class="say"><span class="say-lab"><span class="md">##</span>${C.commitment.h}</span><p>${wordsOf(rich(C.commitment.say)).map(w => `<span class="w">${w}</span>`).join(" ")}</p></div>`,
+    init(el) { this.w = $$(".w", el); },
+    update(p) { const n = this.w.length; this.w.forEach((w, i) => w.style.setProperty("--lit", clamp(seg(p, .08, .8) * n - i).toFixed(3))); }
+  });
+
+  // 5. Coelho
+  scene({
+    id: "prym", t: "be like prym", hud: "dark", len: 4.6, card: { glyph: "”", room: "#ffabc8" },
+    html: `
+      <i class="wall"></i>
+      <div class="frags">${C.quote.frags.map(f => `<p class="frag">${esc(f)}</p>`).join("")}<p class="frag frag-end">${esc(C.quote.end)}<i class="p"></i></p></div>
+      <blockquote class="q-cite"><p>”${esc(C.quote.text)}”</p><cite>— ${esc(C.quote.src)}</cite></blockquote>`,
+    init(el) { this.f = $$(".frag", el); this.c = $(".q-cite", el); },
+    update(p) {
+      const n = this.f.length;
+      this.f.forEach((f, i) => {
+        const a = .02 + i * (.8 / n), b = a + .8 / n;
+        const kin = ease(seg(p, a, a + .06)), kout = i === n - 1 ? 0 : easeIO(seg(p, b - .04, b));
+        f.style.opacity = kin * (1 - kout);
+        f.style.transform = `translateY(calc(-50% + ${(1 - kin) * 40 - kout * 40}px))`;
+      });
+      fadeIn(this.c, ease(seg(p, .86, .96)));
+    }
+  });
+
+  // 6. Who we are – långt bord som panoreras
+  scene({
+    id: "who", t: C.who.h, hud: "light", len: 5, wipe: "circle", card: { glyph: "W", room: "#c7963c" },
+    html: `
+      <i class="wall"></i><div class="cloth"></div>
+      <div class="strip">${C.shifts.map((s, i) => `<figure class="easel" style="--a:${tilt[i + 4]}deg;--room:${s.room}"><img src="${C.img}${s.img}" alt="" loading="lazy"><span>${i + 1}</span><b>from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}</b></figure>`).join("")}</div>
+      <h2 class="chap"><span class="md">##</span>${lines([rich(C.who.head)])}</h2>
+      <div class="cap-wrap">${C.who.p.map(t => `<p class="cap">${esc(t)}</p>`).join("")}</div>`,
+    init(el) { this.chap = $(".chap", el); this.strip = $(".strip", el); this.caps = $$(".cap", el); },
+    update(p) {
+      reveal(this.chap, p, .03, .12);
+      const max = this.strip.scrollWidth - innerWidth;
+      this.strip.style.transform = `translateX(${-easeIO(seg(p, .08, 1)) * max}px)`;
+      const n = this.caps.length;
+      this.caps.forEach((c, i) => {
+        const a = .14 + i * .27, b = a + .27;
+        const k = ease(seg(p, a, a + .05)) * (i === n - 1 ? 1 : 1 - easeIO(seg(p, b - .04, b)));
+        fadeIn(c, k);
+      });
+    }
+  });
+
+  // 7–11. From → To
+  const AR = { "OTPurpose_phone.jpg": 2132 / 2158, "OTNetworking_phone.webp": 1920 / 2160, "OTEmpowering_phone.jpg": 1651 / 2159, "OTExperiment_phone.jpg": 1920 / 2160, "OTTransparency_phone.jpg": 2243 / 2160 };
+  C.shifts.forEach((s, i) => scene({
+    id: `shift-${i + 1}`, t: `${i + 1}. from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}`, hud: "light", len: 3.6, wipe: "circle",
     card: { img: s.img, n: String(i + 1), room: s.room },
+    style: `--room:${s.room};--floor:${s.floor}`,
     html: `
-      <section class="S S-shift" id="shift-${i + 1}" style="--room:${s.room};--a:${tilt[i] * 2}deg">
-        <div class="S__in">
-          <p class="sh-n">${i + 1}</p>
-          <div class="sh-words">
-            <span class="sh-lab">FROM</span>
-            <span class="sh-from">${s.from}<svg class="sh-strike" viewBox="0 0 100 10" preserveAspectRatio="none"><path pathLength="1" d="M1 6 C 30 3, 60 8, 99 4"/></svg></span>
-            <span class="sh-to-w"><span class="sh-lab">TO</span><span class="sh-to">${s.to}.</span></span>
-          </div>
-          <div class="sh-card" aria-hidden="true">
-            <div class="sh-card__pic"><img src="${C.img}${s.img}" alt="" loading="lazy"></div>
-            <p class="sh-card__n">${i + 1}</p>
-            <p class="sh-card__t">from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}</p>
-          </div>
-          <p class="sh-p">${esc(s.p)}</p>
-        </div>
-      </section>`
+      <i class="wall"></i><div class="floor"></div>
+      <i class="sh-shadow"></i>
+      <img class="sh-img" src="${C.img}${s.img}" alt="" style="--ar:${AR[s.img]}">
+      <h2 class="sh-title">${lines([`<span class="num">${i + 1}.</span> from <span class="sh-x">${s.from.toLowerCase()}<svg viewBox="0 0 100 10" preserveAspectRatio="none"><path pathLength="1" d="M1 6 C 30 3, 60 8, 99 4"/></svg></span>`])}</h2>
+      <p class="sh-to">${lines([`${s.to}<i></i>`])}</p>
+      <p class="sh-p">${esc(s.p)}</p>
+      <p class="sh-n">${i + 1} / ${C.shifts.length}</p>`,
+    init(el) { this.img = $(".sh-img", el); this.title = $(".sh-title", el); this.x = $(".sh-x path", el); this.to = $(".sh-to", el); this.p = $(".sh-p", el); },
+    update(p) {
+      const k = ease(seg(p, 0, .32));
+      this.img.style.transform = `translateX(${(1 - k) * 30}vw) scale(${.92 + k * .08})`;
+      reveal(this.title, p, .05, .16);
+      this.x.style.strokeDashoffset = 1 - easeIO(seg(p, .22, .36));
+      reveal(this.to, p, .34, .46);
+      fadeIn(this.p, ease(seg(p, .48, .6)));
+      this.img.style.opacity = 1;
+    }
   }));
 
-  add({
-    id: "what", t: C.what.h, hud: "dark", card: { glyph: "{ }", mono: true, room: "#5d9dc5" },
-    html: `
-      <section class="S S-what S-ink" id="what">
-        <div class="S__in">
-          <h2 class="i-head"><span class="md">## ${C.what.h}</span>${lines(["Real problems.", "Not made-up", "ones."])}</h2>
-          <div class="what-grid">${C.what.items.map(it => `<div class="what-item" style="--on:0"><h3>${it.t}</h3><p><span class="md">-</span>${esc(it.p)}</p></div>`).join("")}</div>
-        </div>
-      </section>`
+  // 12. What we do
+  scene({
+    id: "what", t: C.what.h, hud: "dark", len: 3.6, wipe: "circle", card: { glyph: "{ }", mono: true, room: "#5d9dc5" },
+    html: `<p class="lab"><span class="md">##</span>${C.what.h}</p>${C.what.items.map(it => `<div class="c2-item"><h3>${it.t}</h3><p><span class="md">- </span>${esc(it.p)}</p></div>`).join("")}`,
+    init(el) { this.it = $$(".c2-item", el); this.lab = $(".lab", el); },
+    update(p) {
+      this.lab.style.opacity = seg(p, 0, .08);
+      const n = this.it.length;
+      this.it.forEach((it, i) => {
+        const a = .04 + i * (.92 / n), b = a + .92 / n;
+        const kin = ease(seg(p, a, a + .08)), kout = i === n - 1 ? 0 : easeIO(seg(p, b - .06, b));
+        it.style.opacity = kin * (1 - kout);
+        it.style.transform = `translate(-50%, calc(-50% + ${(1 - kin) * 40 - kout * 40}px))`;
+      });
+    }
   });
 
-  add({
-    id: "work", t: C.work.h, hud: "light", card: { glyph: "→", room: "#69b488" },
+  // 13. Work with us
+  scene({
+    id: "work", t: C.work.h, hud: "dark", len: 3, wipe: "circle", card: { glyph: "→", room: "#26512f", light: true },
     html: `
-      <section class="S S-work" id="work">
-        <div class="S__in">
-          <h2 class="i-head"><span class="md">## ${C.work.h}</span>${lines([C.work.sub + "."])}</h2>
-          <div class="work-grid">${C.work.paths.map((w, i) => `<a class="bubble" href="${w.href}" style="--a:${tilt[i + 3]}deg;--on:0"><h3>${w.t}</h3><p>${esc(w.p)}</p><span class="go">read more →</span></a>`).join("")}</div>
-        </div>
-      </section>`
+      <i class="wall"></i><div class="floor"></div>
+      <h2 class="chap"><span class="md">##</span>${lines([`${C.work.h} <span class="hl-human">(${C.work.sub.toLowerCase()})</span>`])}</h2>
+      <div class="bubbles">${C.work.paths.map((w, i) => `<a class="bubble" href="${w.href}"><h3>${w.t}</h3><p>${esc(w.p)}</p><span class="go">read more →</span></a>`).join("")}</div>`,
+    init(el) { this.chap = $(".chap", el); this.b = $$(".bubble", el); },
+    update(p) {
+      reveal(this.chap, p, .03, .15);
+      this.b.forEach((b, i) => {
+        const k = seg(p, .18 + i * .12, .34 + i * .12), e = 1 - Math.pow(1 - k, 3) + Math.sin(k * Math.PI) * .08;
+        b.style.opacity = clamp(k * 3);
+        b.style.transform = `translateY(${(1 - k) * 60}px) scale(${.7 + e * .3}) rotate(${tilt[i + 5] * (2 - k)}deg)`;
+      });
+    }
   });
 
-  add({
-    id: "lab", t: C.lab.h, hud: "dark", card: { glyph: "&lt;/&gt;", mono: true, room: "#cb9cf8" },
+  // 14. Labbet
+  const fcls = i => ["f1", "f2", "f3"][(i * 7 + 1) % 3];
+  scene({
+    id: "lab", t: C.lab.h, hud: "light", len: 4, wipe: "circle", card: { glyph: "&lt;/&gt;", mono: true, room: "#ffc3e5" },
     html: `
-      <section class="S S-lab" id="lab">
-        <div class="S__in">
-          <i class="wall"></i>
-          <div class="lab-top">
-            <h2 class="i-head"><span class="md">## ${C.lab.h}</span>${lines(["missprym", "<span class='hl-machine'>.tech</span>"])}</h2>
-            <p>${esc(C.lab.sub)}</p>
-          </div>
-          <ol class="lab-list">${C.lab.items.map((l, i) => `<li class="lab-row"><a href="${l.href}"><span class="n">${i + 1}</span><span class="t">${l.t}</span><span class="p">${esc(l.p)}</span><span class="arr">→</span></a></li>`).join("")}</ol>
-        </div>
-      </section>`
+      <i class="wall"></i><div class="cloth"></div>
+      <p class="lab"><span class="md">##</span>${C.lab.h} · missprym.tech</p>
+      <p class="lead lead--sm">${lines(C.lab.lines.map(esc))}</p>
+      <p class="mgiant" aria-label="${C.lab.giant}">${chars(C.lab.giant, fcls)}</p>
+      <div class="lab-cards">${C.lab.items.map((l, i) => `<a class="lcard" href="${l.href}" style="--a:${tilt[i + 2]}deg"><span class="n">${i + 1}</span><b>${l.t}</b><p>${esc(l.p)}</p></a>`).join("")}</div>`,
+    init(el) { this.lead = $(".lead", el); this.lab = $(".lab", el); this.ch = $$(".mgiant .ch", el); this.cards = $$(".lcard", el); },
+    update(p) {
+      this.lab.style.opacity = seg(p, 0, .06);
+      reveal(this.lead, p, .04, .2);
+      this.ch.forEach((c, i) => {
+        const k = seg(p, .2 + i * .025, .32 + i * .025);
+        const y = (1 - ease(k)) * -60 + (k > 0 && k < 1 ? Math.sin(k * Math.PI) * -12 : 0);
+        c.style.transform = `translateY(${y}vh) rotate(${(1 - k) * (i % 2 ? 20 : -20)}deg)`;
+        c.style.opacity = k > 0 ? 1 : 0;
+      });
+      this.cards.forEach((c, i) => {
+        const k = ease(seg(p, .56 + i * .05, .7 + i * .05));
+        c.style.opacity = k; c.style.transform = `translateY(${(1 - k) * 40}vh) rotate(${tilt[i + 2] * (1 + (1 - k) * 4)}deg)`;
+      });
+    }
   });
 
-  const E = C.events;
-  add({
-    id: "events", t: E.h, hud: "light", card: { glyph: E.next.date, room: "#fc4109" },
+  // 15. Event
+  scene({
+    id: "events", t: E.h, hud: "light", len: 3, wipe: "circle", card: { glyph: E.next.date, room: "#fc4109" },
     html: `
-      <section class="S S-events" id="events">
-        <div class="S__in">
-          <h2 class="h2"><span class="md">##</span>${E.h} · kommande</h2>
-          <div class="ev-next">
-            <p class="ev-date">${E.next.date}</p>
-            <div>
-              <h3>${esc(E.next.t)}</h3>
-              <p class="ev-when">${esc(E.next.when)}</p>
-              <p>${esc(E.next.p)}</p>
-              <div class="ctas"><a class="cta" href="${E.next.href}">Läs mer och anmäl dig</a></div>
-            </div>
-          </div>
-          <p class="ev-past-h">GENOMFÖRDA EVENT</p>
-          <ul class="ev-past">${E.past.map(p => `<li><span class="d">${p.date}</span><span class="t">${esc(p.t)}</span><span class="p">${esc(p.p)}</span></li>`).join("")}</ul>
-        </div>
-      </section>`
+      <p class="lab"><span class="md">##</span>${E.h} · kommande</p>
+      <p class="ev-date">${lines([E.next.date])}</p>
+      <div class="ev-box"><h3>${esc(E.next.t)}</h3><p class="ev-when">${esc(E.next.when)}</p><p>${esc(E.next.p)}</p><a class="cta" href="${E.next.href}">Läs mer och anmäl dig</a></div>
+      <p class="ev-past-h">GENOMFÖRDA EVENT</p>
+      <ul class="ev-past">${E.past.map(x => `<li><span class="d">${x.date}</span><span class="t">${esc(x.t)}</span></li>`).join("")}</ul>`,
+    init(el) { this.lab = $(".lab", el); this.d = $(".ev-date", el); this.box = $(".ev-box", el); this.past = $$(".ev-past li, .ev-past-h", el); },
+    update(p) {
+      this.lab.style.opacity = seg(p, 0, .06);
+      reveal(this.d, p, .02, .2);
+      fadeIn(this.box, ease(seg(p, .18, .34)));
+      this.past.forEach((l, i) => fadeIn(l, ease(seg(p, .38 + i * .04, .5 + i * .04)), 16));
+    }
   });
 
+  // 16. Bibliotek
   const spineCols = ["#ffabc8", "#e7bfff", "#5d9dc5", "#f8d867", "#69b488", "#e83729", "#f4efe8", "#cb9cf8", "#a67325", "#fc4109"];
-  const spines = Array.from({ length: 90 }, (_, i) => {
-    const r = (Math.sin(i * 12.9898) * 43758.5453) % 1, r2 = Math.abs((Math.sin(i * 78.233) * 12345.678) % 1);
-    return `<i class="spine" style="--i:${i};--w:${14 + Math.round(Math.abs(r) * 22)}px;--h:${55 + Math.round(r2 * 40)}%;--c:${spineCols[i % spineCols.length]}"></i>`;
+  const spines = Array.from({ length: 96 }, (_, i) => {
+    const r = Math.abs((Math.sin(i * 12.9898) * 43758.5453) % 1), r2 = Math.abs((Math.sin(i * 78.233) * 12345.678) % 1);
+    return `<i class="spine" style="--w:${14 + Math.round(r * 22)}px;--h:${55 + Math.round(r2 * 40)}%;--c:${spineCols[i % spineCols.length]}"></i>`;
   }).join("");
-  add({
-    id: "library", t: C.books.h, hud: "dark", card: { glyph: "B", room: "#1c3d24", light: true },
+  scene({
+    id: "library", t: C.books.h, hud: "dark", len: 3, wipe: "circle", card: { glyph: "B", room: "#1c3d24", light: true },
     html: `
-      <section class="S S-books" id="library">
-        <div class="S__in">
-          <div class="say"><p class="h2"><span class="md">##</span>${C.books.h}</p><p>${rich(C.books.say)}</p></div>
-          <p class="books-p">${esc(C.books.p)} <a href="${C.books.href}">Se hyllan →</a></p>
-          <div class="shelf" aria-hidden="true">${spines}</div>
-        </div>
-      </section>`
+      <i class="wall"></i>
+      <div class="say"><span class="say-lab"><span class="md">##</span>${C.books.h}</span><p>${wordsOf(rich(C.books.say)).map(w => `<span class="w">${w}</span>`).join(" ")}</p></div>
+      <p class="books-p">${esc(C.books.p)} <a href="${C.books.href}">Se hyllan →</a></p>
+      <div class="shelf" aria-hidden="true">${spines}</div>`,
+    init(el) { this.w = $$(".w", el); this.sp = $$(".spine", el); this.bp = $(".books-p", el); },
+    update(p) {
+      const n = this.w.length;
+      this.w.forEach((w, i) => w.style.setProperty("--lit", clamp(seg(p, .05, .55) * n - i).toFixed(3)));
+      this.sp.forEach((s, i) => (s.style.transform = `translateY(${(1 - ease(seg(p, .3 + i * .004, .5 + i * .004))) * 110}%)`));
+      fadeIn(this.bp, ease(seg(p, .55, .7)));
+    }
   });
 
-  const K = C.contact;
-  add({
-    id: "contact", t: K.h, hud: "dark", card: { glyph: "@", mono: true, room: "#f4efe8" },
+  // 17. Kontakt
+  scene({
+    id: "contact", t: K.h, hud: "dark", len: 2.4, wipe: "circle", card: { glyph: "@", mono: true, room: "#f4efe8" },
     html: `
-      <section class="S S-contact S-ink" id="contact">
-        <div class="S__in">
-          <h2 class="h2"><span class="md">##</span>${K.h}</h2>
-          <p class="c-lead">${esc(K.p)}</p>
-          <a class="c-mail" href="mailto:${K.email}">${K.email}</a>
-          <div class="c-row">
-            <span><span class="md">&gt;</span>${K.address}</span>
-            <a href="${K.linkedin}">LinkedIn</a>
-            <a href="https://missprym.tech">missprym.tech</a>
-          </div>
-          <footer class="foot">
-            <span>— Miss P Aktiebolag</span>
-            <button type="button" data-read>läs som text</button>
-            <b>MISSPRYM<span>.md</span></b>
-          </footer>
-        </div>
-      </section>`
+      <p class="lab"><span class="md">##</span>${K.h}</p>
+      <p class="c-lead">${esc(K.p)}</p>
+      <a class="c-mail" href="mailto:${K.email}">${K.email}</a>
+      <div class="c-row"><span><span class="md">&gt;</span>${K.address}</span><a href="${K.linkedin}">LinkedIn</a><a href="https://missprym.tech">missprym.tech</a></div>
+      <footer class="foot"><span>— Miss P Aktiebolag</span><button type="button" data-read>läs som text</button><b>MISSPRYM<span>.md</span></b></footer>`,
+    init(el) { this.items = $$(".lab, .c-lead, .c-mail, .c-row, .foot", el); },
+    update(p) { this.items.forEach((it, i) => fadeIn(it, ease(seg(p, .02 + i * .06, .16 + i * .06)))); }
   });
 
-  $("#stage").innerHTML = scenes.map(s => s.html).join("");
-  scenes.forEach(s => (s.el = document.getElementById(s.id)));
+  /* ================= bygg scenen ================= */
+  const stage = $("#stage");
+  stage.innerHTML = S.map(s => `<section class="L L-${s.id.replace(/-\d+$/, "")}" id="${s.id}" ${s.style ? `style="${s.style}"` : ""}>${s.html}</section>`).join("") + `<i class="wipe-ring"></i>`;
+  const ring = $(".wipe-ring");
+  S.forEach(s => { s.el = document.getElementById(s.id); s.init?.(s.el); });
 
-  /* ---------------- markdown (fil + läsläge) ---------------- */
+  const WIPE = .9; // skärmhöjder som en övergång tar
+  let VH = innerHeight, total = 0;
+  const measure = () => {
+    VH = innerHeight; total = 0;
+    S.forEach(s => { s.start = total; total += s.len; });
+    $("#scroll").style.height = `${(total + 1) * VH}px`;
+    S.forEach(s => s.layout?.());
+    window.__scenes = S.map(s => ({ id: s.id, start: s.start, len: s.len }));
+  };
+
+  /* ================= renderloop ================= */
+  let cur = scrollY, mx = innerWidth * .72, my = innerHeight * .62, active = null, prevVisible = [];
+  const body = document.body;
+  const crumb = $(".hud-crumb"), crumbT = $(".hud-crumb__t");
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function render() {
+    const target = scrollY;
+    cur += (target - cur) * (reduced ? 1 : .14);
+    if (Math.abs(target - cur) < .4) cur = target;
+    const pos = cur / VH;
+
+    let k = S.findIndex(s => pos < s.start + s.len); if (k < 0) k = S.length - 1;
+    const s = S[k], p = clamp((pos - s.start) / s.len);
+    const wp = s.wipe ? (pos - s.start) / WIPE : 1; // 0..1 under övergången
+    const visible = [s];
+    if (k > 0 && wp < 1) visible.push(S[k - 1]);
+
+    S.forEach(x => {
+      const on = visible.includes(x);
+      x.el.classList.toggle("is-on", on);
+      x.el.classList.toggle("is-top", x === s && visible.length > 1);
+      x.el.classList.toggle("is-under", on && x !== s);
+    });
+    s.update?.(p);
+    if (visible.length > 1) S[k - 1].update?.(1);
+
+    // övergång
+    if (visible.length > 1 && s.wipe === "circle") {
+      const R = Math.hypot(innerWidth, innerHeight) * 1.05, t = easeIO(clamp(wp));
+      const r = t * R, ox = mx, oy = my;
+      s.el.style.clipPath = `circle(${r}px at ${ox}px ${oy}px)`;
+      s.el.style.opacity = 1;
+      ring.style.visibility = "visible";
+      ring.style.clipPath = `circle(${r + Math.max(18, innerWidth * .03) * (1 - t * .6)}px at ${ox}px ${oy}px)`;
+    } else {
+      s.el.style.clipPath = "";
+      s.el.style.opacity = visible.length > 1 && s.wipe === "fade" ? easeIO(clamp(wp)) : 1;
+      ring.style.visibility = "hidden";
+    }
+
+    if (active !== s) {
+      active = s;
+      body.dataset.hud = s.hud;
+      crumb.classList.toggle("is-on", s.id !== "top");
+      crumbT.textContent = s.t;
+    }
+
+    dot.style.transform = `translate(${dx += (mx - dx) * .2}px, ${dy += (my - dy) * .2}px)`;
+    requestAnimationFrame(render);
+  }
+
+  /* ================= markdown (fil + läsläge) ================= */
   const md = [
     `# MISSPRYM.md`, ``,
     ...C.hero.quote.map(q => `> ${q}`), ``,
@@ -221,15 +400,12 @@
     `— Miss P Aktiebolag`
   ].join("\n");
 
-  // läsläge: enkel md → html
   const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\*(.+?)\*/g, "<em>$1</em>")
     .replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1">$1</a>').replace(/([\w.]+@[\w.]+\.\w+)/g, '<a href="mailto:$1">$1</a>');
-  const readHtml = (() => {
-    let out = `<header><p class="read__by">${C.byline}</p><h1>MISSPRYM<span class="md2">.md</span></h1>`, inList = false, inQuote = false;
-    const body = md.split("\n").slice(1);
+  $("#read").innerHTML = (() => {
+    let out = `<header><p class="read__by">${C.byline}</p><h1>MISSPRYM<span class="md2">.md</span></h1>`, inList = false, inQuote = false, headerClosed = false;
     const close = () => { if (inList) { out += "</ul>"; inList = false; } if (inQuote) { out += "</blockquote>"; inQuote = false; } };
-    let headerClosed = false;
-    body.forEach(l => {
+    md.split("\n").slice(1).forEach(l => {
       if (l.startsWith("## ") && !headerClosed) { close(); out += "</header>"; headerClosed = true; }
       if (l.startsWith("> ")) { if (inList) { out += "</ul>"; inList = false; } if (!inQuote) { out += "<blockquote>"; inQuote = true; } out += `<p>&gt; ${inline(l.slice(2))}</p>`; return; }
       if (l.startsWith("- ")) { if (inQuote) { out += "</blockquote>"; inQuote = false; } if (!inList) { out += "<ul>"; inList = true; } out += `<li>${inline(l.slice(2))}</li>`; return; }
@@ -242,25 +418,23 @@
     close();
     return out + `<p class="read__back"><a href="#top" data-unread>← tillbaka till sajten</a></p>`;
   })();
-  $("#read").innerHTML = readHtml;
 
-  /* ---------------- index ---------------- */
-  $(".index__track").innerHTML = scenes.map((s, i) => {
+  /* ================= index ================= */
+  $(".index__track").innerHTML = S.map((s, i) => {
     const c = s.card;
     const pic = c.img ? `<img src="${C.img}${c.img}" alt="" loading="lazy">` : `<span class="icard__glyph${c.mono ? " mono" : ""}" ${c.light ? 'style="color:#f4efe8"' : ""}>${c.glyph}</span>`;
-    return `<a class="icard" href="#${s.id}" data-go style="--a:${tilt[i]}deg"><span class="icard__face"><span class="icard__pic" style="--room:${c.room}">${pic}</span><span class="icard__n">${c.n || (i === 0 ? "M" : String.fromCharCode(96 + i))}</span><span class="icard__t">${s.t}</span></span><i class="icard__dot"></i></a>`;
-  }).join("") + `<a class="icard" href="#file" data-file style="--a:${tilt[15]}deg"><span class="icard__face"><span class="icard__pic" style="--room:#0b0b0b"><span class="icard__glyph mono">.md</span></span><span class="icard__n">↓</span><span class="icard__t">MISSPRYM.md — hela filen</span></span></a>`;
+    return `<a class="icard" href="#${s.id}" style="--a:${tilt[i]}deg"><span class="icard__face"><span class="icard__pic" style="--room:${c.room}">${pic}</span><span class="icard__n">${c.n || String.fromCharCode(96 + i)}</span><span class="icard__t">${s.t}</span></span><i class="icard__dot"></i></a>`;
+  }).join("") + `<a class="icard" href="#file" data-file style="--a:${tilt[17]}deg"><span class="icard__face"><span class="icard__pic" style="--room:#0b0b0b"><span class="icard__glyph mono">.md</span></span><span class="icard__n">↓</span><span class="icard__t">MISSPRYM.md — hela filen</span></span></a>`;
 
-  const body = document.body;
   const setIndex = open => {
     body.classList.toggle("index-open", open);
     $("[data-index]").setAttribute("aria-expanded", open);
     $(".index").hidden = false;
-    if (open) $$(".icard").forEach(c => c.classList.toggle("is-here", c.getAttribute("href") === "#" + current?.id));
+    if (open) $$(".icard").forEach(c => c.classList.toggle("is-here", c.getAttribute("href") === "#" + active?.id));
   };
   $("[data-index]").addEventListener("click", () => setIndex(!body.classList.contains("index-open")));
 
-  /* ---------------- fil-fönster ---------------- */
+  /* ================= .md-fönster ================= */
   const fileEl = $(".file");
   $(".file__text").innerHTML = esc(md).split("\n").map(l => /^#{1,3} /.test(l) ? `<span class="h">${l}</span>` : /^&gt; /.test(l) ? `<span class="q">${l}</span>` : l).join("\n");
   const openFile = () => { setIndex(false); fileEl.hidden = false; $(".file__text").focus(); };
@@ -274,136 +448,59 @@
   });
   addEventListener("keydown", e => { if (e.key === "Escape") { closeFile(); setIndex(false); } });
 
-  /* ---------------- läsläge ---------------- */
-  const setReading = on => { document.documentElement.classList.toggle("reading", on); scrollTo(0, 0); if (on) history.replaceState(null, "", "#read"); };
-  $$("[data-read]").forEach(b => b.addEventListener("click", e => { e.preventDefault(); setReading(true); }));
-  $("#read").addEventListener("click", e => { if (e.target.matches("[data-unread]")) { e.preventDefault(); setReading(false); history.replaceState(null, "", "#top"); } });
-  if (location.hash === "#read") setReading(true);
-
-  // indexlänkar och interna ankare
+  /* ================= läsläge ================= */
+  const setReading = on => { document.documentElement.classList.toggle("reading", on); scrollTo(0, 0); cur = 0; history.replaceState(null, "", on ? "#read" : "#top"); };
   document.addEventListener("click", e => {
+    if (e.target.closest("[data-read]")) { e.preventDefault(); setReading(true); return; }
+    if (e.target.closest("[data-unread]")) { e.preventDefault(); setReading(false); return; }
     const a = e.target.closest('a[href^="#"]');
-    if (!a || a.hasAttribute("data-file") || a.hasAttribute("data-read") || a.hasAttribute("data-unread")) return;
-    const el = document.getElementById(a.getAttribute("href").slice(1));
-    if (!el || el.id === "read") return;
+    if (!a || a.hasAttribute("data-file")) return;
+    const s = S.find(x => "#" + x.id === a.getAttribute("href"));
+    if (!s) return;
     e.preventDefault();
     if (document.documentElement.classList.contains("reading")) setReading(false);
-    setIndex(false);
-    stopWatch();
-    // landa en bit in i scenen så att innehållet syns
-    const into = el.offsetHeight > innerHeight * 1.5 ? innerHeight * .35 : 0;
-    scrollTo({ top: el.offsetTop + into, behavior: "smooth" });
+    setIndex(false); stopWatch();
+    const into = s.start + (s.id === "top" ? 0 : Math.min(s.len * .5, 1.4));
+    scrollTo({ top: into * VH, behavior: "instant" in document.documentElement.style ? "instant" : "auto" });
+    cur = into * VH - VH * .6; // kort glidning in i scenen
   });
+  if (location.hash === "#read") document.documentElement.classList.add("reading");
 
-  /* ---------------- watch: automatisk scroll ---------------- */
-  const watchBtn = $("[data-watch]");
+  /* ================= watch ================= */
+  const watchBtn = $("[data-watch]"), watchT = $(".hud-watch__t");
   let watching = false, last = 0;
-  const watchStep = t => {
+  const step = t => {
     if (!watching) return;
     const dt = last ? Math.min(50, t - last) : 16; last = t;
-    scrollBy(0, dt * .42);
+    scrollBy(0, dt * VH / 2600);
     if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) return stopWatch();
-    requestAnimationFrame(watchStep);
+    requestAnimationFrame(step);
   };
-  function stopWatch() { watching = false; watchBtn.setAttribute("aria-pressed", "false"); $(".hud-watch__t").textContent = "watch"; }
+  function stopWatch() { watching = false; watchBtn.setAttribute("aria-pressed", "false"); watchT.textContent = "watch"; }
   watchBtn.addEventListener("click", () => {
     if (watching) return stopWatch();
-    watching = true; last = 0; watchBtn.setAttribute("aria-pressed", "true"); $(".hud-watch__t").textContent = "pause";
-    requestAnimationFrame(watchStep);
+    watching = true; last = 0; watchBtn.setAttribute("aria-pressed", "true"); watchT.textContent = "pause";
+    requestAnimationFrame(step);
   });
-  ["wheel", "touchstart", "keydown"].forEach(ev => addEventListener(ev, () => watching && stopWatch(), { passive: true }));
+  ["wheel", "touchstart"].forEach(ev => addEventListener(ev, () => watching && stopWatch(), { passive: true }));
+  addEventListener("keydown", e => { if (watching && e.key !== " ") stopWatch(); });
 
-  /* ---------------- scroll-driven animation ---------------- */
-  const commitWords = $$(".S-commit .w");
-  const crumb = $(".hud-crumb"), crumbT = $(".hud-crumb__t");
-  let current = null;
-
-  const seg = (p, i, n) => clamp((p - i / n) * n);
-
-  function frame() {
-    const vh = innerHeight, y = scrollY;
-    let active = scenes[0];
-    for (const s of scenes) {
-      const top = s.el.offsetTop, h = s.el.offsetHeight;
-      const p = clamp((y - top) / Math.max(1, h - vh));
-      s.el.style.setProperty("--p", p.toFixed(4));
-      s.p = p;
-      if (y + vh * .5 >= top) active = s;
-    }
-
-    // commitment: ord tänds ett i taget
-    const pc = scenes[1].p, n = commitWords.length;
-    commitWords.forEach((w, i) => w.style.setProperty("--lit", clamp(pc * 1.25 * n - i).toFixed(3)));
-
-    // citat: tre fragment, sedan hela citatet
-    const pq = scenes[2].p, frags = $$(".frag", scenes[2].el);
-    frags.forEach((f, i) => f.style.setProperty("--on", pq >= i / 4 && pq < (i + 1) / 4 ? 1 : 0));
-    scenes[2].el.style.setProperty("--qo", pq >= .75 ? 1 : 0);
-
-    // who: bildtexter i tur och ordning
-    const pw = scenes[3].p, caps = $$(".cap", scenes[3].el);
-    caps.forEach((c, i) => c.style.setProperty("--on", pw >= i / caps.length && (pw < (i + 1) / caps.length || i === caps.length - 1) ? 1 : 0));
-
-    // from → to
-    scenes.filter(s => s.id.startsWith("shift-")).forEach(s => {
-      const p = s.p, st = s.el.style;
-      st.setProperty("--k1", clamp(p / .3).toFixed(3));
-      st.setProperty("--k2", clamp((p - .25) / .22).toFixed(3));
-      st.setProperty("--k3", clamp((p - .45) / .2).toFixed(3));
-    });
-
-    // what we do
-    const what = scenes.find(s => s.id === "what"), items = $$(".what-item", what.el);
-    items.forEach((it, i) => {
-      const on = isMobile() ? (what.p >= i / 3 && (what.p < (i + 1) / 3 || i === 2)) : what.p >= i * .22;
-      it.style.setProperty("--on", on ? 1 : 0);
-    });
-
-    // work with us
-    const work = scenes.find(s => s.id === "work");
-    $$(".bubble", work.el).forEach((b, i) => b.style.setProperty("--on", isMobile() ? 1 : clamp((work.p + .25 - i * .12) / .25).toFixed(3)));
-
-    // bokhylla
-    const lib = scenes.find(s => s.id === "library");
-    lib.el.style.setProperty("--on", lib.p > 0.02 || (lib.el.getBoundingClientRect().top < vh * .3) ? 1 : 0);
-    $$(".spine", lib.el).forEach(sp => sp.style.setProperty("--on", lib.el.style.getPropertyValue("--on")));
-
-    // HUD
-    if (active !== current) {
-      current = active;
-      body.dataset.hud = active.hud;
-      crumb.classList.toggle("is-on", active.id !== "top");
-      crumbT.textContent = active.t;
-    }
-    ticking = false;
-  }
-  let ticking = false;
-  const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
-  addEventListener("scroll", req, { passive: true });
-  addEventListener("resize", req);
-
-  // radvisning när en scen kommer in i bild
-  const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add("is-in")), { threshold: .2 });
-  $$(".S").forEach(s => io.observe(s));
-
-  /* ---------------- prick & öga ---------------- */
+  /* ================= prick & öga ================= */
   const dot = $(".dot"), eye = $(".hud-mark");
-  let mx = innerWidth / 2, my = innerHeight / 2, dx = mx, dy = my;
+  let dx = mx, dy = my;
   addEventListener("pointermove", e => {
+    if (e.pointerType === "touch") return;
     mx = e.clientX; my = e.clientY;
     dot.classList.toggle("is-big", !!e.target.closest("a, button"));
     const r = eye.getBoundingClientRect(), ax = mx - (r.left + r.width / 2), ay = my - (r.top + r.height / 2), d = Math.hypot(ax, ay) || 1;
     eye.style.setProperty("--ex", (ax / d * Math.min(9, d / 30)).toFixed(1) + "px");
     eye.style.setProperty("--ey", (ay / d * Math.min(4, d / 60)).toFixed(1) + "px");
   });
-  (function loop() {
-    dx += (mx - dx) * .18; dy += (my - dy) * .18;
-    dot.style.transform = `translate(${dx}px, ${dy}px)`;
-    requestAnimationFrame(loop);
-  })();
 
-  /* ---------------- start ---------------- */
-  const start = () => { body.classList.remove("is-loading"); frame(); };
-  (document.fonts?.ready || Promise.resolve()).then(() => setTimeout(start, 120));
+  /* ================= start ================= */
+  addEventListener("resize", measure);
+  let started = false;
+  const start = () => { if (started) return; started = true; measure(); body.classList.remove("is-loading"); requestAnimationFrame(render); };
+  (document.fonts?.ready || Promise.resolve()).then(() => setTimeout(start, 100));
   setTimeout(start, 1500);
 })();

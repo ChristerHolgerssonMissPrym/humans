@@ -1,6 +1,6 @@
 # MISSPRYM.md
 
-Miss Prym's site rebuilt in the visual language of [human-md.ai](https://human-md.ai): a scroll-driven "manifesto file" with a HUD, a card index, a reading mode and a downloadable `.md` file.
+Miss Prym's site rebuilt in the visual language of [human-md.ai](https://human-md.ai): a scroll-driven "manifesto film" with a fixed stage, circle transitions and pinned scenes with a HUD, a card index, a reading mode and a downloadable `.md` file.
 
 The content comes from [missprym.com](https://www.missprym.com) and [missprym.tech](https://missprym.tech).
 
