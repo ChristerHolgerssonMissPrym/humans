@@ -749,9 +749,10 @@
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   let clock = 0, pausedFor = 0, pausedAt = 0, lastVis = "";
+  const prog = $(".prog i");
   function render() {
     const target = scrollY;
-    cur += (target - cur) * (reduced ? 1 : .14);
+    cur += (target - cur) * (reduced ? 1 : .1);
     if (Math.abs(target - cur) < .4) cur = target;
     const pos = cur / VH;
 
@@ -769,6 +770,7 @@
     });
     if (!body.classList.contains("paused")) clock = performance.now() / 1000 - pausedFor;
     const T = clock;
+    prog.style.transform = `scaleX(${clamp(pos / total)})`;
     s.update?.(p, T);
     if (visible.length > 1) S[k - 1].update?.(1, T);
 
@@ -779,7 +781,7 @@
       s.el.style.clipPath = `circle(${r}px at ${ox}px ${oy}px)`;
       s.el.style.opacity = 1;
       ring.style.visibility = "visible";
-      ring.style.clipPath = `circle(${r + Math.max(18, innerWidth * .03) * (1 - t * .6)}px at ${ox}px ${oy}px)`;
+      ring.style.clipPath = `circle(${r + Math.max(6, innerWidth * .009) * Math.sin(t * Math.PI)}px at ${ox}px ${oy}px)`;
     } else {
       s.el.style.clipPath = "";
       s.el.style.opacity = visible.length > 1 && s.wipe === "fade" ? easeIO(clamp(wp)) : 1;
@@ -798,6 +800,7 @@
       body.dataset.hud = s.hud;
       crumb.classList.toggle("is-on", s.id !== "top");
       crumbT.textContent = s.t;
+      $(".hud-count").textContent = `${String(k + 1).padStart(2, "0")} / ${String(S.length).padStart(2, "0")}`;
     }
 
     dot.style.transform = `translate(${dx += (mx - dx) * .2}px, ${dy += (my - dy) * .2}px)`;
@@ -920,7 +923,9 @@
       if (d < r.height * .6 && !c.classList.contains("hop")) { c.classList.add("hop"); setTimeout(() => c.classList.remove("hop"), 520); }
     });
     mx = e.clientX; my = e.clientY;
-    dot.classList.toggle("is-big", !!e.target.closest("a, button"));
+    const hit = e.target.closest("a, button");
+    dot.classList.toggle("is-big", !!hit);
+    dot.dataset.label = hit ? (hit.matches(".icard, [data-go]") ? "go" : hit.matches("[data-index]") ? "" : "open") : "";
     const r = eye.getBoundingClientRect(), ax = mx - (r.left + r.width / 2), ay = my - (r.top + r.height / 2), d = Math.hypot(ax, ay) || 1;
     eye.style.setProperty("--ex", (ax / d * Math.min(9, d / 30)).toFixed(1) + "px");
     eye.style.setProperty("--ey", (ay / d * Math.min(4, d / 60)).toFixed(1) + "px");
@@ -941,7 +946,11 @@
   /* ================= start ================= */
   addEventListener("resize", measure);
   let started = false;
-  const start = () => { if (started) return; started = true; window.__t0 = performance.now(); measure(); body.classList.remove("is-loading"); requestAnimationFrame(render); };
-  (document.fonts?.ready || Promise.resolve()).then(() => setTimeout(start, 100));
+  const loader = $(".loader"), lnum = $(".loader-n");
+  const imgs = $$("img, video[poster]"); let done = 0;
+  const bump = () => { done++; lnum.textContent = String(Math.min(99, Math.round(done / Math.max(1, imgs.length) * 100))).padStart(2, "0"); };
+  imgs.forEach(im => { if (im.complete) bump(); else { im.addEventListener("load", bump, { once: true }); im.addEventListener("error", bump, { once: true }); } });
+  const start = () => { if (started) return; started = true; lnum.textContent = "100"; setTimeout(() => loader.classList.add("is-out"), 260); setTimeout(() => loader.remove(), 1400); window.__t0 = performance.now() + 500; measure(); body.classList.remove("is-loading"); requestAnimationFrame(render); };
+  (document.fonts?.ready || Promise.resolve()).then(() => setTimeout(start, 700));
   setTimeout(start, 1500);
 })();
