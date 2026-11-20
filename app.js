@@ -726,33 +726,61 @@
   const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", "one-percent": "Standing still vs. one percent better every day.", finale: "Be proud. Be like Prym.", story: "You may only see a CV. We see a story.", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
   S.forEach(x => (x.back = backs[x.id] || (C.shifts[+x.id.split("-")[1] - 1] || {}).p || ""));
 
-  // 18. Finalen – stumfilm: mellantext, och två figurer som går mot horisonten
+  // 18. Finalen – stumfilm: solnedgång, landsväg, två figurer som går mot horisonten, iris, The End
+  const poles = [0, 1, 2, 3, 4, 5].map(i => { const d = Math.pow(.62, i); return { x: 50 + 34 * d, h: 46 * d, l: 50 - 34 * d }; });
   scene({
-    id: "finale", t: "the end", hud: "dark", len: 3.6, wipe: "fade", card: { glyph: "∎", room: "#1a1a1a", light: true },
+    id: "finale", t: "the end", hud: "dark", len: 4.2, wipe: "fade", card: { glyph: "∎", room: "#1a1a1a", light: true },
     html: `
       <div class="silent">
-        <div class="sky"></div><div class="hills"></div>
-        <div class="road"><i></i></div>
-        <div class="pair"><img class="walk w-a" src="${C.fig}statue-justitia.webp" alt=""><img class="walk w-b" src="${C.fig}statue-venus.webp" alt=""></div>
+        <div class="frame">
+          <div class="sky"></div><i class="sun"></i>
+          <img class="crow-fly" src="${C.fig}bird-crow.webp" alt="">
+          <div class="hills"></div>
+          <div class="road"><i></i></div>
+          <svg class="poles" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            ${poles.map(q => `<line x1="${q.x}" y1="${55 + q.h * .9}" x2="${q.x}" y2="${55 + q.h * .9 - q.h}" /><line x1="${q.l}" y1="${55 + q.h * .9}" x2="${q.l}" y2="${55 + q.h * .9 - q.h}" />`).join("")}
+            <polyline points="${poles.map(q => `${q.x},${55 + q.h * .9 - q.h + 1}`).join(" ")}" /><polyline points="${poles.map(q => `${q.l},${55 + q.h * .9 - q.h + 1}`).join(" ")}" />
+          </svg>
+          <div class="pair"><img class="walk w-a" src="${C.fig}statue-justitia.webp" alt=""><img class="walk w-b" src="${C.fig}statue-venus.webp" alt=""></div>
+          <i class="dust"></i>
+        </div>
+        <i class="iris"></i>
         <div class="title-card tc1"><p>”Is it even worth trying?”</p></div>
         <div class="title-card tc2"><p>Be proud.<br><em>Be like Prym.</em></p></div>
-        <div class="title-card tc3"><p class="fin">The End<i></i></p><a href="mailto:${K.email}">${K.email}</a></div>
-        <i class="flick"></i><i class="vign"></i><i class="scratch"></i>
+        <div class="title-card tc3">
+          <p class="fin">The End<i></i></p>
+          <p class="fin-sub">MISS P AKTIEBOLAG · GÖTEBORG · ${new Date().getFullYear()}</p>
+          <a class="fin-mail" href="mailto:${K.email}">${K.email}</a>
+          <div class="fin-btns"><button type="button" class="fin-btn" data-replay>↺ se igen</button><button type="button" class="fin-btn" data-read>läs som text</button></div>
+        </div>
+        <i class="flick"></i><i class="vign"></i><i class="scratch s1"></i><i class="scratch s2"></i><i class="burn"></i>
       </div>`,
     init(el) { this.q = n => $(n, el); },
     update(p, t) {
-      const tc1 = this.q(".tc1"), tc2 = this.q(".tc2"), tc3 = this.q(".tc3");
-      const show = (e, a, b) => { const k = seg(p, a, a + .04) * (1 - seg(p, b - .04, b)); e.style.opacity = k; };
-      show(tc1, 0, .2); show(tc2, .46, .66);
-      tc3.style.opacity = seg(p, .9, .97);
-      // figurerna går – små gung i steget – och krymper mot horisonten
-      const w = seg(p, .16, .9), sc = 1 - w * .78;
-      this.q(".pair").style.transform = `translateX(-50%) translateY(${-w * 34}vh) scale(${sc})`;
-      this.q(".w-a").style.transform = `translateY(${-Math.abs(Math.sin(t * 5)) * 3}%) rotate(${Math.sin(t * 5) * 2}deg)`;
-      this.q(".w-b").style.transform = `translateY(${-Math.abs(Math.sin(t * 5 + 1.6)) * 3}%) rotate(${Math.sin(t * 5 + 1.6) * 2}deg)`;
-      this.q(".flick").style.opacity = .05 + Math.abs(Math.sin(t * 23)) * .06;
-      this.q(".scratch").style.left = `${(Math.sin(t * 3.1) * .5 + .5) * 100}%`;
-      this.q(".scratch").style.opacity = Math.sin(t * 7) > .6 ? .5 : 0;
+      const q = this.q, show = (e, a, b) => { e.style.opacity = seg(p, a, a + .03) * (1 - seg(p, b - .03, b)); };
+      show(q(".tc1"), 0, .16); show(q(".tc2"), .44, .6);
+      // filmrutan skakar lite, som en gammal projektor
+      const j = (Math.sin(t * 37) + Math.sin(t * 61)) * .5;
+      q(".frame").style.transform = `translate(${j * 1.5}px, ${Math.sin(t * 43) * 2}px)`;
+      // solen sjunker, fågeln flyger över himlen
+      const w = seg(p, .14, .86);
+      q(".sun").style.transform = `translate(-50%, ${w * 70}%)`;
+      const cf = seg(p, .18, .5);
+      q(".crow-fly").style.transform = `translate(${-20 + cf * 140}vw, ${-Math.sin(cf * Math.PI) * 8}vh) scaleX(-1) rotate(${Math.sin(t * 9) * 6}deg)`;
+      q(".crow-fly").style.opacity = cf > 0 && cf < 1 ? .85 : 0;
+      // figurerna går – gung i steget – och krymper mot horisonten
+      q(".pair").style.transform = `translateX(-50%) translateY(${-w * 33}vh) scale(${1 - w * .82})`;
+      q(".w-a").style.transform = `translateY(${-Math.abs(Math.sin(t * 5)) * 3}%) rotate(${Math.sin(t * 5) * 2}deg)`;
+      q(".w-b").style.transform = `scaleX(-1) translateY(${-Math.abs(Math.sin(t * 5 + 1.6)) * 3}%) rotate(${Math.sin(t * 5 + 1.6) * 2}deg)`;
+      // irisen sluter sig kring paret
+      const ir = easeIO(seg(p, .78, .9));
+      q(".iris").style.background = `radial-gradient(circle at 50% ${64 - w * 18}%, transparent ${(1 - ir) * 85}vmax, #0b0b0b ${(1 - ir) * 85 + .3}vmax)`;
+      q(".tc3").style.opacity = seg(p, .92, .97);
+      $$(".tc3 > *", q(".silent")).forEach((e, i) => (e.style.transform = `translateY(${(1 - ease(seg(p, .92 + i * .015, .97 + i * .015))) * 18}px)`));
+      q(".flick").style.opacity = .04 + Math.abs(Math.sin(t * 23)) * .06;
+      q(".s1").style.left = `${(Math.sin(t * 3.1) * .5 + .5) * 100}%`; q(".s1").style.opacity = Math.sin(t * 7) > .6 ? .5 : 0;
+      q(".s2").style.left = `${(Math.cos(t * 1.7) * .5 + .5) * 100}%`; q(".s2").style.opacity = Math.sin(t * 5 + 2) > .8 ? .35 : 0;
+      q(".burn").style.opacity = seg(p, .97, 1) * .8;
     }
   });
 
@@ -967,6 +995,7 @@
     if (on) pausedAt = performance.now() / 1000; else pausedFor += performance.now() / 1000 - pausedAt;
     if (on) $$("video").forEach(v => v.pause()); else lastVis = "";
   });
+  document.addEventListener("click", e => { if (e.target.closest("[data-replay]")) { cur = 0; scrollTo(0, 0); window.__t0 = performance.now(); } });
   document.addEventListener("click", e => { if (e.target.closest("[data-next]")) { const n = S[1]; scrollTo({ top: (n.start + .6) * VH, behavior: "smooth" }); } });
 
   /* ================= ögat blinkar ================= */
