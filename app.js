@@ -401,6 +401,31 @@
     }
   }));
 
+  // 11b. Textrytmen från human-md ("Yet." / "I'm not in that argument" / "I'm in this one") – med Miss Pryms ord
+  scene({
+    id: "chaos", t: "we face it together", hud: "dark", len: 3.6, wipe: "circle", card: { glyph: "C", room: "#0b41c2", light: true },
+    html: `
+      <i class="wall"></i>
+      <p class="chaos-word" aria-label="Chaos.">${[..."Chaos"].map(c => `<span class="ch">${c}</span>`).join("")}<i class="cdot"></i></p>
+      <p class="chaos-small">We don't fear chaos<i class="cdot"></i></p>
+      <p class="chaos-big">${wordsOf("We face it together.").map(w => `<span class="w">${w}</span>`).join(" ")}</p>`,
+    init(el) { this.ch = $$(".chaos-word .ch", el); this.word = $(".chaos-word", el); this.small = $(".chaos-small", el); this.big = $(".chaos-big", el); this.w = $$(".chaos-big .w", el); },
+    update(p, t) {
+      // ordet darrar allt mer och flyger sedan isär
+      const shake = seg(p, .04, .3), fly = easeIO(seg(p, .3, .42));
+      this.word.style.opacity = ease(seg(p, 0, .06)) * (1 - seg(p, .38, .44));
+      this.ch.forEach((c, i) => {
+        const r1 = Math.sin(i * 91.7 + t * 9) , r2 = Math.cos(i * 37.3 + t * 11);
+        const dx = r1 * shake * 6 + (i - 2) * fly * 40, dy = r2 * shake * 6 + (i % 2 ? -1 : 1) * fly * 30;
+        c.style.transform = `translate(${dx}vw, ${dy}vh) rotate(${r1 * shake * 12 + (i - 2) * fly * 60}deg)`;
+      });
+      fadeIn(this.small, ease(seg(p, .42, .5)) * (1 - seg(p, .62, .68)), 12);
+      const inB = ease(seg(p, .6, .7)); this.big.style.opacity = inB;
+      const n = this.w.length; this.w.forEach((w, i) => w.style.setProperty("--lit", clamp(seg(p, .64, .9) * n - i).toFixed(3)));
+    }
+  });
+  { const i = S.findIndex(x => x.id === "chaos"), j = S.findIndex(x => x.id === "shift-3"); S.splice(j + 1, 0, ...S.splice(i, 1)); }
+
   // 12. What we do – tre tallrikar med silverkupor som lyfts (efter Figma-skissen)
   const cloche = `<svg class="cl-svg" viewBox="0 0 200 130" aria-hidden="true"><defs><linearGradient id="clg" x1="0" x2="1"><stop offset="0" stop-color="#9aa0a6"/><stop offset=".35" stop-color="#f4f4f2"/><stop offset=".6" stop-color="#c9cdd0"/><stop offset="1" stop-color="#7e858b"/></linearGradient></defs><path d="M10 118 Q 10 22 100 18 Q 190 22 190 118 Z" fill="url(#clg)" stroke="#5c6369" stroke-width="2"/><rect x="2" y="114" width="196" height="12" rx="6" fill="#b9bec2" stroke="#5c6369" stroke-width="2"/><circle cx="100" cy="12" r="9" fill="url(#clg)" stroke="#5c6369" stroke-width="2"/><path d="M40 40 Q 60 28 80 26" stroke="#fff" stroke-width="6" fill="none" opacity=".7" stroke-linecap="round"/></svg>`;
   scene({
@@ -607,7 +632,7 @@
   { const i = S.findIndex(x => x.id === "together"); S.splice(1, 0, ...S.splice(i, 1)); }
 
   // baksida på indexkorten: en rad ur innehållet
-  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
+  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
   S.forEach(x => (x.back = backs[x.id] || (C.shifts[+x.id.split("-")[1] - 1] || {}).p || ""));
 
   /* ================= bygg scenen ================= */
