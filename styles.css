@@ -1039,3 +1039,7 @@ html { text-rendering: optimizeLegibility; font-kerning: normal; }
 .tick-mark { font-size: clamp(13px, 1.15vw, 18px); }
 .tm-t { display: block; }
 @media (orientation: landscape) { .L-contact .c-mail { font-size: clamp(28px, 4.4vw, 84px); } }
+
+.bgtint--commit { background: linear-gradient(rgba(11,65,194,.78), rgba(11,65,194,.62) 60%, rgba(11,65,194,.85)); mix-blend-mode: multiply; }
+.L-commitment .lead, .L-commitment .lab, .L-commitment .giant { position: absolute; z-index: 1; }
+.L-commitment .lead { position: absolute; }

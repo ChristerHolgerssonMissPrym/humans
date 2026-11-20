@@ -100,6 +100,7 @@
     id: "commitment", t: C.commitment.h, hud: "dark", len: 2.7, wipe: "fade", card: { glyph: "?", room: "#e7bfff" },
     html: `
       <i class="wall"></i>
+      <video class="bgfilm" src="${C.film}" poster="${C.filmPoster}" muted loop playsinline preload="none" aria-hidden="true"></video><i class="bgtint bgtint--commit"></i>
       <p class="lab"><span class="md">##</span>${C.commitment.h}</p>
       <div class="lead"><p class="l1">${lines(C.open2.lines)}</p><p class="after">${lines([esc(C.open2.after)])}</p></div>
       <p class="giant" aria-label="${C.open2.giant}">${chars(C.open2.giant)}</p>`,
