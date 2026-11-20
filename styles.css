@@ -609,3 +609,25 @@ body:not(.is-loading) .o-title .ch.hop { animation: chhop .52s var(--ease); }
 .o-face::after { content: ""; position: absolute; left: calc(50% - 4px); top: -52px; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); }
 .o-face figcaption { position: absolute; left: 0; right: 0; top: calc(100% + 10px); font-family: var(--f-mono); font-size: clamp(10px, .8vw, 13px); color: var(--ink); text-align: center; line-height: 1.3; }
 @media (orientation: portrait) { .o-face { left: 34vw; top: 38vh; height: 30vh; } .o-face figcaption { display: none; } .o-frame { display: none; } }
+
+/* labbet: kamera ner i källaren */
+.labcam { position: absolute; left: 0; right: 0; top: 0; height: 200%; will-change: transform; }
+.lab-top { position: absolute; left: 0; right: 0; top: 0; height: 50%; overflow: hidden; --wall: #ffc3e5; }
+.L-lab .lab-top .wall { background: radial-gradient(120% 90% at 18% 0%, rgba(255,255,255,.08), transparent 60%), #ffc3e5; }
+.cellar { position: absolute; left: 0; right: 0; top: 50%; height: 50%; background:
+  repeating-linear-gradient(0deg, rgba(0,0,0,.06) 0 3px, transparent 3px 46px), repeating-linear-gradient(90deg, rgba(0,0,0,.05) 0 3px, transparent 3px 92px), #cf4a1a; }
+.pit { position: absolute; left: 6vw; right: 6vw; top: 9vh; bottom: 30vh; background: #6e1f0b; border: 10px solid #a33b14; box-shadow: inset 0 18px 40px rgba(0,0,0,.55); overflow: hidden; }
+.pit .gear { fill: #d9b25a; stroke: #7a5a1c; stroke-width: 3; bottom: auto; right: auto; height: auto; }
+.pit .gear circle { fill: #b78f3c; } .pit .gear .hub { fill: #7a5a1c; }
+.pit .g1 { width: 30vh; left: 12%; top: 18%; } .pit .g2 { width: 18vh; left: calc(12% + 26vh); top: 8%; }
+.pit .g3 { width: 34vh; right: 16%; top: 12%; left: auto; } .pit .g4 { width: 14vh; right: calc(16% + 31vh); top: 52%; }
+.crank { position: absolute; left: 3%; top: -14%; width: 30vh; transform-origin: 70% 10%; filter: drop-shadow(0 10px 10px rgba(0,0,0,.4)); will-change: transform; }
+.cellar .lab-cards { bottom: 6vh; }
+@media (orientation: portrait) { .pit { left: 4vw; right: 4vw; bottom: 36vh; } .crank { width: 16vh; } }
+
+/* work: figurer i kö vid repet */
+.queue { position: absolute; left: 0; right: 0; bottom: 3vh; height: 40vh; pointer-events: none; }
+.walker { position: absolute; left: 22vw; bottom: 0; display: flex; flex-direction: column; align-items: center; will-change: transform; }
+.walker img { height: 20vh; width: auto; filter: drop-shadow(6px 12px 10px rgba(0,0,0,.25)); }
+.walker .plinth { width: 110%; height: 4vh; }
+@media (orientation: portrait) { .walker img { height: 16vh; } }

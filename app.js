@@ -342,15 +342,24 @@
       <i class="wall"></i><div class="floor"></div>
       <h2 class="chap"><span class="md">##</span>${lines([`${C.work.h} <span class="hl-human">(${C.work.sub.toLowerCase()})</span>`])}</h2>
       <div class="bubbles">${C.work.paths.map((w, i) => `<a class="bubble" href="${w.href}"><h3>${w.t}</h3><p>${esc(w.p)}</p><span class="go">read more →</span></a>`).join("")}</div>
+      <div class="queue"><div class="walker w1"><img src="${C.fig}statue-venus.webp" alt=""><i class="plinth"></i></div><div class="walker w2"><img src="${C.fig}statue-justitia.webp" alt=""><i class="plinth"></i></div></div>
       <svg class="rope" viewBox="0 0 1000 220" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
         <g class="post"><rect x="96" y="40" width="16" height="170" rx="6" fill="#c9a24a"/><circle cx="104" cy="34" r="16" fill="#e2bd5c"/><rect x="70" y="200" width="68" height="14" rx="6" fill="#a8822e"/></g>
         <g class="post"><rect x="888" y="40" width="16" height="170" rx="6" fill="#c9a24a"/><circle cx="896" cy="34" r="16" fill="#e2bd5c"/><rect x="862" y="200" width="68" height="14" rx="6" fill="#a8822e"/></g>
         <path class="rope-p" d="" fill="none" stroke="#b4122a" stroke-width="16" stroke-linecap="round"/>
       </svg>`,
-    init(el) { this.chap = $(".chap", el); this.b = $$(".bubble", el); this.rope = $(".rope-p", el); },
+    init(el) { this.chap = $(".chap", el); this.b = $$(".bubble", el); this.rope = $(".rope-p", el); this.wk = $$(".walker", el); },
     update(p, t) {
       // repet hänger mellan stolparna, hakas av i högra änden och faller ned – vägen är öppen
-      const un = easeIO(seg(p, .1, .28)), sw = Math.sin(t * 1.6) * (1 - un * .6);
+      // figurerna kommer gående, väntar vid repet och går igenom när det hakas av
+      this.wk.forEach((w, i) => {
+        const inn = seg(p, .02 + i * .04, .2 + i * .04), out = seg(p, .4 + i * .06, .75 + i * .06);
+        const x = -60 + ease(inn) * (40 - i * 9) + easeIO(out) * 150;
+        const moving = (inn > 0 && inn < 1) || (out > 0 && out < 1);
+        const step = moving ? Math.abs(Math.sin(t * 7 + i)) : 0;
+        w.style.transform = `translateX(${x}vw) translateY(${-step * 2.4}%) rotate(${moving ? Math.sin(t * 7 + i) * 2.5 : Math.sin(t * .8 + i) * .5}deg)`;
+      });
+      const un = easeIO(seg(p, .22, .36)), sw = Math.sin(t * 1.6) * (1 - un * .6);
       const ex = 896 - un * 420, ey = 40 + un * 160 + Math.sin(un * Math.PI) * 30;
       const cx = (104 + ex) / 2 + sw * 10, cy = 130 + un * 40 + sw * 6;
       this.rope.setAttribute("d", `M104 40 Q ${cx} ${cy + 40}, ${ex} ${ey}`);
@@ -363,33 +372,45 @@
     }
   });
 
-  // 14. Labbet
+  // 14. Labbet – ordet faller ner, sedan åker kameran ner under golvet till maskineriet
   const fcls = i => ["f1", "f2", "f3"][(i * 7 + 1) % 3];
   scene({
-    id: "lab", t: C.lab.h, hud: "light", len: 4, wipe: "circle", card: { glyph: "&lt;/&gt;", mono: true, room: "#ffc3e5" },
+    id: "lab", t: C.lab.h, hud: "light", len: 5, wipe: "circle", card: { glyph: "&lt;/&gt;", mono: true, room: "#ffc3e5" },
     html: `
-      <i class="wall"></i>
-      ${[["g1", 0], ["g2", 1], ["g3", 0]].map(([c, dir]) => `<svg class="gear ${c}" viewBox="-110 -110 220 220" aria-hidden="true"><path d="${gearPath(100, 78, 14)}"/><circle r="26"/></svg>`).join("")}
-      <div class="cloth"></div>
-      <p class="lab"><span class="md">##</span>${C.lab.h} · missprym.tech</p>
-      <p class="lead lead--sm">${lines(C.lab.lines.map(esc))}</p>
-      <p class="mgiant" aria-label="${C.lab.giant}">${chars(C.lab.giant, fcls)}</p>
-      <div class="lab-cards">${C.lab.items.map((l, i) => `<a class="lcard" href="${l.href}" style="--a:${tilt[i + 2]}deg"><span class="n">${i + 1}</span><b>${l.t}</b><p>${esc(l.p)}</p></a>`).join("")}</div>`,
-    init(el) { this.lead = $(".lead", el); this.lab = $(".lab", el); this.ch = $$(".mgiant .ch", el); this.cards = $$(".lcard", el); this.g = $$(".gear", el); },
+      <div class="labcam">
+        <div class="lab-top">
+          <i class="wall"></i><div class="cloth"></div>
+          <p class="lab"><span class="md">##</span>${C.lab.h} · missprym.tech</p>
+          <p class="lead lead--sm">${lines(C.lab.lines.map(esc))}</p>
+          <p class="mgiant" aria-label="${C.lab.giant}">${chars(C.lab.giant, fcls)}</p>
+        </div>
+        <div class="cellar">
+          <div class="pit">
+            ${[["g1"], ["g2"], ["g3"], ["g4"]].map(([c]) => `<svg class="gear ${c}" viewBox="-110 -110 220 220" aria-hidden="true"><path d="${gearPath(100, 80, 16)}"/><circle r="30"/><circle r="9" class="hub"/></svg>`).join("")}
+            <img class="crank" src="${C.fig}emp-tophand.webp" alt="">
+          </div>
+          <div class="lab-cards">${C.lab.items.map((l, i) => `<a class="lcard" href="${l.href}" style="--a:${tilt[i + 2]}deg"><span class="n">${i + 1}</span><b>${l.t}</b><p>${esc(l.p)}</p></a>`).join("")}</div>
+        </div>
+      </div>`,
+    init(el) { this.cam = $(".labcam", el); this.lead = $(".lead", el); this.lab = $(".lab", el); this.ch = $$(".mgiant .ch", el); this.cards = $$(".lcard", el); this.g = $$(".gear", el); this.crank = $(".crank", el); },
     update(p, t) {
-      // maskineriet under ytan: kugghjulen drivs av scrollen
-      const rot = p * 720 + t * 6;
-      this.g.forEach((g, i) => (g.style.transform = `rotate(${(i % 2 ? -1 : 1) * rot * (i === 1 ? 1.4 : 1)}deg)`));
-      this.lab.style.opacity = seg(p, 0, .06);
-      reveal(this.lead, p, .04, .2);
+      this.lab.style.opacity = seg(p, 0, .05);
+      reveal(this.lead, p, .03, .14);
       this.ch.forEach((c, i) => {
-        const k = seg(p, .2 + i * .025, .32 + i * .025);
+        const k = seg(p, .14 + i * .02, .24 + i * .02);
         const y = (1 - ease(k)) * -60 + (k > 0 && k < 1 ? Math.sin(k * Math.PI) * -12 : 0);
         c.style.transform = `translateY(${y}vh) rotate(${(1 - k) * (i % 2 ? 20 : -20)}deg)`;
         c.style.opacity = k > 0 ? 1 : 0;
       });
+      // kameran åker ner: ytan är bara ytan – under den finns maskineriet
+      const pan = easeIO(seg(p, .42, .6));
+      this.cam.style.transform = `translateY(${-pan * 100}vh)`;
+      const rot = p * 900 + t * 10;
+      this.g.forEach((g, i) => (g.style.transform = `rotate(${(i % 2 ? -1 : 1) * rot * [1, 1.6, .8, 2.2][i]}deg)`));
+      const a = rot * Math.PI / 180;
+      this.crank.style.transform = `translate(${Math.cos(a) * 1.4}vh, ${Math.sin(a) * 1.4}vh) rotate(${-24 + Math.sin(a) * 3}deg)`;
       this.cards.forEach((c, i) => {
-        const k = ease(seg(p, .56 + i * .05, .7 + i * .05));
+        const k = ease(seg(p, .62 + i * .04, .74 + i * .04));
         c.style.opacity = k; c.style.transform = `translateY(${(1 - k) * 40}vh) rotate(${tilt[i + 2] * (1 + (1 - k) * 4)}deg)`;
       });
     }
