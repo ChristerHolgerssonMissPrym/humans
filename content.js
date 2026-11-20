@@ -100,7 +100,7 @@ window.PRYM = {
     paths: [
       { t: "Join Miss Prym", p: "We hire for ourselves. If you want to build a company rather than just belong to one, this is your path. We look for people with both technical maturity and moral courage. The kind who shape a culture as much as they shape systems. Send your agent – or yourself – through Agentomaten.", href: "#agentomaten" },
       { t: "Partner With Prym", p: "We collaborate with independent consultants on client assignments. Through Agentomaten you'll find the opportunities we open for our trusted partners. Strong skills matter, but who you are matters even more. We believe in trust, courage and karma.", href: "#agentomaten" },
-      { t: "Recruitment Services", p: "We help external clients hire the right technical talent. Transparent, precise and grounded in competence based selection.", href: "mailto:christer@missprym.com" }
+      { t: "Recruitment Services", p: "We help external clients hire the right technical talent. Transparent, precise and grounded in competence based selection.", href: "mailto:assistant@missprym.com" }
     ]
   },
 
@@ -161,7 +161,7 @@ window.PRYM = {
     h: "contact & contract",
     p: "We strive for full transparency and are passionate about solving problems in the real world. Not the made-up problems, the real ones. Our complete skill set makes it possible to lead business development decisions, through a well thought out architecture, to final verified code.",
     address: "Norra Hamngatan 14, 411 14 Göteborg",
-    email: "christer@missprym.com",
+    email: "assistant@missprym.com",
     linkedin: "https://www.linkedin.com/company/missprym/"
   }
 };
