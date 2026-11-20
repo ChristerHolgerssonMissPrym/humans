@@ -848,3 +848,32 @@ html.reading .pause { display: none; }
 .eq-cap { position: absolute; right: var(--pad); top: var(--top); width: min(40vw, 16em); text-align: right; font-size: var(--fs-cap); line-height: 1.1; letter-spacing: -.02em; }
 @media (orientation: portrait) { .eq { font-size: 9vw; } .eq2 { top: calc(var(--top) + 13vw); } .eq-cap { left: var(--pad); right: auto; top: 44vh; width: auto; text-align: left; } .curve { height: 22vh; } }
 @media (orientation: landscape) { .L-library .say { right: 30vw; max-width: 12em; } .L-library .books-p { right: 30vw; } .painting { top: 18vh; height: 44vh; right: 8vw; } }
+
+/* finputs */
+.big-say::before { content: ""; position: absolute; inset: -18% -10%; z-index: -1; background: radial-gradient(closest-side, rgba(247,247,247,.95), rgba(247,247,247,.8) 60%, transparent); filter: blur(6px); }
+.big-say { z-index: 3; }
+@media (orientation: portrait) {
+  .L-agentomaten .ag-lead { font-size: 8vw; max-width: none; right: var(--pad); }
+  .L-agentomaten .ag-listen { top: calc(var(--top) + 3 * 8vw + 2vh); }
+  .L-agentomaten .ag-p { top: calc(var(--top) + 3 * 8vw + 9vh); }
+  .L-contact .cradle { height: 20vh; width: 44vw; right: 4vw; }
+  .L-contact .c-lead { top: calc(var(--top) + 16vh); font-size: 17px; }
+}
+/* Transparency: frostat glas */
+.glass-wrap { position: absolute; right: 4vw; bottom: 18vh; height: min(70vh, 58vw); aspect-ratio: 2243 / 2160; will-change: transform; }
+.glass-wrap .sh-img { position: absolute; inset: 0; right: auto; bottom: auto; width: 100%; height: 100%; object-fit: contain; }
+.frost { position: absolute; inset: -4%; background: rgba(240,244,255,.35); backdrop-filter: blur(14px) saturate(.8); -webkit-backdrop-filter: blur(14px) saturate(.8); border: 2px solid rgba(255,255,255,.7); border-radius: 6px; box-shadow: inset 0 0 40px rgba(255,255,255,.5); }
+.wiper { position: absolute; top: -6%; bottom: -6%; width: 10px; margin-left: -5px; border-radius: 5px; background: var(--ink); box-shadow: 0 0 0 3px rgba(255,255,255,.4); opacity: 0; }
+@media (orientation: portrait) { .glass-wrap { height: 40vh; right: -4vw; bottom: 26vh; } }
+/* guldet vid repet */
+.gold--rope { left: 50%; bottom: 7vh; z-index: 0; transform: translateX(-50%); }
+
+/* Intervjuomaten: lappar som blir en berättelse */
+.L-story { --wall: #f7eaad; color: var(--ink); }
+.pile { position: absolute; inset: 0; }
+.slip { position: absolute; padding: .35em .7em .4em; background: #fffdf6; border: 1px solid rgba(32,30,31,.2); box-shadow: 0 6px 10px rgba(80,60,10,.15); font-family: var(--f-mono); font-size: clamp(12px, 1.1vw, 18px); white-space: nowrap; will-change: transform; }
+.slip:nth-child(3n) { background: #fff; } .slip:nth-child(4n) { background: var(--mp-pink); }
+.st-a { position: absolute; left: var(--pad); top: var(--top); font-size: var(--fs-say); font-weight: 300; letter-spacing: -.035em; line-height: 1.02; }
+.st-b { position: absolute; left: var(--pad); top: var(--top); font-size: calc(var(--fs-say) * 1.15); font-weight: 300; letter-spacing: -.035em; line-height: 1.02; }
+.story-card { position: absolute; left: var(--pad); right: var(--pad); bottom: 9vh; max-width: 40em; padding: 1.2em 1.4em; background: #fffdf6; border: 1px solid rgba(32,30,31,.2); border-radius: 6px; box-shadow: 0 16px 30px rgba(80,60,10,.18); font-family: var(--f-serif); font-style: italic; font-size: clamp(20px, 2vw, 34px); line-height: 1.25; opacity: 0; }
+.story-card p { margin: .7em 0 .9em; font-family: var(--f-mono); font-style: normal; font-size: clamp(12px, .9vw, 15px); }

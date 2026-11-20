@@ -51,7 +51,7 @@
             <div class="mon">
               <i class="fc f-back"></i><i class="fc f-left"></i><i class="fc f-right"></i><i class="fc f-top"></i><i class="fc f-bot"></i>
               <div class="pcb pcb1">${chips}</div><div class="pcb pcb2">${chips}</div><i class="yoke"></i>
-              <div class="tube"><video src="assets/agentomaten-face.mp4" poster="assets/agentomaten-face.jpg" muted loop autoplay playsinline aria-label="Agentomatens ansikte som ler"></video><i class="crt-scan"></i><i class="crt-glare"></i><p class="crt-text">&gt; ${C.agentomaten.listen}<b class="crt-cur"></b></p></div>
+              <div class="tube"><video src="assets/agentomaten-face.mp4" poster="assets/agentomaten-face.jpg" muted loop playsinline preload="none" aria-label="Agentomatens ansikte som ler"></video><i class="crt-scan"></i><i class="crt-glare"></i><p class="crt-text">&gt; ${C.agentomaten.listen}<b class="crt-cur"></b></p></div>
               <div class="fc f-front"><span class="badge">MISS PRYM · 1.0</span><i class="led"></i><i class="slot"></i></div>
             </div>
             <div class="base"><i class="fc b-top"></i><i class="fc b-front"></i></div>
@@ -174,7 +174,7 @@
   // 4. Ord tänds: "Technology should strengthen … less human."
   scene({
     id: "human", t: "less human", hud: "dark", len: 2.5, wipe: "circle", card: { glyph: "h", room: "#5578dc" },
-    html: `<i class="wall"></i><figure class="give"><video src="assets/prym-give.mp4" poster="assets/prym-give.jpg" muted loop autoplay playsinline aria-label="Miss Prym: If you give, you will receive twice as much"></video></figure><div class="say say--left"><span class="say-lab"><span class="md">##</span>${C.commitment.h}</span><p>${wordsOf(rich(C.commitment.say)).map(w => `<span class="w">${w}</span>`).join(" ")}</p></div>`,
+    html: `<i class="wall"></i><figure class="give"><video src="assets/prym-give.mp4" poster="assets/prym-give.jpg" muted loop playsinline preload="none" aria-label="Miss Prym: If you give, you will receive twice as much"></video></figure><div class="say say--left"><span class="say-lab"><span class="md">##</span>${C.commitment.h}</span><p>${wordsOf(rich(C.commitment.say)).map(w => `<span class="w">${w}</span>`).join(" ")}</p></div>`,
     init(el) { this.w = $$(".w", el); this.give = $(".give", el); },
     update(p, t) { const k = ease(seg(p, 0, .25)); this.give.style.transform = `translateY(-50%) scale(${.7 + k * .3}) rotate(${(1 - k) * -12 + Math.sin(t * .8) * 1.2}deg)`; this.give.style.opacity = k;
       const n = this.w.length; this.w.forEach((w, i) => w.style.setProperty("--lit", clamp(seg(p, .08, .8) * n - i).toFixed(3))); }
@@ -185,7 +185,7 @@
     id: "prym", t: "be like prym", hud: "dark", len: 3.9, card: { glyph: "”", room: "#ffabc8" },
     html: `
       <i class="wall"></i>
-      <video class="bgfilm" src="assets/street-lamps.mp4" poster="assets/street-lamps.jpg" muted loop autoplay playsinline aria-hidden="true"></video><i class="bgtint"></i>
+      <video class="bgfilm" src="assets/street-lamps.mp4" poster="assets/street-lamps.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><i class="bgtint"></i>
       <div class="frags">${C.quote.frags.map(f => `<p class="frag">${esc(f)}</p>`).join("")}<p class="frag frag-end">${esc(C.quote.end)}<i class="p"></i></p></div>
       <blockquote class="q-cite"><p>”${esc(C.quote.text)}”</p><cite>— ${esc(C.quote.src)}</cite></blockquote>`,
     init(el) { this.f = $$(".frag", el); this.c = $(".q-cite", el); },
@@ -312,7 +312,7 @@
     style: `--room:${s.room};--floor:${s.floor}`,
     html: `
       <i class="wall"></i>${s.art === "net" ? "" : `<div class="floor"></div>`}
-      ${s.art ? ART[s.art]() : `<img class="sh-img" src="${C.img}${s.img}" alt="">`}
+      ${s.art ? ART[s.art]() : `<div class="glass-wrap"><img class="sh-img" src="${C.img}${s.img}" alt=""><i class="frost"></i><i class="wiper"></i></div>`}
       <h2 class="sh-title">${lines([`<span class="num">${i + 1}.</span> from <span class="sh-x">${s.from.toLowerCase()}<svg viewBox="0 0 100 10" preserveAspectRatio="none"><path pathLength="1" d="M1 6 C 30 3, 60 8, 99 4"/></svg></span>`])}</h2>
       <p class="sh-to">${lines([`${s.to}<i></i>`])}</p>
       <p class="sh-p">${esc(s.p)}</p>
@@ -330,8 +330,13 @@
       reveal(this.to, p, strikeB - .02, strikeB + .1);
       fadeIn(this.p, ease(seg(p, strikeB + .12, strikeB + .24)));
 
-      if (!art) { // bild utan friställning: glider in och svävar
-        this.img.style.transform = `translateX(${(1 - k) * 30}vw) translateY(${Math.sin(t * 1.1) * 6}px) scale(${.92 + k * .08})`;
+      if (!art) { // Transparency: bilden står bakom frostat glas – när "privacy" stryks torkas glaset klart
+        this.img.style.transform = `translateY(${Math.sin(t * 1.1) * 4}px)`;
+        const w = this.q(".glass-wrap"), fr = this.q(".frost"), wp = this.q(".wiper");
+        w.style.transform = `translateX(${(1 - k) * 30}vw)`;
+        const c = easeIO(seg(p, strikeA, strikeB + .1));
+        fr.style.clipPath = `inset(0 0 0 ${c * 100}%)`;
+        wp.style.left = `${c * 100}%`; wp.style.opacity = c > 0 && c < 1 ? 1 : 0;
         return;
       }
       if (art === "woman") {
@@ -509,6 +514,7 @@
       <i class="wall"></i><div class="floor"></div>
       <h2 class="chap"><span class="md">##</span>${lines([`${C.work.h} <span class="hl-human">(${C.work.sub.toLowerCase()})</span>`])}</h2>
       <div class="bubbles">${C.work.paths.map((w, i) => `<a class="bubble" href="${w.href}"><h3>${w.t}</h3><p>${esc(w.p)}</p><span class="go">read more →</span></a>`).join("")}</div>
+      <div class="gold gold--rope" aria-hidden="true"><i class="bar"></i><i class="bar"></i><i class="bar"></i><span class="gold-tag">profit?</span></div>
       <div class="queue"><div class="walker w1"><img src="${C.fig}statue-venus.webp" alt=""><i class="plinth"></i></div><div class="walker w2"><img src="${C.fig}statue-justitia.webp" alt=""><i class="plinth"></i></div></div>
       <svg class="rope" viewBox="0 0 1000 220" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
         <g class="post"><rect x="96" y="40" width="16" height="170" rx="6" fill="#c9a24a"/><circle cx="104" cy="34" r="16" fill="#e2bd5c"/><rect x="70" y="200" width="68" height="14" rx="6" fill="#a8822e"/></g>
@@ -526,6 +532,10 @@
         const step = moving ? Math.abs(Math.sin(t * 7 + i)) : 0;
         w.style.transform = `translateX(${x}vw) translateY(${-step * 2.4}%) rotate(${moving ? Math.sin(t * 7 + i) * 2.5 : Math.sin(t * .8 + i) * .5}deg)`;
       });
+      // guldet ligger där – statyerna går förbi utan att titta
+      const gr = this.gold || (this.gold = this.wk[0].closest("section").querySelector(".gold--rope"));
+      gr.style.opacity = ease(seg(p, .1, .2)) * (1 - seg(p, .85, .95));
+      gr.querySelector(".gold-tag").style.opacity = seg(p, .3, .36) * (1 - seg(p, .6, .66));
       const un = easeIO(seg(p, .22, .36)), sw = Math.sin(t * 1.6) * (1 - un * .6);
       const ex = 896 - un * 420, ey = 40 + un * 160 + Math.sin(un * Math.PI) * 30;
       const cx = (104 + ex) / 2 + sw * 10, cy = 130 + un * 40 + sw * 6;
@@ -580,6 +590,40 @@
         const k = ease(seg(p, .62 + i * .04, .74 + i * .04));
         c.style.opacity = k; c.style.transform = `translateY(${(1 - k) * 40}vh) rotate(${tilt[i + 2] * (1 + (1 - k) * 4)}deg)`;
       });
+    }
+  });
+
+  // 14a. "Du ser ett CV. Vi ser en berättelse." – Intervjuomaten
+  const slips = ["deltog i", "ansvarade för", "avvikelser", "leverantörer", "uppföljning", "kunder", "metoder", "verktyg", "beslut", "resultat", "processer", "dokumentation", "projekt", "förbättring", "samordning", "kvalitet"];
+  const story = ["Hon fick olika personer att", "röra sig åt samma håll,", "följde upp leverantörerna", "– och avvikelserna blev färre."];
+  scene({
+    id: "story", t: "intervjuomaten", hud: "light", len: 3.6, wipe: "circle", card: { glyph: "¶", room: "#f7eaad" },
+    html: `
+      <i class="wall"></i>
+      <p class="lab"><span class="md">##</span>intervjuomaten · missprym.tech</p>
+      <div class="pile">${slips.map((w, i) => `<span class="slip" style="--i:${i}">${w}</span>`).join("")}</div>
+      <p class="st-a">${lines(["You may only see", "a CV."])}</p>
+      <p class="st-b">${lines(["We see a <span class='hl-human'>story.</span>"])}</p>
+      <div class="story-card"><span class="md">&gt;</span> ${story.map(esc).join(" ")}<p>Intervjuomaten får hjälpa kandidaten att minnas. Den får aldrig hitta på.</p><a class="cta" href="https://missprym.tech/intervjuomaten/">Testa Intervjuomaten →</a></div>`,
+    init(el) { this.sl = $$(".slip", el); this.a = $(".st-a", el); this.b = $(".st-b", el); this.card = $(".story-card", el); this.lab = $(".lab", el); },
+    update(p, t) {
+      this.lab.style.opacity = seg(p, 0, .05);
+      reveal(this.a, p, .02, .14);
+      hide(this.a, p, .44, .5);
+      // lapparna ligger i en hög – sedan lyfter de och sorterar sig till en berättelse
+      const sort = easeIO(seg(p, .3, .62)), n = this.sl.length;
+      this.sl.forEach((e, i) => {
+        const r1 = Math.sin(i * 12.9898) * 43758.5453 % 1, r2 = Math.cos(i * 78.233) * 12345.678 % 1;
+        const px = 50 + r1 * 22, py = 72 + r2 * 8, pr = r1 * 40;
+        const nc = portrait() ? 3 : 4, col = i % nc, row = Math.floor(i / nc), tx = (portrait() ? 20 : 14) + col * (portrait() ? 30 : 20), ty = (portrait() ? 26 : 28) + row * (portrait() ? 6.5 : 8);
+        const x = px + (tx - px) * sort, y = py + (ty - py) * sort, rot = pr * (1 - sort);
+        const lift = Math.sin(sort * Math.PI) * -6;
+        e.style.left = x + "%"; e.style.top = (y + lift) + "%";
+        e.style.transform = `translate(-50%, -50%) rotate(${rot + (sort < 1 ? Math.sin(t * 2 + i) * 2 * (1 - sort) : 0)}deg)`;
+        e.style.opacity = 1 - seg(p, .66, .74);
+      });
+      reveal(this.b, p, .5, .62);
+      fadeIn(this.card, ease(seg(p, .7, .82)), 30);
     }
   });
 
@@ -639,7 +683,7 @@
     id: "library", t: C.books.h, hud: "dark", len: 2.5, wipe: "circle", card: { glyph: "B", room: "#1c3d24", light: true },
     html: `
       <i class="wall"></i>
-      <figure class="painting"><video src="assets/portrait.mp4" poster="assets/portrait.jpg" muted loop autoplay playsinline aria-label="Porträtt"></video></figure>
+      <figure class="painting"><video src="assets/portrait.mp4" poster="assets/portrait.jpg" muted loop playsinline preload="none" aria-label="Porträtt"></video></figure>
       <div class="say"><span class="say-lab"><span class="md">##</span>${C.books.h}</span><p>${wordsOf(rich(C.books.say)).map(w => `<span class="w">${w}</span>`).join(" ")}</p></div>
       <p class="books-p">${esc(C.books.p)} <a href="${C.books.href}">Se hyllan →</a></p>
       <div class="shelf" aria-hidden="true">${spines}</div>`,
@@ -679,7 +723,7 @@
   { const i = S.findIndex(x => x.id === "together"); S.splice(1, 0, ...S.splice(i, 1)); }
 
   // baksida på indexkorten: en rad ur innehållet
-  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", "one-percent": "Standing still vs. one percent better every day.", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
+  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", "one-percent": "Standing still vs. one percent better every day.", story: "You may only see a CV. We see a story.", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
   S.forEach(x => (x.back = backs[x.id] || (C.shifts[+x.id.split("-")[1] - 1] || {}).p || ""));
 
   /* ================= bygg scenen ================= */
@@ -704,7 +748,7 @@
   const crumb = $(".hud-crumb"), crumbT = $(".hud-crumb__t");
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  let clock = 0, pausedFor = 0, pausedAt = 0;
+  let clock = 0, pausedFor = 0, pausedAt = 0, lastVis = "";
   function render() {
     const target = scrollY;
     cur += (target - cur) * (reduced ? 1 : .14);
@@ -742,6 +786,13 @@
       ring.style.visibility = "hidden";
     }
 
+    // filmer spelas bara i de scener som syns – sparar batteri och data
+    if (visible.map(v => v.id).join() !== lastVis) {
+      lastVis = visible.map(v => v.id).join();
+      S.forEach(x => $$("video", x.el).forEach(v => {
+        if (visible.includes(x) && !body.classList.contains("paused")) { if (v.preload !== "auto") v.preload = "auto"; v.play().catch(() => {}); } else v.pause();
+      }));
+    }
     if (active !== s) {
       active = s;
       body.dataset.hud = s.hud;
@@ -879,7 +930,7 @@
     const pb = e.target.closest("[data-pause]"); if (!pb) return;
     const on = !body.classList.contains("paused"); body.classList.toggle("paused", on); pb.setAttribute("aria-pressed", on);
     if (on) pausedAt = performance.now() / 1000; else pausedFor += performance.now() / 1000 - pausedAt;
-    $$("video").forEach(v => (on ? v.pause() : v.play().catch(() => {})));
+    if (on) $$("video").forEach(v => v.pause()); else lastVis = "";
   });
   document.addEventListener("click", e => { if (e.target.closest("[data-next]")) { const n = S[1]; scrollTo({ top: (n.start + .6) * VH, behavior: "smooth" }); } });
 
