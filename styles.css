@@ -915,3 +915,26 @@ html { text-rendering: optimizeLegibility; font-kerning: normal; }
 @keyframes lpulse { 50% { transform: scale(.4); } }
 @media (prefers-reduced-motion: reduce) { .loader { transition: none; } }
 @media (orientation: landscape) and (max-height: 760px) { .sh-to { font-size: calc(var(--fs-word) * .85); } .sh-p { bottom: 21vh; width: min(34vw, 26em); font-size: 14px; } .sh-to { top: calc(var(--top) + 1.9 * var(--fs-say)); } }
+
+/* finalen: stumfilm */
+.L-finale { background: #0d0d0d; }
+.silent { position: absolute; inset: 0; filter: grayscale(1) contrast(1.15); overflow: hidden; }
+.sky { position: absolute; inset: 0 0 45% 0; background: linear-gradient(#e9e6df, #bdb9b1); }
+.hills { position: absolute; left: -5%; right: -5%; top: 44%; height: 14%; background: #6f6c66; clip-path: polygon(0 100%, 0 55%, 10% 30%, 22% 52%, 34% 20%, 48% 46%, 60% 18%, 74% 42%, 86% 25%, 100% 50%, 100% 100%); }
+.road { position: absolute; left: 0; right: 0; top: 55%; bottom: 0; background: linear-gradient(#8a8780, #4b4944); }
+.road i { position: absolute; left: 50%; top: 0; bottom: 0; width: 70%; transform: translateX(-50%); background: linear-gradient(#cfcac0, #a7a299); clip-path: polygon(48% 0, 52% 0, 100% 100%, 0 100%); }
+.pair { position: absolute; left: 50%; bottom: 4vh; display: flex; gap: 0; align-items: flex-end; transform-origin: 50% 100%; will-change: transform; }
+.walk { height: 46vh; width: auto; filter: brightness(.28) contrast(1.3); transform-origin: 50% 100%; }
+.w-b { margin-left: -4%; transform: scaleX(-1); }
+.title-card { position: absolute; inset: 0; display: grid; place-items: center; background: #141414; color: #e9e6df; text-align: center; opacity: 0; z-index: 2; }
+.title-card::before { content: ""; position: absolute; inset: 7vh 9vw; border: 2px solid rgba(233,230,223,.6); outline: 1px solid rgba(233,230,223,.3); outline-offset: 8px; }
+.title-card p { margin: 0; font-family: var(--f-serif); font-size: clamp(30px, 4.4vw, 84px); line-height: 1.15; letter-spacing: .01em; }
+.title-card em { font-style: italic; }
+.tc3 { gap: 2vh; align-content: center; }
+.tc3 .fin { font-size: clamp(56px, 9vw, 180px); font-style: italic; }
+.tc3 .fin i { display: inline-block; width: .14em; height: .14em; margin-left: .05em; border-radius: 50%; background: var(--accent); }
+.tc3 a { position: relative; font-family: var(--f-mono); color: #e9e6df; font-size: clamp(14px, 1.3vw, 20px); letter-spacing: .08em; }
+.flick { position: absolute; inset: 0; background: #fff; mix-blend-mode: overlay; pointer-events: none; z-index: 3; }
+.vign { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.75)); pointer-events: none; z-index: 3; }
+.scratch { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,.8); z-index: 3; pointer-events: none; }
+@media (orientation: portrait) { .walk { height: 30vh; } .title-card::before { inset: 10vh 6vw; } }

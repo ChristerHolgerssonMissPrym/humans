@@ -723,8 +723,38 @@
   { const i = S.findIndex(x => x.id === "together"); S.splice(1, 0, ...S.splice(i, 1)); }
 
   // baksida på indexkorten: en rad ur innehållet
-  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", "one-percent": "Standing still vs. one percent better every day.", story: "You may only see a CV. We see a story.", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
+  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", "one-percent": "Standing still vs. one percent better every day.", finale: "Be proud. Be like Prym.", story: "You may only see a CV. We see a story.", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
   S.forEach(x => (x.back = backs[x.id] || (C.shifts[+x.id.split("-")[1] - 1] || {}).p || ""));
+
+  // 18. Finalen – stumfilm: mellantext, och två figurer som går mot horisonten
+  scene({
+    id: "finale", t: "the end", hud: "dark", len: 3.6, wipe: "fade", card: { glyph: "∎", room: "#1a1a1a", light: true },
+    html: `
+      <div class="silent">
+        <div class="sky"></div><div class="hills"></div>
+        <div class="road"><i></i></div>
+        <div class="pair"><img class="walk w-a" src="${C.fig}statue-justitia.webp" alt=""><img class="walk w-b" src="${C.fig}statue-venus.webp" alt=""></div>
+        <div class="title-card tc1"><p>”Is it even worth trying?”</p></div>
+        <div class="title-card tc2"><p>Be proud.<br>Be like Prym.<br><em>Let's walk on – together.</em></p></div>
+        <div class="title-card tc3"><p class="fin">The End<i></i></p><a href="mailto:${K.email}">${K.email}</a></div>
+        <i class="flick"></i><i class="vign"></i><i class="scratch"></i>
+      </div>`,
+    init(el) { this.q = n => $(n, el); },
+    update(p, t) {
+      const tc1 = this.q(".tc1"), tc2 = this.q(".tc2"), tc3 = this.q(".tc3");
+      const show = (e, a, b) => { const k = seg(p, a, a + .04) * (1 - seg(p, b - .04, b)); e.style.opacity = k; };
+      show(tc1, 0, .2); show(tc2, .46, .66);
+      tc3.style.opacity = seg(p, .9, .97);
+      // figurerna går – små gung i steget – och krymper mot horisonten
+      const w = seg(p, .16, .9), sc = 1 - w * .78;
+      this.q(".pair").style.transform = `translateX(-50%) translateY(${-w * 34}vh) scale(${sc})`;
+      this.q(".w-a").style.transform = `translateY(${-Math.abs(Math.sin(t * 5)) * 3}%) rotate(${Math.sin(t * 5) * 2}deg)`;
+      this.q(".w-b").style.transform = `translateY(${-Math.abs(Math.sin(t * 5 + 1.6)) * 3}%) rotate(${Math.sin(t * 5 + 1.6) * 2}deg)`;
+      this.q(".flick").style.opacity = .05 + Math.abs(Math.sin(t * 23)) * .06;
+      this.q(".scratch").style.left = `${(Math.sin(t * 3.1) * .5 + .5) * 100}%`;
+      this.q(".scratch").style.opacity = Math.sin(t * 7) > .6 ? .5 : 0;
+    }
+  });
 
   /* ================= bygg scenen ================= */
   const stage = $("#stage");
