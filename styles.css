@@ -938,3 +938,46 @@ html { text-rendering: optimizeLegibility; font-kerning: normal; }
 .vign { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.75)); pointer-events: none; z-index: 3; }
 .scratch { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,.8); z-index: 3; pointer-events: none; }
 @media (orientation: portrait) { .walk { height: 30vh; } .title-card::before { inset: 10vh 6vw; } }
+
+/* ================= designrunda ================= */
+/* etiketter: mono, versaler, luft – samma överallt */
+.lab, .h2, .say-lab, .chap .md, .i-head .md { font-family: var(--f-mono) !important; font-weight: 400 !important; text-transform: uppercase; letter-spacing: .14em; font-size: clamp(11px, .8vw, 13px) !important; }
+.lab .md, .h2 .md, .say-lab .md { margin-right: .6em; }
+.chap .md { display: block; vertical-align: 0; margin: 0 0 1.4em; }
+/* rubriker: tajtare och jämnare */
+.chap, .sh-title, .lead { letter-spacing: -.04em; }
+.chap { font-weight: 700; }
+
+/* Who we are: krämvägg i stället för brunt – figurerna lyser */
+.L-who { --wall: #f7eaad; }
+.L-who .wall::after { opacity: .18; }
+
+/* golven i From→To-rummen: samma ton som väggen, fast mörkare */
+.L-shift .floor { --floor: color-mix(in srgb, var(--room) 72%, #201e1f); }
+.L-shift .floor::before { height: 6px; }
+
+/* textblock i rummen: ren panel i stället för text rakt över bilden */
+.sh-p { background: rgba(255,255,255,.55); backdrop-filter: blur(10px) saturate(1.2); -webkit-backdrop-filter: blur(10px) saturate(1.2); border-radius: 14px; padding: 1em 1.2em; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
+@media (orientation: portrait) { .sh-p { border-radius: 12px; padding: .8em .9em; font-size: 13.5px; line-height: 1.38; } }
+
+/* kontakt: läsbar text på korallen */
+.L-contact { color: #fff8e6; }
+.L-contact .c-lead { color: #fff8e6; opacity: .92; }
+.L-contact .c-mail { color: #fff8e6; }
+.L-contact .c-row, .L-contact .foot { color: #fff8e6; }
+.L-contact .c-mail:hover { color: #f2cd5c; }
+
+/* event: lugnare, tydligare hierarki */
+.L-events { background: #fbf6ea; }
+.ev-past { border-top-color: rgba(32,30,31,.15); }
+.ev-box .cta { background: var(--ink) !important; color: var(--paper) !important; }
+
+/* kort och paneler: samma radie och skuggspråk */
+.lcard, .bubble, .menu, .story-card, .fl, .icard__face { box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 12px 28px rgba(0,0,0,.10); }
+.bubble { border-color: rgba(32,30,31,.85); }
+.sh-p { font-size: clamp(13px, .95vw, 16px); width: min(32vw, 25em); line-height: 1.42; }
+@media (orientation: portrait) {
+  .sh-p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; line-clamp: 4; overflow: hidden; width: auto; }
+  .L-contact .cradle { top: 9vh; }
+}
+@media (orientation: portrait) { .sh-p { bottom: 11vh !important; } }

@@ -735,7 +735,7 @@
         <div class="road"><i></i></div>
         <div class="pair"><img class="walk w-a" src="${C.fig}statue-justitia.webp" alt=""><img class="walk w-b" src="${C.fig}statue-venus.webp" alt=""></div>
         <div class="title-card tc1"><p>”Is it even worth trying?”</p></div>
-        <div class="title-card tc2"><p>Be proud.<br>Be like Prym.<br><em>Let's walk on – together.</em></p></div>
+        <div class="title-card tc2"><p>Be proud.<br><em>Be like Prym.</em></p></div>
         <div class="title-card tc3"><p class="fin">The End<i></i></p><a href="mailto:${K.email}">${K.email}</a></div>
         <i class="flick"></i><i class="vign"></i><i class="scratch"></i>
       </div>`,
