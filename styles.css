@@ -311,10 +311,10 @@ body:not(.is-loading) .o-title .ch { transform: none; }
 .easel img { width: 100%; aspect-ratio: 1; object-fit: cover; outline: 1.5px solid var(--cardred); outline-offset: -1.5px; background: var(--room); }
 .easel span { position: absolute; left: clamp(9px, .9vw, 15px); bottom: clamp(8px, .7vw, 12px); font-family: var(--f-serif); font-style: italic; color: var(--cardred); font-size: clamp(16px, 1.6vw, 28px); line-height: 1; }
 .easel b { position: absolute; left: clamp(32px, 3.2vw, 56px); right: 8px; bottom: clamp(10px, .9vw, 15px); font-weight: 700; font-size: clamp(10px, .85vw, 14px); line-height: 1.15; color: var(--ink); }
-.L-who .cap-wrap { position: absolute; left: var(--pad); top: calc(var(--top) + 3.6 * var(--fs-say)); width: min(88vw, 21em); }
+.L-who .cap-wrap { position: absolute; right: var(--pad); top: var(--top); width: min(40vw, 21em); }
 .L-who .cap { position: absolute; left: 0; top: 0; font-size: var(--fs-note); line-height: 1.32; letter-spacing: -.01em; color: var(--ink); will-change: opacity, transform; }
 .L-who .chap { color: var(--ink); }
-@media (orientation: portrait) { .L-who .cap-wrap { top: calc(var(--top) + 4.4 * var(--fs-say)); } }
+@media (orientation: portrait) { .L-who .cap-wrap { left: var(--pad); right: var(--pad); width: auto; top: calc(var(--top) + 4.4 * var(--fs-say)); } }
 
 /* --- from → to-rum --- */
 .L-shift { --wall: var(--room); }
@@ -420,7 +420,9 @@ body:not(.is-loading) .o-title .ch { transform: none; }
 @media (orientation: portrait) { .books-p { top: 62%; font-size: 13px; } }
 
 /* --- kontakt --- */
-.L-contact { background: var(--ink); }
+.L-contact { background: #e65564; color: #ffd765; }
+.L-contact .md { color: var(--paper); }
+.L-contact .c-mail:hover { color: var(--paper); }
 .c-lead { position: absolute; left: var(--pad); top: var(--top); width: min(88vw, 22em); font-size: var(--fs-cap); letter-spacing: -.018em; line-height: 1.12; }
 .c-mail { position: absolute; left: var(--pad); bottom: 22vh; font-weight: 300; font-size: clamp(34px, 8vw, 170px); letter-spacing: -.045em; line-height: 1; text-decoration: none; white-space: nowrap; }
 .c-mail:hover { font-family: var(--f-serif); font-style: italic; color: var(--pink); letter-spacing: -.02em; }
@@ -493,3 +495,35 @@ body.index-open .index { clip-path: circle(150% at calc(100% - 64px) 44px); visi
   .grain { animation: none; }
   .ln, .o-title .ch { transition: none; transform: none; }
 }
+
+/* ---------- figurer från Figma ---------- */
+.fig { position: absolute; right: 0; bottom: 0; height: 100%; aspect-ratio: 16 / 9; pointer-events: none; }
+.pc { position: absolute; max-width: none; will-change: transform; transform-origin: 50% 100%; }
+.a-top { transform-origin: 60% 0; }
+.a-sc { transform-origin: 30% 50%; filter: drop-shadow(0 6px 6px rgba(80,20,20,.18)); }
+.a-free { transform-origin: 20% 90%; }
+.a-woman { transform-origin: 70% 100%; }
+.a-net { transform-origin: 60% 60%; }
+.a-flasks { transform-origin: 50% 100%; }
+.bub { position: absolute; top: 40%; width: var(--s); height: var(--s); border-radius: 50%; border: 1.5px solid rgba(255,255,255,.75); background: rgba(255,255,255,.18); opacity: 0; }
+@media (orientation: portrait) { .fig { height: 60%; } .L-shift .sh-to { z-index: 1; } }
+
+.roll { flex: none; width: clamp(160px, 20vw, 340px); aspect-ratio: 1; margin: 0 0 calc(30vh - 6px) 0; will-change: transform; filter: drop-shadow(0 18px 18px rgba(70,40,0,.28)); }
+.roll img { width: 100%; height: 100%; }
+
+.cradle { position: absolute; right: 3vw; top: 0; height: 58vh; width: min(34vw, 50vh); display: flex; justify-content: center; will-change: transform; }
+.pend { position: relative; width: 25%; height: 100%; transform-origin: 50% 0; }
+.pend i { position: absolute; left: 50%; top: 0; bottom: 50%; width: 1.5px; background: #ffd765; transform: translateX(-50%); }
+.pend b { position: absolute; left: 1%; right: 1%; top: 50%; aspect-ratio: 1; border-radius: 50%; background: #ffd765; transform: translateY(-50%); }
+@media (orientation: portrait) { .cradle { right: 6vw; height: 34vh; width: 60vw; opacity: .9; } }
+
+/* nätverksrummet: fåglar bakom bordet */
+.L-shift .cloth { --ch: 30vh; }
+.balloon { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.bal-str { fill: none; stroke: var(--ink); stroke-width: 2; opacity: .7; }
+.bal-b { fill: var(--tomato); }
+.bal-h { fill: rgba(255,255,255,.35); }
+.bal-k { fill: #b4231a; }
+.a-crow, .a-owl { transform-origin: 50% 100%; }
+.a-robin, .a-robin2 { transform-origin: 50% 90%; }
+.L-shift .cloth ~ .fig { z-index: 1; }

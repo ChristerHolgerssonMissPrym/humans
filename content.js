@@ -5,6 +5,7 @@ window.PRYM = {
   file: "MISSPRYM.md",
   byline: "MISS P AKTIEBOLAG · GÖTEBORG",
   img: "https://www.missprym.com/images/",
+  fig: "assets/figma/",  // friställda figurer från Figma (OneDrive › Marknadsföringsmaterial › FIGMA_)
 
   hero: {
     quote: [
@@ -61,19 +62,19 @@ window.PRYM = {
 
   shifts: [
     {
-      from: "Profit", to: "Purpose", img: "OTPurpose_phone.jpg", room: "#ffc3e5", floor: "#d59ce6",
+      from: "Profit", to: "Purpose", img: "OTPurpose_phone.jpg", art: "woman", room: "#ffc2e3", floor: "#d59ce6",
       p: "We learn from Miss Prym's struggle with a moral choice. She is offered wealth in exchange for committing evil. Choosing purpose over profit, she rejects the deal, demonstrating a profound commitment to morality and human values. We will do the same."
     },
     {
-      from: "Hierarchies", to: "Networks", img: "OTNetworking_phone.webp", room: "#aab2c6", floor: "#1c3d24",
+      from: "Hierarchies", to: "Networks", img: "OTNetworking_phone.webp", art: "net", room: "#a9b2c3", floor: "#1c3d24",
       p: "Carl Jung called it synchronicity. Meaningful connections can create outcomes no one could plan alone. That belief shapes how we organise. We favour networks over rigid hierarchies, bringing people and knowledge together around a shared purpose. We dare kindness, because trust makes collaboration stronger. In nature and society, simple interactions can produce unexpected results. This is emergence. We apply the same principle to our work, forming teams in which consultants, clients and partners create more together than any individual could achieve alone."
     },
     {
-      from: "Controlling", to: "Empowering", img: "OTEmpowering_phone.jpg", room: "#ffecaa", floor: "#cf4a1a",
+      from: "Controlling", to: "Empowering", img: "OTEmpowering_phone.jpg", art: "puppet", room: "#ffecaa", floor: "#cf4a1a",
       p: "Shifting from controlling to empowering transforms leadership. Embracing collaboration, trust and autonomy fosters innovation, resilience and employee growth, creating a dynamic and empowered organisational culture. We don't fear chaos. We face it together."
     },
     {
-      from: "Planning", to: "Experiments", img: "OTExperiment_phone.jpg", room: "#e75564", floor: "#f4efe8",
+      from: "Planning", to: "Experiments", img: "OTExperiment_phone.jpg", art: "flasks", room: "#e65564", floor: "#f4efe8",
       p: "We prefer doing. Transitioning from rigid planning to embracing experiments unlocks potential. Iterative, adaptive approaches allow for learning, flexibility and discovery, fostering a dynamic environment that thrives on continuous improvement and creative exploration. We act to generate value through engineering, open-source code and practical action, not by talking about it."
     },
     {

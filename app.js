@@ -150,51 +150,140 @@
     }
   });
 
-  // 6. Who we are – långt bord som panoreras
+  // 6. Who we are – långt bord som panoreras, Christer rullar in
   scene({
-    id: "who", t: C.who.h, hud: "light", len: 5, wipe: "circle", card: { glyph: "W", room: "#c7963c" },
+    id: "who", t: C.who.h, hud: "light", len: 5, wipe: "circle", card: { fig: "christer.webp", glyph: "W", room: "#c7963c" },
     html: `
       <i class="wall"></i><div class="cloth"></div>
-      <div class="strip">${C.shifts.map((s, i) => `<figure class="easel" style="--a:${tilt[i + 4]}deg;--room:${s.room}"><img src="${C.img}${s.img}" alt="" loading="lazy"><span>${i + 1}</span><b>from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}</b></figure>`).join("")}</div>
+      <div class="strip"><figure class="roll"><img src="${C.fig}christer.webp" alt="Christer Holgersson"></figure>${C.shifts.map((s, i) => `<figure class="easel" style="--a:${tilt[i + 4]}deg;--room:${s.room}"><img src="${C.img}${s.img}" alt="" loading="lazy"><span>${i + 1}</span><b>from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}</b></figure>`).join("")}</div>
       <h2 class="chap"><span class="md">##</span>${lines([rich(C.who.head)])}</h2>
       <div class="cap-wrap">${C.who.p.map(t => `<p class="cap">${esc(t)}</p>`).join("")}</div>`,
-    init(el) { this.chap = $(".chap", el); this.strip = $(".strip", el); this.caps = $$(".cap", el); },
-    update(p) {
+    init(el) { this.chap = $(".chap", el); this.strip = $(".strip", el); this.caps = $$(".cap", el); this.roll = $(".roll", el); this.easels = $$(".easel", el); },
+    update(p, t) {
       reveal(this.chap, p, .03, .12);
       const max = this.strip.scrollWidth - innerWidth;
-      this.strip.style.transform = `translateX(${-easeIO(seg(p, .08, 1)) * max}px)`;
+      const x = -easeIO(seg(p, .08, 1)) * max;
+      this.strip.style.transform = `translateX(${x}px)`;
+      // Christer rullar in från höger och stannar; rotationen följer sträckan
+      const k = easeIO(seg(p, 0, .14)), r = this.roll.offsetWidth / 2 || 100;
+      const dx = (1 - k) * innerWidth * .9;
+      this.roll.style.transform = `translateX(${dx}px) rotate(${(dx + x * 0) / r * 57.3}deg)`;
+      this.easels.forEach((e, i) => (e.style.transform = `rotate(${tilt[i + 4] + Math.sin(t * 1.3 + i) * .8}deg)`));
       const n = this.caps.length;
       this.caps.forEach((c, i) => {
         const a = .14 + i * .27, b = a + .27;
-        const k = ease(seg(p, a, a + .05)) * (i === n - 1 ? 1 : 1 - easeIO(seg(p, b - .04, b)));
-        fadeIn(c, k);
+        const kk = ease(seg(p, a, a + .05)) * (i === n - 1 ? 1 : 1 - easeIO(seg(p, b - .04, b)));
+        fadeIn(c, kk);
       });
     }
   });
 
-  // 7–11. From → To
-  const AR = { "OTPurpose_phone.jpg": 2132 / 2158, "OTNetworking_phone.webp": 1920 / 2160, "OTEmpowering_phone.jpg": 1651 / 2159, "OTExperiment_phone.jpg": 1920 / 2160, "OTTransparency_phone.jpg": 2243 / 2160 };
+  // 7–11. From → To – figurerna från Figma, friställda och animerade
+  const FIG = { // placering i Figma-ramen 1920×1080
+    "purpose-woman": [854, 99, 1071, 986], "net-all": [954, 0, 971, 1085],
+    "emp-tophand": [1095, 0, 425, 520], "emp-scissors": [1189, 389, 370, 192], "emp-free": [1093, 509, 832, 552],
+    "exp-flasks": [1009, 247, 696, 618],
+    // fåglarna i nätverksrummet – egen uppställning kring bordet (ramenheter)
+    "bird-crow": [1010, 300, 431, 474], "bird-owl": [1560, 290, 261, 487],
+    "bird-bowl": [1290, 690, 274, 149], "bird-robin": [1610, 660, 239, 221], "bird-robin2": [1235, 560, 122, 166]
+  };
+  const pc = (name, cls = "") => { const [x, y, w, h] = FIG[name]; return `<img class="pc ${cls}" src="${C.fig}${name}.webp" alt="" style="left:${x / 19.2}%;top:${y / 10.8}%;width:${w / 19.2}%;height:${h / 10.8}%">`; };
+  const BUB = Array.from({ length: 16 }, (_, i) => [1110 + (i * 97) % 520, 0.4 + (i * 0.37) % 1, 5 + (i * 7) % 9, (i * .173) % 1]);
+  const ART = {
+    woman: () => `<div class="fig">${pc("purpose-woman", "a-woman")}</div>`,
+    net: () => `
+      <div class="fig">
+        <svg class="balloon" viewBox="0 0 1920 1080" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
+          <g class="bal-g">
+            <path class="bal-str" d="M1438 453 C 1470 380, 1430 300, 1500 205"/>
+            <ellipse cx="1500" cy="118" rx="72" ry="88" class="bal-b"/>
+            <ellipse cx="1474" cy="88" rx="16" ry="26" class="bal-h"/>
+            <path d="M1490 204 L1510 204 L1500 192 Z" class="bal-k"/>
+          </g>
+        </svg>
+        ${pc("bird-owl", "a-owl")}${pc("bird-crow", "a-crow")}
+      </div>
+      <div class="cloth"></div>
+      <div class="fig">${pc("bird-bowl", "a-bowl")}${pc("bird-robin2", "a-robin2")}${pc("bird-robin", "a-robin")}</div>`,
+    puppet: () => `<div class="fig">${pc("emp-free", "a-free")}${pc("emp-tophand", "a-top")}${pc("emp-scissors", "a-sc")}</div>`,
+    flasks: () => `<div class="fig">${BUB.map(b => `<i class="bub" style="left:${b[0] / 19.2}%;--s:${b[2]}px"></i>`).join("")}${pc("exp-flasks", "a-flasks")}</div>`
+  };
   C.shifts.forEach((s, i) => scene({
-    id: `shift-${i + 1}`, t: `${i + 1}. from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}`, hud: "light", len: 3.6, wipe: "circle",
-    card: { img: s.img, n: String(i + 1), room: s.room },
+    id: `shift-${i + 1}`, t: `${i + 1}. from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}`, hud: "light", len: s.art === "puppet" ? 4.4 : 3.6, wipe: "circle",
+    card: { img: s.img, n: String(i + 1), room: s.room }, art: s.art,
     style: `--room:${s.room};--floor:${s.floor}`,
     html: `
-      <i class="wall"></i><div class="floor"></div>
-      <i class="sh-shadow"></i>
-      <img class="sh-img" src="${C.img}${s.img}" alt="" style="--ar:${AR[s.img]}">
+      <i class="wall"></i>${s.art === "net" ? "" : `<div class="floor"></div>`}
+      ${s.art ? ART[s.art]() : `<img class="sh-img" src="${C.img}${s.img}" alt="">`}
       <h2 class="sh-title">${lines([`<span class="num">${i + 1}.</span> from <span class="sh-x">${s.from.toLowerCase()}<svg viewBox="0 0 100 10" preserveAspectRatio="none"><path pathLength="1" d="M1 6 C 30 3, 60 8, 99 4"/></svg></span>`])}</h2>
       <p class="sh-to">${lines([`${s.to}<i></i>`])}</p>
       <p class="sh-p">${esc(s.p)}</p>
       <p class="sh-n">${i + 1} / ${C.shifts.length}</p>`,
-    init(el) { this.img = $(".sh-img", el); this.title = $(".sh-title", el); this.x = $(".sh-x path", el); this.to = $(".sh-to", el); this.p = $(".sh-p", el); },
-    update(p) {
-      const k = ease(seg(p, 0, .32));
-      this.img.style.transform = `translateX(${(1 - k) * 30}vw) scale(${.92 + k * .08})`;
+    init(el) {
+      this.fig = $(".fig", el); this.img = $(".sh-img", el); this.title = $(".sh-title", el); this.x = $(".sh-x path", el); this.to = $(".sh-to", el); this.p = $(".sh-p", el);
+      this.q = n => $(n, el); this.bubs = $$(".bub", el);
+    },
+    update(p, t) {
+      const art = this.art, k = ease(seg(p, 0, .3));
+      // tidpunkter: marionetten klipps loss när ordet stryks
+      const strikeA = art === "puppet" ? .4 : .22, strikeB = art === "puppet" ? .46 : .36;
       reveal(this.title, p, .05, .16);
-      this.x.style.strokeDashoffset = 1 - easeIO(seg(p, .22, .36));
-      reveal(this.to, p, .34, .46);
-      fadeIn(this.p, ease(seg(p, .48, .6)));
-      this.img.style.opacity = 1;
+      this.x.style.strokeDashoffset = 1 - easeIO(seg(p, strikeA, strikeB));
+      reveal(this.to, p, strikeB - .02, strikeB + .1);
+      fadeIn(this.p, ease(seg(p, strikeB + .12, strikeB + .24)));
+
+      if (!art) { // bild utan friställning: glider in och svävar
+        this.img.style.transform = `translateX(${(1 - k) * 30}vw) translateY(${Math.sin(t * 1.1) * 6}px) scale(${.92 + k * .08})`;
+        return;
+      }
+      if (art === "woman") {
+        const w = this.q(".a-woman");
+        // glider in på golvplankorna och läser – andas, bläddrar med en lätt nick
+        w.style.transform = `translateX(${(1 - k) * 45}vw) rotate(${Math.sin(t * .9) * .5 - (1 - k) * 4}deg) scale(${1 + Math.sin(t * 1.8) * .004})`;
+      }
+      if (art === "net") {
+        // fåglarna reser sig bakom bordet, rödhakarna hoppar in, kråkan håller ballongen
+        const up = (a, b) => 1 - ease(seg(p, a, b));
+        const owl = this.q(".a-owl"), crow = this.q(".a-crow"), g = this.q(".bal-g");
+        const uo = up(.02, .16), uc = up(.06, .2);
+        owl.style.transform = `translateY(${uo * 105}%) rotate(${Math.sin(t * .8) * 2.2}deg)`;
+        crow.style.transform = `translateY(${uc * 105}%) rotate(${Math.sin(t * 1.1 + 1) * 1.4}deg)`;
+        const dy = uc * 474 * 1.05 - Math.sin(t * 1.1 + 1) * 3;
+        g.setAttribute("transform", `translate(0 ${dy - ease(seg(p, .2, .4)) * 12}) rotate(${Math.sin(t * .9) * 5 - uc * 8} 1438 453)`);
+        const bowl = this.q(".a-bowl");
+        bowl.style.transform = `translateX(${up(.12, .26) * -60}vw)`;
+        const hop = (el, a, b, from, dir) => {
+          const kk = seg(p, a, b), x = (1 - ease(kk)) * from;
+          const y = -Math.abs(Math.sin(kk * Math.PI * 3)) * 18 * (1 - kk);
+          const peck = kk >= 1 ? Math.max(0, Math.sin(t * 2.2 + dir)) ** 6 * 14 : 0;
+          el.style.transform = `translate(${x}vw, ${y}%) rotate(${dir * peck}deg)`;
+        };
+        hop(this.q(".a-robin"), .18, .34, 40, 1);
+        hop(this.q(".a-robin2"), .24, .4, -50, -1);
+      }
+      if (art === "puppet") {
+        const top = this.q(".a-top"), sc = this.q(".a-sc"), fr = this.q(".a-free");
+        const cut = seg(p, strikeA, strikeB), freed = seg(p, strikeB, strikeB + .14);
+        const pull = Math.sin(t * 1.7) * (1 - freed); // dockföraren rycker i trådarna
+        // övre handen: in uppifrån, rycker, flyger iväg efter klippet
+        top.style.transform = `translateY(${(1 - k) * -60 + pull * 2.2 - easeIO(freed) * 120}%) rotate(${pull * 1.6 - easeIO(freed) * 12}deg)`;
+        // saxen: in från höger, klipper två gånger, ut igen
+        const inS = ease(seg(p, .2, strikeA)), outS = easeIO(seg(p, strikeB + .1, strikeB + .24));
+        const snip = Math.sin(cut * Math.PI * 4) * 9;
+        sc.style.transform = `translateX(${(1 - inS) * 70 + outS * 90}vw) rotate(${snip}deg)`;
+        // marionetten: dinglar i trådarna, gör ett glädjeskutt när den är fri
+        const hop = Math.sin(seg(p, strikeB + .02, strikeB + .12) * Math.PI) * 5;
+        fr.style.transform = `translateX(${(1 - k) * 20}vw) translateY(${pull * .6 - hop}%) rotate(${pull * 1.2 * (1 - freed)}deg)`;
+      }
+      if (art === "flasks") {
+        const f = this.q(".a-flasks");
+        f.style.transform = `translateY(${(1 - k) * 40}vh) rotate(${Math.sin(t * 2.4) * .6}deg)`;
+        this.bubs.forEach((b, i) => {
+          const B = BUB[i], cyc = (t * .12 * B[1] + B[3]) % 1;
+          b.style.top = `${(44 - cyc * 40)}%`;
+          b.style.opacity = k * Math.sin(cyc * Math.PI) * .9;
+        });
+      }
     }
   }));
 
@@ -300,17 +389,28 @@
     }
   });
 
-  // 17. Kontakt
+  // 17. Kontakt – Newtons vagga från Figma-skissen
   scene({
-    id: "contact", t: K.h, hud: "dark", len: 2.4, wipe: "circle", card: { glyph: "@", mono: true, room: "#f4efe8" },
+    id: "contact", t: K.h, hud: "dark", len: 2.6, wipe: "circle", card: { glyph: "@", mono: true, room: "#e65564" },
     html: `
+      <div class="cradle" aria-hidden="true">${[0, 1, 2, 3].map(i => `<span class="pend"><i></i><b></b></span>`).join("")}</div>
       <p class="lab"><span class="md">##</span>${K.h}</p>
       <p class="c-lead">${esc(K.p)}</p>
       <a class="c-mail" href="mailto:${K.email}">${K.email}</a>
       <div class="c-row"><span><span class="md">&gt;</span>${K.address}</span><a href="${K.linkedin}">LinkedIn</a><a href="https://missprym.tech">missprym.tech</a></div>
       <footer class="foot"><span>— Miss P Aktiebolag</span><button type="button" data-read>läs som text</button><b>MISSPRYM<span>.md</span></b></footer>`,
-    init(el) { this.items = $$(".lab, .c-lead, .c-mail, .c-row, .foot", el); },
-    update(p) { this.items.forEach((it, i) => fadeIn(it, ease(seg(p, .02 + i * .06, .16 + i * .06)))); }
+    init(el) { this.items = $$(".lab, .c-lead, .c-mail, .c-row, .foot", el); this.pend = $$(".pend", el); this.cradle = $(".cradle", el); },
+    update(p, t) {
+      this.items.forEach((it, i) => fadeIn(it, ease(seg(p, .02 + i * .06, .16 + i * .06))));
+      // kulorna faller ner uppifrån och börjar slå
+      const drop = ease(seg(p, 0, .3));
+      this.cradle.style.transform = `translateY(${(1 - drop) * -100}%)`;
+      const w = Math.sin(t * 3.2), A = 26 * drop;
+      this.pend.forEach((pd, i) => {
+        const ang = i === 0 ? Math.min(0, w) * A : i === 3 ? Math.max(0, w) * A : 0;
+        pd.style.transform = `rotate(${-ang}deg)`;
+      });
+    }
   });
 
   /* ================= bygg scenen ================= */
@@ -353,8 +453,9 @@
       x.el.classList.toggle("is-top", x === s && visible.length > 1);
       x.el.classList.toggle("is-under", on && x !== s);
     });
-    s.update?.(p);
-    if (visible.length > 1) S[k - 1].update?.(1);
+    const T = performance.now() / 1000;
+    s.update?.(p, T);
+    if (visible.length > 1) S[k - 1].update?.(1, T);
 
     // övergång
     if (visible.length > 1 && s.wipe === "circle") {
@@ -422,7 +523,7 @@
   /* ================= index ================= */
   $(".index__track").innerHTML = S.map((s, i) => {
     const c = s.card;
-    const pic = c.img ? `<img src="${C.img}${c.img}" alt="" loading="lazy">` : `<span class="icard__glyph${c.mono ? " mono" : ""}" ${c.light ? 'style="color:#f4efe8"' : ""}>${c.glyph}</span>`;
+    const pic = c.img ? `<img src="${C.img}${c.img}" alt="" loading="lazy">` : c.fig ? `<img src="${C.fig}${c.fig}" alt="" loading="lazy" style="object-fit:contain;padding:8%">` : `<span class="icard__glyph${c.mono ? " mono" : ""}" ${c.light ? 'style="color:#f4efe8"' : ""}>${c.glyph}</span>`;
     return `<a class="icard" href="#${s.id}" style="--a:${tilt[i]}deg"><span class="icard__face"><span class="icard__pic" style="--room:${c.room}">${pic}</span><span class="icard__n">${c.n || String.fromCharCode(96 + i)}</span><span class="icard__t">${s.t}</span></span><i class="icard__dot"></i></a>`;
   }).join("") + `<a class="icard" href="#file" data-file style="--a:${tilt[17]}deg"><span class="icard__face"><span class="icard__pic" style="--room:#0b0b0b"><span class="icard__glyph mono">.md</span></span><span class="icard__n">↓</span><span class="icard__t">MISSPRYM.md — hela filen</span></span></a>`;
 
