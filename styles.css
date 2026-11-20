@@ -981,3 +981,16 @@ html { text-rendering: optimizeLegibility; font-kerning: normal; }
   .L-contact .cradle { top: 9vh; }
 }
 @media (orientation: portrait) { .sh-p { bottom: 11vh !important; } }
+/* laget: aldrig över texten – en rad på breda skärmar, två ordnade rader på höga */
+.team { flex-wrap: nowrap; }
+.mate { width: min(10.5vw, 15vh, 180px) !important; }
+.mate b { font-size: calc(min(10.5vw, 15vh, 180px) * .13) !important; }
+@media (orientation: portrait) {
+  .team { flex-wrap: wrap; width: calc(100vw - 2 * var(--pad)); gap: 2vw 3vw; margin-bottom: calc(30vh + 2vh); }
+  .mate { width: min(16vw, 9.5vh) !important; }
+  .mate b { font-size: calc(min(16vw, 9.5vh) * .15) !important; }
+  .team-net { display: none; }
+  .L-who .cap-wrap { top: calc(var(--top) + 3.2 * var(--fs-say)); }
+  .L-who .chap { font-size: 8.4vw; }
+}
+@media (orientation: portrait) { .L-who .cap-wrap { top: calc(var(--top) + 30vw); } .L-who .cap { font-size: clamp(14px, 2.6vw, 22px); } }
