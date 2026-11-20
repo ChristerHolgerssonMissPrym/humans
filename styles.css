@@ -914,3 +914,4 @@ html { text-rendering: optimizeLegibility; font-kerning: normal; }
 .loader-eye i { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); animation: lpulse 1s ease-in-out infinite; }
 @keyframes lpulse { 50% { transform: scale(.4); } }
 @media (prefers-reduced-motion: reduce) { .loader { transition: none; } }
+@media (orientation: landscape) and (max-height: 760px) { .sh-to { font-size: calc(var(--fs-word) * .85); } .sh-p { bottom: 21vh; width: min(34vw, 26em); font-size: 14px; } .sh-to { top: calc(var(--top) + 1.9 * var(--fs-say)); } }
