@@ -921,10 +921,39 @@
   })();
 
   /* ================= index ================= */
+  // varje kort får en liten bild ur sin egen scen, i scenens färg – som korten i human-md
+  const F = C.fig, im = (src, cls = "") => `<img class="th ${cls}" src="${src}" alt="" loading="lazy">`;
+  const word = (w, cls = "") => `<span class="th-word ${cls}">${w}</span>`;
+  const TH = {
+    top: [`<span class="th-crt"><span><img src="assets/agentomaten-face.jpg" alt=""></span></span>`, "#f4f1ea"],
+    together: [`<span class="th-cards"><i style="--b:#f0bad9"></i><i style="--b:#f7eaad"></i><i style="--b:#b9bee9"></i></span>`, "#f4f1ea"],
+    commitment: [word("human", "pink"), "#0b41c2"],
+    expertise: [im(F + "puppet-man.webp", "fig"), "#ffabc8"],
+    human: [im("assets/prym-give.jpg", "cover"), "#3a4650"],
+    prym: [im("assets/street-lamps.jpg", "cover duo"), "#0b41c2"],
+    who: [`<span class="th-team">${["#d9646a", "#f7eaad", "#b9bee9", "#f0bad9", "#3a4650"].map(c => `<i style="--c:${c}"><b></b></i>`).join("")}</span>`, "#f7eaad"],
+    "shift-1": [im(F + "purpose-woman.webp", "fig"), "#ffc2e3"],
+    "shift-2": [im(F + "bird-crow.webp", "fig") + `<i class="th-balloon"></i>`, "#a9b2c3"],
+    "shift-3": [im(F + "emp-free.webp", "fig wide"), "#ffecaa"],
+    chaos: [word("Chaos.", "pink serif"), "#0b41c2"],
+    "shift-4": [im(F + "exp-flasks.webp", "fig"), "#e65564"],
+    "one-percent": [`<span class="th-bars">${Array.from({ length: 12 }, (_, i) => `<i style="--h:${(Math.pow(1.35, i) / Math.pow(1.35, 11) * 100).toFixed(0)}%"></i>`).join("")}</span>`, "#111111"],
+    "shift-5": [im(C.img + "OTTransparency_phone.jpg", "cover"), "#b8c2ea"],
+    what: [`<span class="th-cl">${cloche}</span>`, "#ffeaa6"],
+    work: [im(F + "statue-justitia.webp", "fig") + `<i class="th-rope"></i>`, "#26512f"],
+    lab: [`<svg class="th-gear" viewBox="-110 -110 220 220"><path d="${gearPath(100, 80, 14)}"/><circle r="30"/></svg>`, "#cf4a1a"],
+    story: [`<span class="th-slips"><i>deltog i</i><i>beslut</i><i>resultat</i></span>`, "#f7eaad"],
+    agentomaten: [`<span class="th-mail">✉<b></b></span>`, "#0b41c2"],
+    events: [word("26/11", "red serif"), "#fbf6ea"],
+    library: [im("assets/portrait.jpg", "cover"), "#1c3d24"],
+    contact: [im("assets/goteborg-sunset.jpg", "cover"), "#e65564"],
+    finale: [`<span class="th-end">${im(F + "statue-justitia.webp", "sil")}${im(F + "statue-venus.webp", "sil")}</span>`, "#d8d0c2"]
+  };
   $(".index__track").innerHTML = S.map((s, i) => {
-    const c = s.card;
-    const pic = c.img ? `<img src="${C.img}${c.img}" alt="" loading="lazy">` : c.fig ? `<img src="${C.fig}${c.fig}" alt="" loading="lazy" style="object-fit:contain;padding:8%">` : `<span class="icard__glyph${c.mono ? " mono" : ""}" ${c.light ? 'style="color:#f4efe8"' : ""}>${c.glyph}</span>`;
-    return `<a class="icard" href="#${s.id}" style="--a:${tilt[i]}deg;--room:${c.room}"><span class="icard__in"><span class="icard__face"><span class="icard__pic" style="--room:${c.room}">${pic}</span><span class="icard__n">${c.n || String.fromCharCode(96 + i)}</span><span class="icard__t">${s.t}</span></span><span class="icard__back"><span class="icard__file">## ${s.t}\n\n${esc((s.back || "").slice(0, 150))}</span></span></span><i class="icard__dot"></i></a>`;
+    const c = s.card, th = TH[s.id];
+    if (th) { c.room = th[1]; }
+    const pic = th ? th[0] : c.img ? `<img src="${C.img}${c.img}" alt="" loading="lazy">` : c.fig ? `<img src="${C.fig}${c.fig}" alt="" loading="lazy" style="object-fit:contain;padding:8%">` : `<span class="icard__glyph${c.mono ? " mono" : ""}" ${c.light ? 'style="color:#f4efe8"' : ""}>${c.glyph}</span>`;
+    return `<a class="icard" href="#${s.id}" style="--a:${tilt[i]}deg;--room:${c.room}"><span class="icard__in"><span class="icard__face"><span class="icard__pic" style="--room:${c.room}">${pic}</span><span class="icard__n">${i + 1}</span><span class="icard__t">${s.t}</span></span><span class="icard__back"><span class="icard__file">## ${s.t}\n\n${esc((s.back || "").slice(0, 150))}</span></span></span><i class="icard__dot"></i></a>`;
   }).join("") + `<a class="icard" href="#file" data-file style="--a:${tilt[17]}deg"><span class="icard__face"><span class="icard__pic" style="--room:#0b0b0b"><span class="icard__glyph mono">.md</span></span><span class="icard__n">↓</span><span class="icard__t">MISSPRYM.md — hela filen</span></span></a>`;
 
   const setIndex = open => {
