@@ -735,61 +735,68 @@
   const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", "one-percent": "Standing still vs. one percent better every day.", finale: "Be proud. Be like Prym.", story: "You may only see a CV. We see a story.", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
   S.forEach(x => (x.back = backs[x.id] || (C.shifts[+x.id.split("-")[1] - 1] || {}).p || ""));
 
-  // 18. Finalen – stumfilm: solnedgång, landsväg, två figurer som går mot horisonten, iris, The End
-  const poles = [0, 1, 2, 3, 4, 5].map(i => { const d = Math.pow(.62, i); return { x: 50 + 34 * d, h: 46 * d, l: 50 - 34 * d }; });
+  // 18. Finalen – stumfilm: landsväg i solnedgång, två figurer mot horisonten, iris, eftertexter, The End
+  const P = [0, 1, 2, 3, 4, 5, 6].map(i => { const d = Math.pow(.66, i); return { r: 50 + 40 * d, l: 50 - 40 * d, base: 56 + 40 * d, h: 34 * d }; });
+  const wire = side => P.map((q, i) => { const x = side > 0 ? q.r : q.l, y = q.base - q.h + q.h * .08; if (!i) return `M${x} ${y}`; const o = P[i - 1], ox = side > 0 ? o.r : o.l, oy = o.base - o.h + o.h * .08; return `Q ${(x + ox) / 2} ${(y + oy) / 2 + 1.6 * (o.h / 34) + .3} ${x} ${y}`; }).join(" ");
+  const credits = [["Starring", C.expertise.words.slice(0, 10).join("<br>")], ["Inspired by", "Fröken Prym"], ["Directed by", "Courage"], ["Produced by", "Miss P Aktiebolag"], ["Filmed on location", "Norra Hamngatan 14, Göteborg"]];
   scene({
-    id: "finale", t: "the end", hud: "dark", len: 4.2, wipe: "fade", card: { glyph: "∎", room: "#1a1a1a", light: true },
+    id: "finale", t: "the end", hud: "dark", len: 5, wipe: "fade", card: { glyph: "∎", room: "#1a1a1a", light: true },
     html: `
       <div class="silent">
         <div class="frame">
           <div class="sky"></div><i class="sun"></i>
+          <div class="clouds"><i></i><i></i><i></i></div>
           <img class="crow-fly" src="${C.fig}bird-crow.webp" alt="">
-          <div class="hills"></div>
-          <div class="road"><i></i></div>
+          <div class="hills h3"></div><div class="hills h2"></div><div class="hills h1"></div>
+          <div class="road"><i class="tarmac"></i><i class="midline"></i></div>
           <svg class="poles" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            ${poles.map(q => `<line x1="${q.x}" y1="${55 + q.h * .9}" x2="${q.x}" y2="${55 + q.h * .9 - q.h}" /><line x1="${q.l}" y1="${55 + q.h * .9}" x2="${q.l}" y2="${55 + q.h * .9 - q.h}" />`).join("")}
-            <polyline points="${poles.map(q => `${q.x},${55 + q.h * .9 - q.h + 1}`).join(" ")}" /><polyline points="${poles.map(q => `${q.l},${55 + q.h * .9 - q.h + 1}`).join(" ")}" />
+            ${P.map(q => [q.r, q.l].map(x => `<line class="pole" x1="${x}" y1="${q.base}" x2="${x}" y2="${q.base - q.h}"/><line class="arm" x1="${x - q.h * .12}" y1="${q.base - q.h + q.h * .08}" x2="${x + q.h * .12}" y2="${q.base - q.h + q.h * .08}"/>`).join("")).join("")}
+            <path class="wire" d="${wire(1)}"/><path class="wire" d="${wire(-1)}"/>
           </svg>
-          <div class="pair"><img class="walk w-a" src="${C.fig}statue-justitia.webp" alt=""><img class="walk w-b" src="${C.fig}statue-venus.webp" alt=""></div>
+          <div class="pair"><i class="pair-sh"></i><img class="walk w-a" src="${C.fig}statue-justitia.webp" alt=""><img class="walk w-b" src="${C.fig}statue-venus.webp" alt=""></div>
           <i class="dust"></i>
         </div>
         <i class="iris"></i>
-        <div class="title-card tc1"><p>”Is it even worth trying?”</p></div>
-        <div class="title-card tc2"><p>Be proud.<br><em>Be like Prym.</em></p></div>
+        <div class="title-card tc1"><span class="tc-mark">MISS PRYM PICTURES</span><p>”Is it even worth trying?”</p></div>
+        <div class="title-card tc2"><span class="tc-mark">MISS PRYM PICTURES</span><p>Be proud.<br><em>Be like Prym.</em></p></div>
+        <div class="title-card tc-credits"><div class="roll">${credits.map(([h, v]) => `<div class="cr"><span>${h}</span><p>${v}</p></div>`).join("")}</div></div>
         <div class="title-card tc3">
           <p class="fin">The End<i></i></p>
           <p class="fin-sub">MISS P AKTIEBOLAG · GÖTEBORG · ${new Date().getFullYear()}</p>
           <a class="fin-mail" href="mailto:${K.email}">${K.email}</a>
           <div class="fin-btns"><button type="button" class="fin-btn" data-replay>↺ se igen</button><button type="button" class="fin-btn" data-read>läs som text</button></div>
         </div>
+        <div class="sprockets l"></div><div class="sprockets r"></div>
         <i class="flick"></i><i class="vign"></i><i class="scratch s1"></i><i class="scratch s2"></i><i class="burn"></i>
       </div>`,
     init(el) { this.q = n => $(n, el); },
     update(p, t) {
-      const q = this.q, show = (e, a, b) => { e.style.opacity = seg(p, a, a + .03) * (1 - seg(p, b - .03, b)); };
-      show(q(".tc1"), 0, .16); show(q(".tc2"), .44, .6);
-      // filmrutan skakar lite, som en gammal projektor
+      const q = this.q, show = (e, a, b) => { e.style.opacity = seg(p, a, a + .025) * (1 - seg(p, b - .025, b)); };
+      show(q(".tc1"), 0, .13); show(q(".tc2"), .4, .52);
       const j = (Math.sin(t * 37) + Math.sin(t * 61)) * .5;
-      q(".frame").style.transform = `translate(${j * 1.5}px, ${Math.sin(t * 43) * 2}px)`;
-      // solen sjunker, fågeln flyger över himlen
-      const w = seg(p, .14, .86);
-      q(".sun").style.transform = `translate(-50%, ${w * 70}%)`;
-      const cf = seg(p, .18, .5);
+      q(".frame").style.transform = `translate(${j * 1.4}px, ${Math.sin(t * 43) * 1.8}px)`;
+      const w = seg(p, .11, .72);
+      q(".sun").style.transform = `translate(-50%, ${w * 55}%)`;
+      q(".clouds").style.transform = `translateX(${-w * 12}vw)`;
+      const cf = seg(p, .14, .42);
       q(".crow-fly").style.transform = `translate(${-20 + cf * 140}vw, ${-Math.sin(cf * Math.PI) * 8}vh) scaleX(-1) rotate(${Math.sin(t * 9) * 6}deg)`;
-      q(".crow-fly").style.opacity = cf > 0 && cf < 1 ? .85 : 0;
-      // figurerna går – gung i steget – och krymper mot horisonten
-      q(".pair").style.transform = `translateX(-50%) translateY(${-w * 33}vh) scale(${1 - w * .82})`;
+      q(".crow-fly").style.opacity = cf > 0 && cf < 1 ? .9 : 0;
+      q(".pair").style.transform = `translateX(-50%) translateY(${-w * 37}vh) scale(${1 - w * .86})`;
       q(".w-a").style.transform = `translateY(${-Math.abs(Math.sin(t * 5)) * 3}%) rotate(${Math.sin(t * 5) * 2}deg)`;
       q(".w-b").style.transform = `scaleX(-1) translateY(${-Math.abs(Math.sin(t * 5 + 1.6)) * 3}%) rotate(${Math.sin(t * 5 + 1.6) * 2}deg)`;
-      // irisen sluter sig kring paret
-      const ir = easeIO(seg(p, .78, .9));
-      q(".iris").style.background = `radial-gradient(circle at 50% ${64 - w * 18}%, transparent ${(1 - ir) * 85}vmax, #0b0b0b ${(1 - ir) * 85 + .3}vmax)`;
-      q(".tc3").style.opacity = seg(p, .92, .97);
-      $$(".tc3 > *", q(".silent")).forEach((e, i) => (e.style.transform = `translateY(${(1 - ease(seg(p, .92 + i * .015, .97 + i * .015))) * 18}px)`));
+      const ir = easeIO(seg(p, .64, .74));
+      q(".iris").style.background = `radial-gradient(circle at 50% ${66 - w * 22}%, transparent ${(1 - ir) * 85}vmax, #0b0a09 ${(1 - ir) * 85 + .3}vmax)`;
+      // eftertexterna rullar uppåt
+      const cr = seg(p, .74, .9), roll = q(".roll");
+      q(".tc-credits").style.opacity = seg(p, .74, .76) * (1 - seg(p, .89, .91));
+      roll.style.transform = `translateY(${(1 - cr) * 60 - cr * (roll.offsetHeight / innerHeight * 100) * .9}vh)`;
+      q(".tc3").style.opacity = seg(p, .91, .95);
+      $$(".tc3 > *", q(".silent")).forEach((e, i) => (e.style.transform = `translateY(${(1 - ease(seg(p, .91 + i * .012, .96 + i * .012))) * 18}px)`));
       q(".flick").style.opacity = .04 + Math.abs(Math.sin(t * 23)) * .06;
-      q(".s1").style.left = `${(Math.sin(t * 3.1) * .5 + .5) * 100}%`; q(".s1").style.opacity = Math.sin(t * 7) > .6 ? .5 : 0;
-      q(".s2").style.left = `${(Math.cos(t * 1.7) * .5 + .5) * 100}%`; q(".s2").style.opacity = Math.sin(t * 5 + 2) > .8 ? .35 : 0;
-      q(".burn").style.opacity = seg(p, .97, 1) * .8;
+      q(".s1").style.left = `${(Math.sin(t * 3.1) * .5 + .5) * 100}%`; q(".s1").style.opacity = Math.sin(t * 7) > .6 ? .45 : 0;
+      q(".s2").style.left = `${(Math.cos(t * 1.7) * .5 + .5) * 100}%`; q(".s2").style.opacity = Math.sin(t * 5 + 2) > .8 ? .3 : 0;
+      q(".burn").style.opacity = seg(p, .975, 1) * .75;
+      $$(".sprockets", q(".silent")).forEach(sp => (sp.style.backgroundPositionY = `${(t * 140) % 64}px`));
     }
   });
 
@@ -1006,6 +1013,82 @@
   });
   document.addEventListener("click", e => { if (e.target.closest("[data-replay]")) { cur = 0; scrollTo(0, 0); window.__t0 = performance.now(); } });
   document.addEventListener("click", e => { if (e.target.closest("[data-next]")) { const n = S[1]; scrollTo({ top: (n.start + .6) * VH, behavior: "smooth" }); } });
+
+  /* ================= verktygen i egen design ================= */
+  const TOOLS = [
+    { id: "uppdrag", t: "Uppdragsautomaten", href: "https://missprym.tech/uppdragsautomaten/" },
+    { id: "intervju", t: "Intervjuomaten", href: "https://missprym.tech/intervjuomaten/" },
+    { id: "agent", t: "Agentomaten", href: "https://missprym.tech/agentomaten/" },
+    { id: "stoic", t: "Stoicism", href: "https://missprym.tech/stoicm-service/" },
+    { id: "event", t: "Event", href: "https://missprym.tech/event/" }
+  ];
+  const API = "https://missprym.tech/uppdragsautomaten-api/api/public-assignments";
+  const appEl = $(".app"), appTabs = $(".app__tabs"), appBody = $(".app__body"), appExt = $(".app__ext");
+  appTabs.innerHTML = TOOLS.map(x => `<button type="button" class="app__tab" data-tool="${x.id}">${x.t}</button>`).join("");
+  let assignments = null;
+  const fmtDate = d => { try { return new Date(d).toLocaleDateString("sv-SE", { day: "numeric", month: "short" }); } catch { return ""; } };
+  const words = q => q.toLowerCase().split(/[^a-zåäö0-9#+.]+/i).filter(w => w.length > 1);
+  function renderUppdrag() {
+    appBody.innerHTML = `
+      <div class="ua">
+        <div class="ua-side">
+          <p class="lab"><span class="md">##</span>uppdragsautomaten</p>
+          <h3 class="ua-h">Beskriv vad du kan<br><em>– vi hittar uppdragen.</em></h3>
+          <textarea class="ua-q" rows="4" placeholder="T.ex. Java, Spring, Göteborg, systemarkitekt, tillgänglig mars…"></textarea>
+          <div class="ua-f">${[["all", "Alla"], ["2", "2 dygn"], ["7", "Veckan"]].map(([v, l], i) => `<button type="button" class="chip${i ? "" : " on"}" data-days="${v}">${l}</button>`).join("")}</div>
+          <p class="ua-meta">Hämtar uppdrag…</p>
+        </div>
+        <div class="ua-list" aria-live="polite"></div>
+      </div>`;
+    const q = $(".ua-q", appBody), list = $(".ua-list", appBody), meta = $(".ua-meta", appBody);
+    let days = "all";
+    const draw = () => {
+      if (!assignments) return;
+      const ws = words(q.value), now = Date.now();
+      let rows = assignments.filter(a => days === "all" || now - new Date(a.receivedAt || a.firstSeen).getTime() < +days * 864e5);
+      rows = rows.map(a => {
+        const hay = [a.title, a.summary, a.location, ...(a.skills || [])].join(" ").toLowerCase();
+        const score = ws.reduce((n, w) => n + (hay.includes(w) ? 1 : 0), 0);
+        return { a, score };
+      }).filter(r => !ws.length || r.score > 0).sort((x, y) => y.score - x.score || new Date(y.a.receivedAt) - new Date(x.a.receivedAt));
+      meta.textContent = `${rows.length} aktuella behov${ws.length ? " som matchar" : ""}`;
+      list.innerHTML = rows.slice(0, 60).map(({ a, score }) => `
+        <article class="ua-card">
+          <div class="ua-top"><span class="ua-ref">${esc(a.reference || a.id || "")}</span><span class="ua-date">${fmtDate(a.receivedAt || a.firstSeen)}</span>${ws.length ? `<span class="ua-score">${"●".repeat(Math.min(5, score))}</span>` : ""}</div>
+          <h4>${esc(a.title || "Uppdrag")}</h4>
+          <p class="ua-loc">${esc(a.location || "")}</p>
+          ${a.summary ? `<p class="ua-sum">${esc(a.summary)}</p>` : ""}
+          <div class="ua-skills">${(a.skills || []).slice(0, 8).map(k => `<span>${esc(String(k))}</span>`).join("")}</div>
+          <a class="cta ua-cta" href="mailto:${K.email}?subject=${encodeURIComponent(`AGENTOMATEN – ${a.reference || a.id} – Kandidat – `)}">Intresserad →</a>
+        </article>`).join("") || `<p class="ua-empty">Inga träffar ännu – prova färre eller andra ord.</p>`;
+    };
+    q.addEventListener("input", draw);
+    $$(".chip", appBody).forEach(c => c.addEventListener("click", () => { $$(".chip", appBody).forEach(x => x.classList.remove("on")); c.classList.add("on"); days = c.dataset.days; draw(); }));
+    if (assignments) draw();
+    else fetch(API).then(r => r.json()).then(j => { assignments = (j.assignments || []).filter(a => a.public !== false); draw(); })
+      .catch(() => { meta.innerHTML = `Kunde inte hämta uppdragen just nu. <a href="${TOOLS[0].href}" target="_blank" rel="noopener">Öppna Uppdragsautomaten ↗</a>`; });
+    setTimeout(() => q.focus(), 300);
+  }
+  function openTool(id) {
+    const tool = TOOLS.find(x => x.id === id) || TOOLS[0];
+    $$(".app__tab", appTabs).forEach(b => b.classList.toggle("on", b.dataset.tool === tool.id));
+    appExt.href = tool.href;
+    if (tool.id === "uppdrag") renderUppdrag();
+    else appBody.innerHTML = `<iframe class="app__frame" src="${tool.href}" title="${tool.t}" loading="lazy"></iframe>`;
+    if (appEl.hidden) { appEl.hidden = false; body.classList.add("app-open"); stopWatch(); }
+  }
+  const closeTool = () => { appEl.hidden = true; body.classList.remove("app-open"); appBody.innerHTML = ""; };
+  appTabs.addEventListener("click", e => { const b = e.target.closest("[data-tool]"); if (b) openTool(b.dataset.tool); });
+  $$("[data-app-close]").forEach(b => b.addEventListener("click", closeTool));
+  addEventListener("keydown", e => { if (e.key === "Escape" && !appEl.hidden) closeTool(); });
+  // alla länkar till verktygen öppnas i fönstret i stället för att lämna sajten
+  const toolFromHref = h => h && (/uppdragsautomat|uppdragsslumpomat/.test(h) ? "uppdrag" : /intervjuomaten/.test(h) ? "intervju" : /agentomaten/.test(h) ? "agent" : /stoicm/.test(h) ? "stoic" : /missprym\.tech\/event/.test(h) ? "event" : null);
+  document.addEventListener("click", e => {
+    const a = e.target.closest("a[href]"); if (!a || a.closest(".app")) return;
+    const id = toolFromHref(a.getAttribute("href")) || (a.getAttribute("href") === "#agentomaten" ? "agent" : null);
+    if (!id) return;
+    e.preventDefault(); e.stopPropagation(); openTool(id);
+  }, true);
 
   /* ================= ögat blinkar ================= */
   const lid = $(".hud-mark__blink");
