@@ -820,3 +820,31 @@ html.reading .pause { display: none; }
 .mate { width: clamp(100px, 10.5vw, 180px); }
 .mate b { font-size: clamp(13px, 1.25vw, 22px); }
 @media (orientation: portrait) { .L-what .plates { bottom: auto; } .mate { width: 17vw; } .mate b { font-size: 3vw; } }
+
+/* egna filmer */
+.bgfilm { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(.3) contrast(1.05); }
+.bgtint { position: absolute; inset: 0; background: linear-gradient(rgba(11,65,194,.72), rgba(11,65,194,.55)); mix-blend-mode: multiply; }
+.L-prym .frag, .L-prym .q-cite { z-index: 1; }
+.give { position: absolute; right: 6vw; top: 50%; width: min(40vw, 64vh); aspect-ratio: 1; margin: 0; border-radius: 50%; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,.35); will-change: transform; }
+.give video { width: 100%; height: 100%; object-fit: cover; }
+.say--left { left: var(--pad); right: auto; margin: 0; width: min(52vw, 14em); text-align: left; }
+@media (orientation: portrait) { .give { right: 50%; margin-right: -36vw; top: 70%; width: 72vw; } .say--left { width: auto; right: var(--pad); top: 30%; } }
+.painting { position: absolute; right: 7vw; top: 14vh; height: 34vh; aspect-ratio: 724 / 960; margin: 0; padding: 10px; background: #2a2622; box-shadow: inset 0 0 0 3px #c9a24a, 0 20px 30px rgba(0,0,0,.4); transform: rotate(1.5deg); }
+.painting video { width: 100%; height: 100%; object-fit: cover; }
+.painting::before { content: ""; position: absolute; left: 50%; top: -40px; width: 1px; height: 40px; background: rgba(0,0,0,.5); }
+@media (orientation: portrait) { .painting { right: 6vw; top: 11vh; height: 18vh; } }
+
+/* 1,01^365 */
+.L-one-percent { --wall: #f7eaad; color: var(--ink); }
+.eq { position: absolute; left: var(--pad); display: flex; align-items: baseline; gap: .25em; font-family: var(--f-mono); font-size: clamp(34px, 5vw, 96px); letter-spacing: -.02em; }
+.eq1 { top: var(--top); opacity: .45; } .eq2 { top: calc(var(--top) + 1.4em * 1); }
+.eq2 { top: calc(var(--top) + clamp(34px, 5vw, 96px) * 1.4); }
+.eq sup { font-size: .38em; align-self: flex-start; margin-left: -.15em; min-width: 2.2em; }
+.eqs { color: var(--accent); }
+.r2 { display: inline-block; transform-origin: 0 70%; color: var(--mp-coral); }
+.curve { position: absolute; left: var(--pad); right: var(--pad); bottom: 8vh; width: calc(100% - 2 * var(--pad)); height: 34vh; overflow: visible; }
+.curve .flat { stroke: rgba(32,30,31,.35); stroke-width: 2; stroke-dasharray: 6 8; fill: none; vector-effect: non-scaling-stroke; }
+.curve .grow { stroke: var(--accent); stroke-width: 4; fill: none; stroke-dasharray: 1; stroke-dashoffset: 1; vector-effect: non-scaling-stroke; }
+.eq-cap { position: absolute; right: var(--pad); top: var(--top); width: min(40vw, 16em); text-align: right; font-size: var(--fs-cap); line-height: 1.1; letter-spacing: -.02em; }
+@media (orientation: portrait) { .eq { font-size: 9vw; } .eq2 { top: calc(var(--top) + 13vw); } .eq-cap { left: var(--pad); right: auto; top: 44vh; width: auto; text-align: left; } .curve { height: 22vh; } }
+@media (orientation: landscape) { .L-library .say { right: 30vw; max-width: 12em; } .L-library .books-p { right: 30vw; } .painting { top: 18vh; height: 44vh; right: 8vw; } }

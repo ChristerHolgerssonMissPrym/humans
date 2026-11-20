@@ -174,9 +174,10 @@
   // 4. Ord tänds: "Technology should strengthen … less human."
   scene({
     id: "human", t: "less human", hud: "dark", len: 2.5, wipe: "circle", card: { glyph: "h", room: "#5578dc" },
-    html: `<i class="wall"></i><div class="say"><span class="say-lab"><span class="md">##</span>${C.commitment.h}</span><p>${wordsOf(rich(C.commitment.say)).map(w => `<span class="w">${w}</span>`).join(" ")}</p></div>`,
-    init(el) { this.w = $$(".w", el); },
-    update(p) { const n = this.w.length; this.w.forEach((w, i) => w.style.setProperty("--lit", clamp(seg(p, .08, .8) * n - i).toFixed(3))); }
+    html: `<i class="wall"></i><figure class="give"><video src="assets/prym-give.mp4" poster="assets/prym-give.jpg" muted loop autoplay playsinline aria-label="Miss Prym: If you give, you will receive twice as much"></video></figure><div class="say say--left"><span class="say-lab"><span class="md">##</span>${C.commitment.h}</span><p>${wordsOf(rich(C.commitment.say)).map(w => `<span class="w">${w}</span>`).join(" ")}</p></div>`,
+    init(el) { this.w = $$(".w", el); this.give = $(".give", el); },
+    update(p, t) { const k = ease(seg(p, 0, .25)); this.give.style.transform = `translateY(-50%) scale(${.7 + k * .3}) rotate(${(1 - k) * -12 + Math.sin(t * .8) * 1.2}deg)`; this.give.style.opacity = k;
+      const n = this.w.length; this.w.forEach((w, i) => w.style.setProperty("--lit", clamp(seg(p, .08, .8) * n - i).toFixed(3))); }
   });
 
   // 5. Coelho
@@ -184,6 +185,7 @@
     id: "prym", t: "be like prym", hud: "dark", len: 3.9, card: { glyph: "”", room: "#ffabc8" },
     html: `
       <i class="wall"></i>
+      <video class="bgfilm" src="assets/street-lamps.mp4" poster="assets/street-lamps.jpg" muted loop autoplay playsinline aria-hidden="true"></video><i class="bgtint"></i>
       <div class="frags">${C.quote.frags.map(f => `<p class="frag">${esc(f)}</p>`).join("")}<p class="frag frag-end">${esc(C.quote.end)}<i class="p"></i></p></div>
       <blockquote class="q-cite"><p>”${esc(C.quote.text)}”</p><cite>— ${esc(C.quote.src)}</cite></blockquote>`,
     init(el) { this.f = $$(".frag", el); this.c = $(".q-cite", el); },
@@ -411,6 +413,28 @@
     }
   }));
 
+  // 11a. 1,01^365 – små steg varje dag (passar Experiments)
+  scene({
+    id: "one-percent", t: "one percent a day", hud: "light", len: 3.2, wipe: "circle", card: { glyph: "%", room: "#f7eaad" },
+    html: `
+      <i class="wall"></i>
+      <div class="eq eq1"><span class="b">(1.00)</span><sup>365</sup><span class="eqs">=</span><span class="r r1">1.00</span></div>
+      <div class="eq eq2"><span class="b">(1.01)</span><sup class="d">0</sup><span class="eqs">=</span><span class="r r2">1.00</span></div>
+      <svg class="curve" viewBox="0 0 1000 300" preserveAspectRatio="none" aria-hidden="true"><path class="flat" d="M0 290 L1000 290"/><path class="grow" pathLength="1" d=""/></svg>
+      <p class="eq-cap">${lines(["Standing still", "<span class='hl-human'>vs.</span>", "one percent better every day."])}</p>`,
+    init(el) { this.d = $(".eq2 .d", el); this.r2 = $(".r2", el); this.g = $(".grow", el); this.cap = $(".eq-cap", el); this.eqs = $$(".eq", el);
+      this.g.setAttribute("d", Array.from({ length: 101 }, (_, i) => `${i ? "L" : "M"}${i * 10} ${290 - (Math.pow(1.01, i * 3.65) - 1) / 36.7 * 280}`).join(" ")); },
+    update(p, t) {
+      this.eqs.forEach((e, i) => fadeIn(e, ease(seg(p, .02 + i * .06, .14 + i * .06))));
+      const k = seg(p, .18, .7), day = Math.round(k * 365);
+      this.d.textContent = day; this.r2.textContent = Math.pow(1.01, day).toFixed(day > 300 ? 1 : 2);
+      this.r2.style.transform = `scale(${1 + k * .35})`;
+      this.g.style.strokeDashoffset = 1 - k;
+      reveal(this.cap, p, .7, .9);
+    }
+  });
+  { const i = S.findIndex(x => x.id === "one-percent"), j = S.findIndex(x => x.id === "shift-4"); S.splice(j + 1, 0, ...S.splice(i, 1)); }
+
   // 11b. Textrytmen från human-md ("Yet." / "I'm not in that argument" / "I'm in this one") – med Miss Pryms ord
   scene({
     id: "chaos", t: "we face it together", hud: "dark", len: 3.1, wipe: "circle", card: { glyph: "C", room: "#0b41c2", light: true },
@@ -615,6 +639,7 @@
     id: "library", t: C.books.h, hud: "dark", len: 2.5, wipe: "circle", card: { glyph: "B", room: "#1c3d24", light: true },
     html: `
       <i class="wall"></i>
+      <figure class="painting"><video src="assets/portrait.mp4" poster="assets/portrait.jpg" muted loop autoplay playsinline aria-label="Porträtt"></video></figure>
       <div class="say"><span class="say-lab"><span class="md">##</span>${C.books.h}</span><p>${wordsOf(rich(C.books.say)).map(w => `<span class="w">${w}</span>`).join(" ")}</p></div>
       <p class="books-p">${esc(C.books.p)} <a href="${C.books.href}">Se hyllan →</a></p>
       <div class="shelf" aria-hidden="true">${spines}</div>`,
@@ -654,7 +679,7 @@
   { const i = S.findIndex(x => x.id === "together"); S.splice(1, 0, ...S.splice(i, 1)); }
 
   // baksida på indexkorten: en rad ur innehållet
-  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
+  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", "one-percent": "Standing still vs. one percent better every day.", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
   S.forEach(x => (x.back = backs[x.id] || (C.shifts[+x.id.split("-")[1] - 1] || {}).p || ""));
 
   /* ================= bygg scenen ================= */
