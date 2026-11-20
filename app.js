@@ -381,6 +381,34 @@
     }
   });
 
+  // 14b. Agentomaten – maskinen lyssnar och skriver mailet själv
+  const AG = C.agentomaten;
+  const agMail = `Till: ${AG.mail.to}\nÄmne: ${AG.mail.subject}\n\n${AG.mail.body.map(b => `– ${b}`).join("\n")}\n\n${AG.mail.note}`;
+  scene({
+    id: "agentomaten", t: AG.h, hud: "dark", len: 3.6, wipe: "circle", card: { glyph: "✉", room: "#0b41c2", light: true },
+    html: `
+      <i class="wall"></i>
+      <p class="lab"><span class="md">##</span>${AG.h}</p>
+      <p class="lead ag-lead">${lines([esc(AG.lead)])}</p>
+      <p class="ag-listen"><i class="ag-dot"></i>${AG.listen}<span class="ag-wave">${Array.from({ length: 9 }, () => "<b></b>").join("")}</span></p>
+      <p class="ag-p">${esc(AG.p)}</p>
+      <div class="ag-win"><div class="file__bar"><span class="file__name">nytt mail · agentomaten</span><span>●●●</span></div><pre class="ag-text"></pre></div>
+      <div class="ag-cta"><a class="cta" href="${AG.href}">Öppna Agentomaten →</a><a class="cta cta--ghost" href="mailto:${AG.mail.to}?subject=${encodeURIComponent(AG.mail.subject)}">Skicka till ${AG.mail.to}</a></div>`,
+    init(el) { this.lead = $(".ag-lead", el); this.lab = $(".lab", el); this.listen = $(".ag-listen", el); this.bars = $$(".ag-wave b", el); this.pp = $(".ag-p", el); this.win = $(".ag-win", el); this.txt = $(".ag-text", el); this.cta = $(".ag-cta", el); },
+    update(p, t) {
+      this.lab.style.opacity = seg(p, 0, .06);
+      reveal(this.lead, p, .03, .14);
+      fadeIn(this.listen, ease(seg(p, .12, .2)));
+      this.bars.forEach((b, i) => (b.style.transform = `scaleY(${.25 + Math.abs(Math.sin(t * 6 + i * .9)) * (p < .7 ? 1 : .3)})`));
+      fadeIn(this.pp, ease(seg(p, .16, .26)));
+      const k = ease(seg(p, .18, .3));
+      this.win.style.opacity = k; this.win.style.transform = `translateY(${(1 - k) * 40}px) rotate(${(1 - k) * 3}deg)`;
+      const n = Math.round(seg(p, .28, .78) * agMail.length);
+      this.txt.innerHTML = esc(agMail.slice(0, n)) + (p < .8 ? '<i class="caret"></i>' : "");
+      fadeIn(this.cta, ease(seg(p, .78, .88)));
+    }
+  });
+
   // 15. Event
   scene({
     id: "events", t: E.h, hud: "light", len: 3, wipe: "circle", card: { glyph: E.next.date, room: "#fc4109" },
@@ -446,7 +474,7 @@
   });
 
   // baksida på indexkorten: en rad ur innehållet
-  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), lab: C.lab.sub, events: E.next.t, library: C.books.p, contact: K.email };
+  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
   S.forEach(x => (x.back = backs[x.id] || (C.shifts[+x.id.split("-")[1] - 1] || {}).p || ""));
 
   /* ================= bygg scenen ================= */
@@ -530,6 +558,7 @@
     `## ${C.what.h}`, ``, ...C.what.items.map(it => `- **${it.t}.** ${it.p}`), ``,
     `## ${C.work.h}`, ``, ...C.work.paths.map(w => `- **${w.t}.** ${w.p}`), ``,
     `## ${C.lab.h}`, ``, C.lab.sub, ``, ...C.lab.items.map(l => `- **${l.t}** (${l.href}) — ${l.p}`), ``,
+    `## ${AG.h}`, ``, AG.lead, ``, AG.p, ``, ...agMail.split("\n"), ``, `${AG.href}`, ``,
     `## ${E.h}`, ``, `**${E.next.t}** — ${E.next.when}`, ``, E.next.p, ``, ...E.past.map(p => `- ${p.date} · ${p.t}. ${p.p}`), ``,
     `## ${C.books.h}`, ``, `${plain(C.books.say)}`, ``, C.books.p, ``,
     `---`, ``,

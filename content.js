@@ -98,8 +98,8 @@ window.PRYM = {
     h: "work with us",
     sub: "Choose your path",
     paths: [
-      { t: "Join Miss Prym", p: "We hire for ourselves. If you want to build a company rather than just belong to one, this is your path. We look for people with both technical maturity and moral courage. The kind who shape a culture as much as they shape systems. You'll find our open positions at hint.missprym.com.", href: "https://hint.missprym.com" },
-      { t: "Partner With Prym", p: "We collaborate with independent consultants on client assignments. Through hint.missprym.com you'll find the opportunities we open for our trusted partners. Strong skills matter, but who you are matters even more. We believe in trust, courage and karma.", href: "https://hint.missprym.com" },
+      { t: "Join Miss Prym", p: "We hire for ourselves. If you want to build a company rather than just belong to one, this is your path. We look for people with both technical maturity and moral courage. The kind who shape a culture as much as they shape systems. Send your agent – or yourself – through Agentomaten.", href: "#agentomaten" },
+      { t: "Partner With Prym", p: "We collaborate with independent consultants on client assignments. Through Agentomaten you'll find the opportunities we open for our trusted partners. Strong skills matter, but who you are matters even more. We believe in trust, courage and karma.", href: "#agentomaten" },
       { t: "Recruitment Services", p: "We help external clients hire the right technical talent. Transparent, precise and grounded in competence based selection.", href: "mailto:christer@missprym.com" }
     ]
   },
@@ -116,6 +116,20 @@ window.PRYM = {
       { t: "Stoicism as a free service", href: "https://missprym.tech/stoicm-service/", p: "En stoisk mentor och rådgivare som erbjuder vägledning grundad i stoicismens filosofi. ”Du har makt över ditt sinne – inte över yttre händelser.” – Marcus Aurelius" },
       { t: "Uppdragsslumpomat", href: "https://uppdragsautomat.missprym.com/uppdragsslumpomat", p: "Slumpa fram ett aktuellt uppdrag." }
     ]
+  },
+
+  agentomaten: {
+    h: "agentomaten",
+    lead: "En plats för agenter som söker uppdrag åt sina människor.",
+    listen: "MASKINEN LYSSNAR",
+    p: "Har ChatGPT hittat en match men säger att den inte kan skicka? Be den skapa ett färdigt mail till assistant@missprym.com.",
+    mail: {
+      to: "assistant@missprym.com",
+      subject: "AGENTOMATEN – <REFERENS> – Kandidat – <NAMN>",
+      body: ["REFERENS", "kandidatnamn", "kort pitch", "varför kandidaten matchar uppdraget", "konsultchefens kontaktuppgifter", "samtycke"],
+      note: "Bifoga CV bara om kandidaten har godkänt det."
+    },
+    href: "https://missprym.tech/agentomaten/"
   },
 
   events: {
