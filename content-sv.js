@@ -10,7 +10,7 @@
     locale: "sv-SE",
     byline: "MISS P AKTIEBOLAG · GÖTEBORG",
     hero: {
-      quote: ["var stolt, var som prym.", "ett öppensinnat tech- och ingenjörsföretag.", "teknisk djup. mänskligt omdöme."]
+      quote: ["var stolt, var som prym.", "ett öppensinnat tech- och ingenjörsföretag.", "tekniskt djup. mänskligt omdöme."]
     },
     open2: { lines: ["Som konsulter förenar vi", "tekniskt djup med"], giant: "mänskligt", after: "omdöme." },
     expertise: {
@@ -33,7 +33,7 @@
     },
     who: {
       h: "vilka vi är",
-      head: "ett öppensinnat <h>(tech- & ingenjörs)</h>företag",
+      head: "ett öppensinnat <h>tech- & ingenjörsföretag</h>",
       p: [
         "Vi är ett öppensinnat tech- och ingenjörsföretag, format av människorna som bygger det tillsammans med oss. Brooks och Conways lagar påminner oss om att starka lösningar börjar med starka team, tydlig kommunikation och rätt förutsättningar för samarbete.",
         "Inspirerade av fröken Prym väljer vi mod, ansvar och medmänsklighet när affärsbesluten blir svåra. Vi arbetar inom ingenjörskonst, mjukvara och IT och förenar genomtänkt design med praktisk problemlösning.",
@@ -102,7 +102,7 @@
     { from: "Hierarkier", to: "Nätverk", p: "Carl Jung kallade det synkronicitet. Meningsfulla kopplingar kan skapa resultat som ingen kunnat planera ensam. Den tron formar hur vi organiserar oss. Vi föredrar nätverk framför stela hierarkier och för samman människor och kunskap kring ett gemensamt syfte. Vi vågar vänlighet, eftersom tillit gör samarbetet starkare. I naturen och samhället kan enkla samspel ge oväntade resultat. Det är emergens. Vi tillämpar samma princip i vårt arbete och bildar team där konsulter, kunder och partners skapar mer tillsammans än någon kunnat åstadkomma ensam." },
     { from: "Kontroll", to: "Egenmakt", p: "Att gå från kontroll till egenmakt förändrar ledarskap. Samarbete, tillit och självständighet ger innovation, motståndskraft och växande medarbetare och en dynamisk och stärkt organisationskultur. Vi är inte rädda för kaos. Vi möter det tillsammans." },
     { from: "Planering", to: "Experiment", p: "Vi föredrar att göra. Att gå från stel planering till experiment frigör potential. Iterativa, anpassningsbara arbetssätt ger lärande, flexibilitet och upptäckter i en miljö som lever på ständig förbättring och kreativt utforskande. Vi skapar värde genom ingenjörskonst, öppen källkod och handling, inte genom att prata om det." },
-    { from: "Hemlighet", to: "Transparens", p: "Att gå från hemlighet till transparens är ett kulturskifte. Öppenhet och ärlighet bygger tillit och ansvar. Organisationer och människor växer i en miljö där information flödar fritt, vilket främjar samarbete, etiskt agerande och ett gemensamt åtagande för integritet." }
+    { from: "Slutenhet", to: "Transparens", p: "Att gå från slutenhet till transparens är ett kulturskifte. Öppenhet och ärlighet bygger tillit och ansvar. Organisationer och människor växer i en miljö där information flödar fritt, vilket främjar samarbete, etiskt agerande och ett gemensamt åtagande för integritet." }
   ]);
   C.events.past = each(C.events.past, [
     { t: "AI & juridiken med Helena Brandt", p: "Frukostevent om ansvar, beslut och praktisk AI governance." },

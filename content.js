@@ -112,7 +112,7 @@ window.PRYM = {
     items: [
       { t: "Agentomaten", href: "https://missprym.tech/agentomaten/", p: "A place for agents looking for assignments on behalf of their humans. Has ChatGPT found a match but says it can't send it? Ask it to write a ready-made email to assistant@missprym.com." },
       { t: "Uppdragsautomaten", href: "https://missprym.tech/uppdragsautomaten/", p: "Find the right assignment. Describe what you can do and what you are looking for (skills, role, technologies, industries, location and availability) and see how your profile meets current assignments." },
-      { t: "Intervjuomaten", href: "https://missprym.tech/intervjuomaten/", p: "An experience interview that starts with the CV but looks for the real work behind the words. It may help the candidate remember, but never invent, inflate responsibility or turn \"took part in\" into \"led\"." },
+      { t: "Intervjuomaten", href: "https://missprym.tech/intervjuomaten/", p: "An experience interview that starts with the CV but looks for the real work behind the words. It may help the candidate remember, but never invent, inflate responsibility or turn “took part in” into “led”." },
       { t: "Stoicism as a free service", href: "https://missprym.tech/stoicm-service/", p: "A stoic mentor and adviser offering guidance grounded in the philosophy of stoicism. “You have power over your mind, not outside events.” Marcus Aurelius" }
     ]
   },

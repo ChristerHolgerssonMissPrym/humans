@@ -325,6 +325,7 @@
       // ordet stryks helt – sedan lossnar bokstäverna och flyger iväg över skärmen
       const sk = easeIO(seg(p, strikeA, strikeB)), blow = seg(p, strikeB + .02, strikeB + .2);
       this.x.style.transform = `rotate(-2deg) scaleX(${sk})`; this.x.style.opacity = 1 - seg(blow, .2, .6);
+      this.title.style.opacity = 1 - seg(blow, .35, .9); // när ordet är borta tonar även "from" ut
       this.mask.style.overflow = seg(p, .05, .16) >= 1 ? "visible" : "hidden";
       this.fl.forEach((c, j) => {
         const r1 = Math.sin((j + 1) * 12.9898 + i * 3) * 43758.5453 % 1, r2 = Math.cos((j + 1) * 78.233 + i) * 12345.678 % 1;
@@ -513,7 +514,7 @@
         // handen kommer ner, greppar knoppen och lyfter kupan
         const down = ease(seg(p, a - .1, a - .01));
         hand.style.transform = `translateY(${(1 - down) * -140}vh) rotate(${(1 - down) * -8 + Math.sin(t * 1.5 + i) * (lift >= 1 ? 2 : 0)}deg)`;
-        cl.style.transform = `translate(${lift * 38}%, ${-lift * 120}%) rotate(${lift * 16 + wob * .6}deg)`;
+        cl.style.transform = `translate(${lift * (portrait() ? 30 : 38)}%, ${-lift * (portrait() ? 70 : 120)}%) rotate(${lift * 16 + wob * .6}deg)`;
         // under kupan: rätten reser sig, ångan stiger, det gnistrar – och menykortet viks upp
         const rev = seg(p, a + .02, a + .12), serve = pl.querySelector(".serve"), steam = pl.querySelector(".steam"), sp = $$(".spark i", pl), menu = pl.querySelector(".menu");
         serve.style.transform = `translateX(-50%) scale(${.6 + .4 * ease(rev) + Math.sin(rev * Math.PI) * .08})`;
@@ -645,7 +646,7 @@
       });
       reveal(this.b, p, .5, .62);
       const sl = this.sline || (this.sline = this.a.parentElement.querySelector(".story-line")), dl = easeIO(seg(p, .66, .8));
-      sl.querySelector("path").style.strokeDashoffset = 1 - dl; sl.querySelector("circle").style.opacity = dl >= 1 ? 1 : 0; sl.style.opacity = portrait() ? 1 - seg(p, .84, .88) : 1;
+      sl.querySelector("path").style.strokeDashoffset = 1 - dl; sl.querySelector("circle").style.opacity = dl >= 1 ? 1 : 0; sl.style.opacity = (dl > 0 ? 1 : 0) * (portrait() ? 1 - seg(p, .84, .88) : 1);
       fadeIn(this.card, ease(seg(p, .84, .94)), 30);
     }
   });
@@ -729,7 +730,7 @@
       <p class="lab"><span class="md">##</span>${K.h}</p>
       <p class="c-lead">${esc(K.p)}</p>
       <a class="c-mail" href="mailto:${K.email}">${K.email}</a>
-      <div class="c-row"><span><span class="md">&gt;</span>${K.address}</span><a href="${K.linkedin}">LinkedIn</a><a href="https://missprym.tech">missprym.tech</a></div>
+      <div class="c-row"><span><span class="md">&gt;</span> ${K.address}</span><a href="${K.linkedin}">LinkedIn</a><a href="https://missprym.tech">missprym.tech</a></div>
       <footer class="foot"><span>Miss P Aktiebolag</span><button type="button" data-read>${tr("read as text")}</button><b>MISSPRYM<span>.md</span></b></footer>`,
     init(el) { this.items = $$(".lab, .c-lead, .c-mail, .c-row, .foot", el); this.pend = $$(".pend", el); this.cradle = $(".cradle", el); },
     update(p, t) {
@@ -967,7 +968,7 @@
 
     // övergång
     // scenen som lämnas sjunker undan lite – djup i övergången
-    S.forEach(x => { if (x !== s) { if (x.el.style.transform) x.el.style.transform = x.el.style.filter = ""; } });
+    S.forEach(x => { if (x !== s && !(visible.length > 1 && x === S[k - 1])) { if (x.el.style.transform) x.el.style.transform = x.el.style.filter = ""; if (x.el.style.opacity) x.el.style.opacity = ""; } });
     if (visible.length > 1) { const u = easeIO(clamp(wp)); S[k - 1].el.style.transform = `scale(${1 - u * .06}) translateY(${-u * 3}vh)`; S[k - 1].el.style.filter = `brightness(${1 - u * .35})`; }
     s.el.style.transform = ""; s.el.style.filter = "";
     if (visible.length > 1 && s.wipe === "circle") {
@@ -975,11 +976,14 @@
       const r = t * R, ox = mx, oy = my;
       s.el.style.clipPath = `circle(${r}px at ${ox}px ${oy}px)`;
       s.el.style.opacity = 1;
+      S[k - 1].el.style.opacity = "";
       ring.style.visibility = "visible";
       ring.style.clipPath = `circle(${r + Math.max(6, innerWidth * .009) * Math.sin(t * Math.PI)}px at ${ox}px ${oy}px)`;
     } else {
       s.el.style.clipPath = "";
-      s.el.style.opacity = visible.length > 1 && s.wipe === "fade" ? easeIO(clamp(wp)) : 1;
+      // mjuk övertoning: den gamla scenen tonar ut innan den nya tonar in, så texterna aldrig ligger på varandra
+      s.el.style.opacity = visible.length > 1 && s.wipe === "fade" ? easeIO(clamp((wp - .3) / .7)) : 1;
+      if (visible.length > 1 && s.wipe === "fade") S[k - 1].el.style.opacity = 1 - easeIO(clamp(wp / .6));
       ring.style.visibility = "hidden";
     }
 

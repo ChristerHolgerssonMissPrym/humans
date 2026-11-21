@@ -1471,7 +1471,7 @@ html.reading .way, body.index-open .way { display: none; }
 .L-file .cm-hero { display: none; }
 .mf-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 26vh; pointer-events: none; }
 .mf-floor::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 9vh; background: linear-gradient(rgba(255,255,255,.0), rgba(255,255,255,.05)); border-top: 1px solid rgba(244,239,232,.12); }
-.mf-wet { position: absolute; right: 0; left: 0; bottom: 1.6vh; height: 3.2vh; border-radius: 99px; background: linear-gradient(90deg, transparent, rgba(186,220,255,.18) 30%, rgba(255,255,255,.28)); transform-origin: 100% 50%; transform: scaleX(0); filter: blur(2px); }
+.mf-wet { position: absolute; right: 0; left: 0; bottom: 0; height: 2.2vh; background: radial-gradient(60% 100% at 50% 100%, rgba(200,225,255,.16), transparent 70%); transform-origin: 100% 50%; transform: scaleX(0); filter: blur(6px); }
 .mf-hero { position: absolute; left: 6vw; bottom: 0; height: 24vh; width: auto; transform-origin: 20% 100%; will-change: transform; filter: drop-shadow(0 8px 10px rgba(0,0,0,.45)); }
 @media (orientation: portrait) { .mf-hero { height: 15vh; } .mf-floor { height: 18vh; } }
 
@@ -1501,3 +1501,21 @@ body.index-open .hud-lang { opacity: 0; pointer-events: none; }
 @media (orientation: portrait) { .ev-pw { bottom: 11vh; } .ev-pw .ev-past li { padding: 0; } .ev-pw .ev-item { padding: .25em .5em; } .ev-pw .ev-past .t { font-size: 12.5px; } .L-events .ev-box .cta { margin-bottom: 1vh; } }
 /* jätteordet anpassar sig efter ordets längd (human / mänskligt) */
 .giant[style*="--n"] { font-size: min(clamp(120px, 30vw, 620px), calc(176vw / var(--n))); }
+
+/* Pausknappen bor i menyraden – då krockar den aldrig med texter och knappar längst ner */
+.hud .pause { position: static; width: 42px; height: 42px; flex: none; background: transparent; border: 1px solid currentColor; color: inherit; }
+.hud .pause i { background: currentColor; height: 12px; width: 3px; }
+.hud .pause[aria-pressed="true"] i:first-child { border-left-color: currentColor; background: none; width: 0; height: 0; margin-left: 3px; }
+body.index-open .hud .pause { opacity: 0; pointer-events: none; }
+@media (max-width: 760px) {
+  .hud .pause { width: 36px; height: 36px; }
+  .hud__l, .hud__r { gap: 4px; }
+  .hud-watch { display: none; }
+  .hud-file { padding: 0 11px; }
+  .hud-lang { padding: 0 9px; }
+}
+@media (orientation: portrait) { .L-file .mf-p { font-size: 4.3vw; } }
+/* Menyraden läsbar ovanpå bilder och film */
+.hud-file, .hud-crumb.is-on, .hud-lang, .hud-watch, .hud .pause { -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+body[data-hud="dark"] .hud-file, body[data-hud="dark"] .hud-crumb.is-on, body[data-hud="dark"] .hud-lang, body[data-hud="dark"] .hud-watch, body[data-hud="dark"] .hud .pause { background: rgba(20,18,16,.32); }
+body[data-hud="light"] .hud-file, body[data-hud="light"] .hud-crumb.is-on, body[data-hud="light"] .hud-lang, body[data-hud="light"] .hud-watch, body[data-hud="light"] .hud .pause { background: rgba(255,255,255,.45); }
