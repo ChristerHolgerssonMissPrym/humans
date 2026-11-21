@@ -779,26 +779,46 @@
 
   // Vad vi är – tech- & ingenjörsbyrå: fem sätt vi arbetar med kunderna, och att vi vill reformera branschen
   const ROLES = [
-    ["consultants", "Tech & engineering consultants", "Developers, architects, quality, sourcing, supply chain – people who solve real problems inside your team."],
-    ["software", "Software commitments", "We take on whole deliveries: from architecture to final, verified code."],
-    ["recruitment", "Your own recruitment", "We help you find and hire the right people for your own organisation – transparent and competence-based."],
-    ["broker", "Assignment broker", "We match assignments with independent consultants we trust, and pass the opportunity on."],
-    ["partner", "Partner", "Not a supplier on a list. A partner who stays when it gets difficult."]
+    ["consultants", "Tech & engineering consultants", "Developers, architects, quality, sourcing, supply chain – people who solve real problems inside your team.", "team-hero"],
+    ["software", "Software commitments", "We take on whole deliveries: from architecture to final, verified code.", "team-glasses"],
+    ["recruitment", "Your own recruitment", "We help you find and hire the right people for your own organisation – transparent and competence-based.", "team-blond"],
+    ["broker", "Assignment broker", "We match assignments with independent consultants we trust, and pass the opportunity on.", "team-cap"],
+    ["partner", "Partner", "Not a supplier on a list. A partner who stays when it gets difficult.", "team-dancer"]
   ];
   scene({
-    id: "we-are", t: "what we are", hud: "light", len: 3.6, wipe: "circle", card: { glyph: "5", room: "#f7eaad" },
+    id: "we-are", t: "what we are", hud: "light", len: 4.4, wipe: "circle", card: { glyph: "5", room: "#f7eaad" },
     html: `
       <i class="wall"></i>
       <p class="lab"><span class="md">##</span>what we are · Miss P Aktiebolag · 559455-8172</p>
       <h2 class="wa-h">${lines(["A tech & engineering firm", "<span class='hl-human'>– with five ways in.</span>"])}</h2>
-      <div class="wa-doors">${ROLES.map(([id, t, d], i) => `<article class="door" style="--i:${i}"><span class="door-n">0${i + 1}</span><h3>${t}</h3><p>${d}</p></article>`).join("")}</div>
+      <div class="wa-doors">${ROLES.map(([id, t, d, f], i) => `<article class="door d-${id}" style="--i:${i}">
+        <div class="door-fr"><img src="${C.fig}${f}.webp" alt=""><div class="door-leaf"><span class="door-n">0${i + 1}</span><i class="knob"></i></div></div>
+        <div class="door-tx"><span class="door-k">0${i + 1} / 05</span><h3>${t}</h3><p>${d}</p></div></article>`).join("")}</div>
       <p class="wa-foot">${lines(["…while we work to <b>reform our industry</b>."])}</p>`,
-    init(el) { this.h = $(".wa-h", el); this.d = $$(".door", el); this.f = $(".wa-foot", el); this.lab = $(".lab", el); },
+    init(el) { this.h = $(".wa-h", el); this.d = $$(".door", el); this.f = $(".wa-foot", el); this.lab = $(".lab", el);
+      this.leaf = this.d.map(d => $(".door-leaf", d)); this.img = this.d.map(d => $("img", d)); this.tx = this.d.map(d => $(".door-tx", d)); },
     update(p, t) {
+      const port = innerHeight > innerWidth;
       this.lab.style.opacity = seg(p, 0, .05);
-      reveal(this.h, p, .02, .14);
-      this.d.forEach((e, i) => { const k = seg(p, .14 + i * .08, .26 + i * .08), e2 = ease(k); e.style.opacity = k > 0 ? 1 : 0; e.style.transform = `perspective(900px) rotateY(${(1 - e2) * -80}deg) translateY(${(1 - e2) * 30}px)`; });
-      reveal(this.f, p, .7, .82);
+      reveal(this.h, p, .02, .12);
+      this.d.forEach((e, i) => {
+        let show, open;
+        if (port) {
+          // mobil: en dörr i taget – glider in, öppnas, glider ut
+          const a = .12 + i * .15, inn = easeIO(seg(p, a, a + .05)), out = easeIO(seg(p, a + .14, a + .18));
+          open = ease(seg(p, a + .03, a + .09));
+          e.style.opacity = inn > 0 && out < 1 ? 1 : 0;
+          e.style.transform = `translateX(${(1 - inn) * 110 - out * 110}%) rotate(${(1 - inn) * 6 - out * 6}deg)`;
+        } else {
+          const a = .12 + i * .1; show = ease(seg(p, a, a + .08)); open = ease(seg(p, a + .06, a + .16));
+          e.style.opacity = show > 0 ? 1 : 0;
+          e.style.transform = `translateY(${(1 - show) * 60}px)`;
+        }
+        this.leaf[i].style.transform = `perspective(900px) rotateY(${-open * 108}deg)`;
+        this.img[i].style.transform = `translateY(${(1 - open) * 18}%) scale(${.9 + open * .1})`;
+        this.tx[i].style.opacity = open; this.tx[i].style.transform = `translateY(${(1 - open) * 14}px)`;
+      });
+      reveal(this.f, p, port ? .88 : .7, port ? .95 : .82);
     }
   });
 
