@@ -1246,3 +1246,17 @@ body.app-open { overflow: hidden; }
 .th-toc { display: flex; flex-direction: column; gap: 6%; width: 84%; font-family: var(--f-mono); color: #e6e2db; font-size: calc(9 * var(--u)); }
 .th-toc i { font-style: normal; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .th-toc i::first-letter { color: var(--mp-yellow); }
 .hi { background: linear-gradient(transparent 52%, rgba(242,205,92,.85) 52%, rgba(242,205,92,.85) 92%, transparent 92%) no-repeat 0 0 / calc(100% * var(--k, 0)) 100%; padding: 0 .1em; }
+/* mobil: textpanelen i det tomma fältet under rubriken, aldrig över figuren, och inga halva rader */
+@media (orientation: portrait) {
+  .sh-p {
+    top: calc(var(--top) + 3.4 * var(--fs-say) + 22vw) !important; bottom: auto !important;
+    left: calc(var(--pad) + .7em) !important; right: calc(var(--pad) + .7em) !important; width: auto !important;
+    padding: 0 !important; border-radius: 4px !important;
+    background: rgba(255,255,255,.82) !important; box-shadow: 0 0 0 .75em rgba(255,255,255,.82), 0 10px 30px .75em rgba(0,0,0,.06) !important;
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+    font-size: 14px !important; line-height: 1.4 !important;
+    -webkit-line-clamp: 5 !important; line-clamp: 5 !important; max-height: calc(1.4em * 5);
+  }
+  .L-shift .fig { height: 46%; }
+  .glass-wrap { height: 34vh !important; bottom: 18vh !important; }
+}
