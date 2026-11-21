@@ -1146,7 +1146,11 @@
     watching = true; last = 0; watchBtn.setAttribute("aria-pressed", "true"); watchT.textContent = tr("pause");
     requestAnimationFrame(step);
   });
-  ["wheel", "touchstart"].forEach(ev => addEventListener(ev, () => watching && stopWatch(), { passive: true }));
+  // ett tryck var som helst (utom på knappen själv) avbryter uppspelningen
+  ["wheel", "touchstart"].forEach(ev => addEventListener(ev, e => watching && !e.target.closest?.("[data-watch]") && stopWatch(), { passive: true }));
+  // mobiler (särskilt iPhone) kräver att filmerna är ljudlösa och spelas i sidan – och ibland en första beröring
+  $$("video").forEach(v => { v.muted = true; v.defaultMuted = true; v.playsInline = true; v.setAttribute("playsinline", ""); });
+  addEventListener("touchstart", () => { lastVis = ""; }, { passive: true, once: true });
   addEventListener("keydown", e => { if (watching && e.key !== " ") stopWatch(); });
 
   /* ================= prick & öga ================= */

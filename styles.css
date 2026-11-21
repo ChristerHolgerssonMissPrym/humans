@@ -1519,3 +1519,14 @@ body.index-open .hud .pause { opacity: 0; pointer-events: none; }
 .hud-file, .hud-crumb.is-on, .hud-lang, .hud-watch, .hud .pause { -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 body[data-hud="dark"] .hud-file, body[data-hud="dark"] .hud-crumb.is-on, body[data-hud="dark"] .hud-lang, body[data-hud="dark"] .hud-watch, body[data-hud="dark"] .hud .pause { background: rgba(20,18,16,.32); }
 body[data-hud="light"] .hud-file, body[data-hud="light"] .hud-crumb.is-on, body[data-hud="light"] .hud-lang, body[data-hud="light"] .hud-watch, body[data-hud="light"] .hud .pause { background: rgba(255,255,255,.45); }
+
+/* Titta-knappen: i mobilen en play-ikon (och stopp-ikon när den spelar) */
+.hud-watch__i { display: none; width: 0; height: 0; border-left: 11px solid currentColor; border-top: 7px solid transparent; border-bottom: 7px solid transparent; margin-left: 3px; }
+.hud-watch[aria-pressed="true"] .hud-watch__i { width: 11px; height: 11px; border: 0; margin: 0; background: currentColor; border-radius: 2px; }
+@media (max-width: 760px) {
+  .hud-watch { display: inline-flex !important; width: 36px; padding: 0 !important; justify-content: center; border: 1px solid currentColor; }
+  .hud-watch__t { display: none; }
+  .hud-watch__i { display: block; }
+  .hud-index { width: 36px; padding: 0 !important; justify-content: center; }
+  .hud-index__t { display: none; }
+}
