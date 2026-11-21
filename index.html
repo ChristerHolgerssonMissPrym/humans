@@ -20,7 +20,7 @@
   <!-- HUD -->
   <header class="hud">
     <div class="hud__l">
-      <a class="hud-mark" href="#top" aria-label="Till toppen">
+      <a class="hud-mark" href="#top" aria-label="To the top">
         <svg viewBox="0 0 64 64" aria-hidden="true">
           <circle cx="32" cy="32" r="30" class="hud-mark__ring"/>
           <path d="M10 32 C 20 18, 44 18, 54 32 C 44 46, 20 46, 10 32 Z" class="hud-mark__lid"/>
@@ -30,9 +30,10 @@
         </svg>
       </a>
       <button class="pill hud-file" type="button" data-file><span>MISSPRYM<span class="md">.md</span></span><i class="hud-file__dot"></i></button>
-      <span class="pill hud-count">01 / 22</span><span class="pill hud-crumb"><span class="md">##</span> <span class="hud-crumb__t"></span></span>
+      <span class="pill hud-crumb"><span class="md">##</span> <span class="hud-crumb__t"></span></span>
     </div>
     <div class="hud__r">
+      <a class="pill hud-lang" href="sv.html" hreflang="sv" lang="sv" title="På svenska">SV</a>
       <button class="pill hud-watch" type="button" data-watch><span class="hud-watch__t">watch</span></button>
       <button class="pill hud-index" type="button" data-index aria-expanded="false">index <span class="hud-index__i"><i></i><i></i></span></button>
     </div>
@@ -58,14 +59,14 @@
   </div>
 
   <!-- Verktygen (Uppdragsautomaten m.fl.) i sajtens egen design -->
-  <div class="app" role="dialog" aria-modal="true" aria-label="Miss Prym-verktyg" hidden>
+  <div class="app" role="dialog" aria-modal="true" aria-label="Miss Prym tools" hidden>
     <div class="app__scrim" data-app-close></div>
     <div class="app__win">
       <div class="app__bar">
         <span class="app__dot"></span>
-        <nav class="app__tabs" aria-label="Verktyg"></nav>
-        <a class="app__ext" href="#" target="_blank" rel="noopener">öppna i ny flik ↗</a>
-        <button class="app__close" type="button" data-app-close aria-label="Stäng">✕</button>
+        <nav class="app__tabs" aria-label="Tools"></nav>
+        <a class="app__ext" href="#" target="_blank" rel="noopener">open in new tab ↗</a>
+        <button class="app__close" type="button" data-app-close aria-label="Close">✕</button>
       </div>
       <div class="app__body"></div>
     </div>
@@ -78,7 +79,7 @@
   <!-- Läsläge: hela innehållet som ren text -->
   <article id="read" class="read"></article>
 
-  <button class="pause" type="button" aria-pressed="false" aria-label="Pausa animationer" data-pause><i></i><i></i></button>
+  <button class="pause" type="button" aria-pressed="false" aria-label="Pause animations" data-pause><i></i><i></i></button>
   <div class="grain" aria-hidden="true"></div>
   <i class="dot" aria-hidden="true"></i>
   <div class="prog" aria-hidden="true"><i></i></div>

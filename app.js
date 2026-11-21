@@ -1,5 +1,6 @@
 (() => {
   const C = window.PRYM, E = C.events, K = C.contact;
+  const tr = s => (C.tr && C.tr[s]) || s; // översättning (svenska versionen fyller C.tr)
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -22,6 +23,7 @@
     ls.forEach((l, i) => {
       const k = ease(seg(p, a + (b - a) * i / n, a + (b - a) * (i + 1) / n));
       l.style.transform = `translateY(${(1 - k) * 105}%)`;
+      l.style.opacity = (.2 + .8 * k).toFixed(3); // raden tänds upp – och släcks när man scrollar tillbaka
     });
   };
   const hide = (el, p, a, b) => { // rader glider ut uppåt
@@ -44,14 +46,14 @@
     id: "top", t: "MISSPRYM.md", hud: "light", len: 2.0, card: { glyph: "▣", room: "#f7f7f7" },
     html: `
       <div class="nl">
-        <h1 class="nl-h">${lines(["Technical depth.", "Human", "judgement<span class='nl-dot'></span>"])}</h1>
+        <h1 class="nl-h">${lines([tr("Technical depth."), tr("Human"), tr("judgement") + "<span class='nl-dot'></span>"])}</h1>
         <p class="nl-p">${esc(C.commitment.lead)} ${esc(C.commitment.body.split(". ").slice(-1)[0])}</p>
         <div class="pc">
           <div class="rig">
             <div class="mon">
               <i class="fc f-back"></i><i class="fc f-left"></i><i class="fc f-right"></i><i class="fc f-top"></i><i class="fc f-bot"></i>
               <div class="pcb pcb1">${chips}</div><div class="pcb pcb2">${chips}</div><i class="yoke"></i>
-              <div class="tube"><video src="assets/agentomaten-face.mp4" poster="assets/agentomaten-face.jpg" muted loop playsinline preload="none" aria-label="Agentomatens ansikte som ler"></video><i class="crt-scan"></i><i class="crt-glare"></i><p class="crt-text">&gt; ${C.agentomaten.listen}<b class="crt-cur"></b></p></div>
+              <div class="tube"><video src="assets/agentomaten-face.mp4" poster="assets/agentomaten-face.jpg" muted loop playsinline preload="none" aria-label="${tr("The smiling face of Agentomaten")}"></video><i class="crt-scan"></i><i class="crt-glare"></i><p class="crt-text">&gt; ${C.agentomaten.listen}<b class="crt-cur"></b></p></div>
               <div class="fc f-front"><span class="badge">MISS PRYM · 1.0</span><i class="led"></i><i class="slot"></i></div>
             </div>
             <div class="base"><i class="fc b-top"></i><i class="fc b-front"></i></div>
@@ -60,8 +62,8 @@
             <svg class="coil" viewBox="0 0 300 120" aria-hidden="true"><path d="${Array.from({ length: 24 }, (_, i) => `${i ? "" : "M10 60 "}C ${14 + i * 11} 30, ${20 + i * 11} 90, ${21 + i * 11} 60`).join(" ")} Q 290 60 290 20"/></svg>
           </div>
         </div>
-        <button class="nl-down" type="button" aria-label="Till nästa del" data-next>↓</button>
-        <div class="marquee" aria-hidden="true"><div class="mq">${Array.from({ length: 6 }, () => `<span>BE PROUD · BE LIKE PRYM · TECHNICAL DEPTH · HUMAN JUDGEMENT · </span>`).join("")}</div></div>
+        <button class="nl-down" type="button" aria-label="${tr("To the next part")}" data-next>↓</button>
+        <div class="marquee" aria-hidden="true"><div class="mq">${Array.from({ length: 6 }, () => `<span>${tr("BE PROUD · BE LIKE PRYM · TECHNICAL DEPTH · HUMAN JUDGEMENT · ")}</span>`).join("")}</div></div>
       </div>`,
     init(el) {
       this.nl = $(".nl", el); this.rig = $(".rig", el); this.q = n => $$(n, el); this.mq = $(".marquee", el); this.down = $(".nl-down", el);
@@ -103,7 +105,7 @@
       <video class="bgfilm" src="${C.film}" poster="${C.filmPoster}" muted loop playsinline preload="none" aria-hidden="true"></video><i class="bgtint bgtint--commit"></i>
       <p class="lab"><span class="md">##</span>${C.commitment.h}</p>
       <div class="lead"><p class="l1">${lines(C.open2.lines)}</p><p class="after">${lines([esc(C.open2.after)])}</p></div>
-      <p class="giant" aria-label="${C.open2.giant}">${chars(C.open2.giant)}</p>`,
+      <p class="giant" style="--n:${C.open2.giant.length}" aria-label="${C.open2.giant}">${chars(C.open2.giant)}</p>`,
     init(el) { this.l1 = $(".l1", el); this.after = $(".after", el); this.lab = $(".lab", el); this.ch = $$(".giant .ch", el); },
     update(p) {
       reveal(this.l1, p, .04, .3);
@@ -120,7 +122,7 @@
 
   // 3. Bordet: kompetenserna landar som piller
   scene({
-    id: "expertise", t: "our expertise", hud: "light", len: 3.4, wipe: "circle", card: { glyph: "∗", room: "#ffabc8" },
+    id: "expertise", t: tr("our expertise"), hud: "light", len: 3.4, wipe: "circle", card: { glyph: "∗", room: "#ffabc8" },
     html: `
       <i class="wall"></i>
       <div class="crowd">${["puppet-man", "statue-justitia", "bird-owl", "purpose-woman", "bird-crow", "statue-venus", "bird-robin"].map((n, i) => `<img class="dude d-${n}" src="${C.fig}${n}.webp" alt="" style="--x:${6 + i * 13.6}%;--f:${i % 2 ? -1 : 1}">`).join("")}</div>
@@ -174,8 +176,8 @@
 
   // 4. Ord tänds: "Technology should strengthen … less human."
   scene({
-    id: "human", t: "less human", hud: "dark", len: 2.5, wipe: "circle", card: { glyph: "h", room: "#5578dc" },
-    html: `<i class="wall"></i><figure class="give"><video src="assets/prym-give.mp4" poster="assets/prym-give.jpg" muted loop playsinline preload="none" aria-label="Miss Prym: If you give, you will receive twice as much"></video></figure><div class="say say--left"><span class="say-lab"><span class="md">##</span>${C.commitment.h}</span><p>${wordsOf(rich(C.commitment.say)).map(w => `<span class="w">${w}</span>`).join(" ")}</p></div>`,
+    id: "human", t: tr("less human"), hud: "dark", len: 2.5, wipe: "circle", card: { glyph: "h", room: "#5578dc" },
+    html: `<i class="wall"></i><figure class="give"><video src="assets/prym-give.mp4" poster="assets/prym-give.jpg" muted loop playsinline preload="none" aria-label="${tr("Miss Prym: If you give, you will receive twice as much")}"></video></figure><div class="say say--left"><span class="say-lab"><span class="md">##</span>${C.commitment.h}</span><p>${wordsOf(rich(C.commitment.say)).map(w => `<span class="w">${w}</span>`).join(" ")}</p></div>`,
     init(el) { this.w = $$(".w", el); this.give = $(".give", el); },
     update(p, t) { const k = ease(seg(p, 0, .25)); this.give.style.transform = `translateY(-50%) scale(${.7 + k * .3}) rotate(${(1 - k) * -12 + Math.sin(t * .8) * 1.2}deg)`; this.give.style.opacity = k;
       const n = this.w.length; this.w.forEach((w, i) => w.style.setProperty("--lit", clamp(seg(p, .08, .8) * n - i).toFixed(3))); }
@@ -183,7 +185,7 @@
 
   // 5. Coelho
   scene({
-    id: "prym", t: "be like prym", hud: "dark", len: 3.9, card: { glyph: "”", room: "#ffabc8" },
+    id: "prym", t: tr("be like prym"), hud: "dark", len: 3.9, card: { glyph: "”", room: "#ffabc8" },
     html: `
       <i class="wall"></i>
       <video class="bgfilm" src="assets/street-lamps.mp4" poster="assets/street-lamps.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><i class="bgtint"></i>
@@ -209,13 +211,13 @@
     id: "who", t: C.who.h, hud: "dark", len: 5.4, wipe: "circle", card: { glyph: "W", room: "#2a2622" },
     html: `
       <div class="hall">
-        <div class="pano"><img src="assets/team.jpg" alt="Vi som jobbar på Miss Prym, i barockdräkter i en sal med utsikt över Göteborg"></div>
-        <video class="hall-film" src="assets/team-krakan.mp4" poster="assets/team-krakan.jpg" muted loop playsinline preload="none" aria-label="Vi som jobbar på Miss Prym"></video>
+        <div class="pano"><img src="assets/team.jpg" alt="${tr("We who work at Miss Prym, in baroque costumes in a hall overlooking Gothenburg")}"></div>
+        <video class="hall-film" src="assets/team-krakan.mp4" poster="assets/team-krakan.jpg" muted loop playsinline preload="none" aria-label="${tr("We who work at Miss Prym")}"></video>
         <i class="hall-shade"></i>
       </div>
       <h2 class="chap chap--hall"><span class="md">##</span>${lines([rich(C.who.head)])}</h2>
       <div class="cap-wrap">${C.who.p.map(t => `<p class="cap">${esc(t)}</p>`).join("")}</div>
-      <p class="hall-sign">${lines(["This is us<span class='nl-dot'></span>"])}</p>`,
+      <p class="hall-sign">${lines([tr("This is us") + "<span class='nl-dot'></span>"])}</p>`,
     init(el) { this.chap = $(".chap", el); this.pano = $(".pano", el); this.caps = $$(".cap", el); this.sign = $(".hall-sign", el); this.shade = $(".hall-shade", el); },
     update(p, t) {
       reveal(this.chap, p, .02, .1);
@@ -244,14 +246,14 @@
   const floaters = [];
   for (let i = 0; i < 22; i++) floaters.push(i % 2 ? team[(i >> 1) % team.length] : FL[(i >> 1) % FL.length]);
   scene({
-    id: "together", t: "together", hud: "light", len: 3.7, wipe: "fade", card: { glyph: "∞", room: "#f4efe8" },
+    id: "together", t: tr("together"), hud: "light", len: 3.7, wipe: "fade", card: { glyph: "∞", room: "#f4efe8" },
     html: `
       <div class="swarm">${floaters.map((f, i) => {
         const x = [6, 74, 18, 60, 38, 84, 2, 48, 28, 70, 90, 12, 56, 34, 80, 8, 64, 44, 22, 76, 52, 30][i], d = [1, .7, .45, .9, .6, 1, .5, .8, .35, .95, .55, .75, .4, 1, .65, .5, .85, .45, .7, .9, .6, .8][i];
         return `<figure class="fl" style="--x:${x}%;--d:${d};--o:${i * .043};--bg:${f.bg}">${f.img ? `<img src="${f.img}" alt="" loading="lazy">` : `<span>${f.word}</span>`}</figure>`;
       }).join("")}</div>
-      <p class="big-say s1">${wordsOf("We provide our clients with open-minded consultants…").map(w => `<span class="w">${w}</span>`).join(" ")}</p>
-      <p class="big-say s2">${wordsOf("…who create more together than any individual could achieve alone.").map(w => `<span class="w">${w}</span>`).join(" ")}</p>`,
+      <p class="big-say s1">${wordsOf(tr("We provide our clients with open-minded consultants…")).map(w => `<span class="w">${w}</span>`).join(" ")}</p>
+      <p class="big-say s2">${wordsOf(tr("…who create more together than any individual could achieve alone.")).map(w => `<span class="w">${w}</span>`).join(" ")}</p>`,
     init(el) { this.fl = $$(".fl", el); this.s1 = $(".s1", el); this.s2 = $(".s2", el); this.w1 = $$(".s1 .w", el); this.w2 = $$(".s2 .w", el); },
     update(p, t) {
       // som hos Netlight: texten står grå och fylls i svart ord för ord
@@ -281,7 +283,7 @@
   const pc = (name, cls = "") => { const [x, y, w, h] = FIG[name]; return `<img class="pc ${cls}" src="${C.fig}${name}.webp" alt="" style="left:${x / 19.2}%;top:${y / 10.8}%;width:${w / 19.2}%;height:${h / 10.8}%">`; };
   const BUB = Array.from({ length: 16 }, (_, i) => [1110 + (i * 97) % 520, 0.4 + (i * 0.37) % 1, 5 + (i * 7) % 9, (i * .173) % 1]);
   const ART = {
-    woman: () => `<div class="fig">${pc("purpose-woman", "a-woman")}</div><div class="gold" aria-hidden="true">${[0, 1, 2].map(i => `<i class="bar" style="--i:${i}"></i>`).join("")}<span class="gold-tag">profit?</span></div>`,
+    woman: () => `<div class="fig">${pc("purpose-woman", "a-woman")}</div><div class="gold" aria-hidden="true">${[0, 1, 2].map(i => `<i class="bar" style="--i:${i}"></i>`).join("")}<span class="gold-tag">${tr("profit?")}</span></div>`,
     net: () => `
       <div class="fig">
         <svg class="balloon" viewBox="0 0 1920 1080" preserveAspectRatio="xMaxYMax meet" aria-hidden="true">
@@ -301,19 +303,18 @@
     puppet: () => `<div class="fig">${pc("emp-free", "a-free")}${pc("emp-tophand", "a-top")}${pc("emp-scissors", "a-sc")}</div>`,
     flasks: () => `<div class="fig">${BUB.map(b => `<i class="bub" style="left:${b[0] / 19.2}%;--s:${b[2]}px"></i>`).join("")}${pc("exp-flasks", "a-flasks")}</div>`
   };
-  C.shifts.forEach((s, i) => scene({
-    id: `shift-${i + 1}`, t: `${i + 1}. from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}`, hud: "light", len: s.art === "puppet" ? 3.8 : 3.1, wipe: "circle",
-    card: { img: s.img, n: String(i + 1), room: s.room }, art: s.art,
+  C.shifts.forEach((s, i) => scene({ i,
+    id: `shift-${i + 1}`, t: `${tr("from")} ${s.from.toLowerCase()} ${tr("to")} ${s.to.toLowerCase()}`, hud: "light", len: s.art === "puppet" ? 3.8 : 3.1, wipe: "circle",
+    card: { img: s.img, room: s.room }, art: s.art,
     style: `--room:${s.room};--floor:${s.floor}`,
     html: `
       <i class="wall"></i>${s.art === "net" ? "" : `<div class="floor"></div>`}
       ${s.art ? ART[s.art]() : `<div class="glass-wrap"><img class="sh-img" src="${C.img}${s.img}" alt=""><i class="frost"></i><i class="wiper"></i></div>`}
-      <h2 class="sh-title">${lines([`<span class="num">${i + 1}.</span> from <span class="sh-x">${s.from.toLowerCase()}<svg viewBox="0 0 100 10" preserveAspectRatio="none"><path pathLength="1" d="M1 6 C 30 3, 60 8, 99 4"/></svg></span>`])}</h2>
+      <h2 class="sh-title">${lines([`${tr("from")} <span class="sh-x">${chars(s.from.toLowerCase(), "fly")}<i class="sh-strike"></i></span>`])}</h2>
       <p class="sh-to">${lines([`${s.to}<i></i>`])}</p>
-      <p class="sh-p">${esc(s.p)}</p>
-      <p class="sh-n">${i + 1} / ${C.shifts.length}</p>`,
+      <p class="sh-p">${esc(s.p)}</p>`,
     init(el) {
-      this.fig = $(".fig", el); this.img = $(".sh-img", el); this.title = $(".sh-title", el); this.x = $(".sh-x path", el); this.to = $(".sh-to", el); this.p = $(".sh-p", el);
+      this.fig = $(".fig", el); this.img = $(".sh-img", el); this.title = $(".sh-title", el); this.x = $(".sh-strike", el); this.fl = $$(".sh-x .fly", el); this.mask = $(".sh-title .ln-mask", el); this.to = $(".sh-to", el); this.p = $(".sh-p", el);
       this.q = n => $(n, el); this.bubs = $$(".bub", el);
     },
     update(p, t) {
@@ -321,7 +322,16 @@
       // tidpunkter: marionetten klipps loss när ordet stryks
       const strikeA = art === "puppet" ? .4 : .22, strikeB = art === "puppet" ? .46 : .36;
       reveal(this.title, p, .05, .16);
-      this.x.style.strokeDashoffset = 1 - easeIO(seg(p, strikeA, strikeB));
+      // ordet stryks helt – sedan lossnar bokstäverna och flyger iväg över skärmen
+      const sk = easeIO(seg(p, strikeA, strikeB)), blow = seg(p, strikeB + .02, strikeB + .2);
+      this.x.style.transform = `rotate(-2deg) scaleX(${sk})`; this.x.style.opacity = 1 - seg(blow, .2, .6);
+      this.mask.style.overflow = seg(p, .05, .16) >= 1 ? "visible" : "hidden";
+      this.fl.forEach((c, j) => {
+        const r1 = Math.sin((j + 1) * 12.9898 + i * 3) * 43758.5453 % 1, r2 = Math.cos((j + 1) * 78.233 + i) * 12345.678 % 1;
+        const b = ease(clamp(blow * 1.3 - j * .03));
+        c.style.transform = b > 0 ? `translate(${r1 * 70 * b}vw, ${(r2 * 50 - 30) * b + b * b * 40}vh) rotate(${r1 * 540 * b}deg) scale(${1 + b * .6})` : "";
+        c.style.opacity = 1 - seg(b, .5, 1);
+      });
       reveal(this.to, p, strikeB - .02, strikeB + .1);
       fadeIn(this.p, ease(seg(p, strikeB + .12, strikeB + .24)));
 
@@ -416,13 +426,13 @@
   // 11a. 1,01^365 – stapel för stapel; det mesta av resan ser ut att inte ge något alls
   const NB = 30, bars = Array.from({ length: NB }, (_, i) => Math.pow(1.01, (i + 1) * 365 / NB));
   scene({
-    id: "one-percent", t: "one percent a day", hud: "dark", len: 3.6, wipe: "circle", card: { glyph: "%", room: "#111111", light: true },
+    id: "one-percent", t: tr("one percent a day"), hud: "dark", len: 3.6, wipe: "circle", card: { glyph: "%", room: "#111111", light: true },
     html: `
       <div class="eq eq1"><span class="b">(1.00)</span><sup>365</sup><span class="eqs">=</span><span class="r r1">1.00</span></div>
       <div class="eq eq2"><span class="b">(1.01)</span><sup class="d">0</sup><span class="eqs">=</span><span class="r r2">1.00</span></div>
       <div class="ticks">${bars.map(v => `<i style="--v:${(v - 1) / 36.8}"></i>`).join("")}</div>
-      <p class="tick-mark"><b>▲</b><span class="tm-t">"this is pointless."</span></p>
-      <p class="eq-cap">${lines(["Standing still", "<span class='hl-human'>vs.</span>", "one percent better every day."])}</p>`,
+      <p class="tick-mark"><b>▲</b><span class="tm-t">${tr("\"this is pointless.\"")}</span></p>
+      <p class="eq-cap">${lines([tr("Standing still"), `<span class='hl-human'>${tr("vs.")}</span>`, tr("one percent better every day.")])}</p>`,
     init(el) { this.d = $(".eq2 .d", el); this.r2 = $(".r2", el); this.bars = $$(".ticks i", el); this.mark = $(".tick-mark", el); this.mt = $(".tm-t", el); this.cap = $(".eq-cap", el); this.eqs = $$(".eq", el); },
     update(p, t) {
       this.eqs.forEach((e, i) => fadeIn(e, ease(seg(p, .02 + i * .06, .14 + i * .06))));
@@ -441,12 +451,12 @@
 
   // 11b. Textrytmen från human-md ("Yet." / "I'm not in that argument" / "I'm in this one") – med Miss Pryms ord
   scene({
-    id: "chaos", t: "we face it together", hud: "dark", len: 3.1, wipe: "circle", card: { glyph: "C", room: "#0b41c2", light: true },
+    id: "chaos", t: tr("we face it together"), hud: "dark", len: 3.1, wipe: "circle", card: { glyph: "C", room: "#0b41c2", light: true },
     html: `
       <i class="wall"></i>
-      <p class="chaos-word" aria-label="Chaos.">${[..."Chaos"].map(c => `<span class="ch">${c}</span>`).join("")}<i class="cdot"></i></p>
-      <p class="chaos-small">We don't fear chaos<i class="cdot"></i></p>
-      <p class="chaos-big">${wordsOf("We face it together.").map(w => `<span class="w">${w}</span>`).join(" ")}</p>`,
+      <p class="chaos-word" aria-label="${tr("Chaos")}.">${[...tr("Chaos")].map(c => `<span class="ch">${c}</span>`).join("")}<i class="cdot"></i></p>
+      <p class="chaos-small">${tr("We don't fear chaos")}<i class="cdot"></i></p>
+      <p class="chaos-big">${wordsOf(tr("We face it together.")).map(w => `<span class="w">${w}</span>`).join(" ")}</p>`,
     init(el) { this.ch = $$(".chaos-word .ch", el); this.word = $(".chaos-word", el); this.small = $(".chaos-small", el); this.big = $(".chaos-big", el); this.w = $$(".chaos-big .w", el); },
     update(p, t) {
       // ordet darrar allt mer och flyger sedan isär
@@ -467,13 +477,15 @@
   // 12. What we do – tre tallrikar med silverkupor som lyfts (efter Figma-skissen)
   const cloche = `<svg class="cl-svg" viewBox="0 0 200 130" aria-hidden="true"><defs><linearGradient id="clg" x1="0" x2="1"><stop offset="0" stop-color="#9aa0a6"/><stop offset=".35" stop-color="#f4f4f2"/><stop offset=".6" stop-color="#c9cdd0"/><stop offset="1" stop-color="#7e858b"/></linearGradient></defs><path d="M10 118 Q 10 22 100 18 Q 190 22 190 118 Z" fill="url(#clg)" stroke="#5c6369" stroke-width="2"/><rect x="2" y="114" width="196" height="12" rx="6" fill="#b9bec2" stroke="#5c6369" stroke-width="2"/><circle cx="100" cy="12" r="9" fill="url(#clg)" stroke="#5c6369" stroke-width="2"/><path d="M40 40 Q 60 28 80 26" stroke="#fff" stroke-width="6" fill="none" opacity=".7" stroke-linecap="round"/></svg>`;
   // det som kommer upp under kuporna – en bild av det som beskrivs
+  const TEAM7 = ["team-sofa", "team-book", "team-cap", "team-glasses", "team-blond", "team-hero", "team-dancer"];
   const DISH = [
-    // Consultants: tre av oss kliver upp på tallriken, kopplade med en tråd
-    `<div class="v-team">${["team-dancer", "team-hero", "team-sofa"].map((n, j) => `<img src="${C.fig}${n}.webp" alt="" style="--j:${j}">`).join("")}<svg viewBox="0 0 100 20"><path d="M12 14 Q 30 2, 50 12 T 88 12"/></svg></div>`,
-    // Capability: staplar som växer och en glödlampa som tänds
-    `<div class="v-cap"><span class="bars">${[30, 48, 66, 88].map((h, j) => `<i style="--h:${h}%;--j:${j}"></i>`).join("")}</span><svg class="bulb" viewBox="0 0 40 56"><circle class="glow" cx="20" cy="20" r="19"/><path class="glass" d="M20 4 a15 15 0 0 1 9 27 v6 h-18 v-6 a15 15 0 0 1 9 -27z"/><rect x="12" y="39" width="16" height="4" rx="2"/><rect x="13" y="45" width="14" height="4" rx="2"/></svg></div>`,
-    // Recruitment: ett förstoringsglas sveper över kandidater och hittar matchen
-    `<div class="v-rec"><span class="people">${[0, 1, 2, 3, 4].map(j => `<i class="${j === 3 ? "match" : ""}"><b></b></i>`).join("")}</span><span class="lens"><i></i></span><span class="tick">✓</span></div>`
+    // Tech & engineering consultants: hela laget trängs upp på tallriken – det är individerna man hyr
+    `<div class="v-team">${TEAM7.map((n, j) => `<img src="${C.fig}${n}.webp" alt="" style="--j:${j}">`).join("")}</div>`,
+    // Software commitments: koden skrivs – och blir till digitala artefakter
+    `<div class="v-code"><div class="ed"><i class="ed-bar"><b></b><b></b><b></b></i>${[["<em>const</em> idea = <s>\"real problem\"</s>;", 0], ["<em>await</em> build(idea)", 0], ["  .test()", 1], ["  .verify()", 1], ["  .ship();", 1]].map(([l], j) => `<code style="--j:${j}">${l}</code>`).join("")}<i class="caret"></i></div>
+      <span class="art a1" style="--j:0"><i></i><i></i><i></i></span><span class="art a2" style="--j:1"><i></i></span><span class="art a3" style="--j:2">{ }</span></div>`,
+    // Your own recruitment: CV:n läggs fram, luppen letar – och en berättelse lyfter ur högen
+    `<div class="v-cv">${[0, 1, 2, 3, 4].map(j => `<span class="cv${j === 3 ? " hit" : ""}" style="--j:${j}"><i class="av"></i><i></i><i></i><i></i></span>`).join("")}<span class="lens"><i></i></span><span class="tick">✓</span></div>`
   ];
   scene({
     id: "what", t: C.what.h, hud: "light", len: 3.4, wipe: "circle", card: { glyph: "{ }", mono: true, room: "#ffeaa6" },
@@ -485,8 +497,7 @@
         <i class="dish"></i>
         <div class="serve dish-${i}">${DISH[i]}</div>
         <span class="spark">${Array.from({ length: 8 }, () => "<i></i>").join("")}</span>
-        <img class="waiter" src="${C.fig}team-${["cap", "blond", "glasses"][i]}.webp" alt="">
-        <span class="cl">${cloche}</span>
+        <span class="cl">${cloche}<img class="cl-hand" src="${C.fig}emp-tophand.webp" alt=""></span>
         <div class="menu"><span class="menu-h"><span class="md">###</span> ${it.t.toLowerCase()}</span><p>${esc(it.p)}</p></div>
       </div>`).join("")}</div>`,
     init(el) { this.chap = $(".chap", el); this.pl = $$(".plate", el); },
@@ -498,16 +509,15 @@
         pl.style.transform = `translateY(${(1 - inK) * 60}vh)`;
         const a = .26 + i * .22, lift = easeIO(seg(p, a, a + .1));
         const wob = lift > 0 && lift < 1 ? Math.sin(lift * Math.PI * 3) * 4 : 0;
-        const cl = pl.querySelector(".cl"), waiter = pl.querySelector(".waiter");
+        const cl = pl.querySelector(".cl"), hand = pl.querySelector(".cl-hand");
         // handen kommer ner, greppar knoppen och lyfter kupan
         const down = ease(seg(p, a - .1, a - .01));
-        // en av oss reser sig bakom bordet, lyfter kupan högt och ler
-        waiter.style.opacity = down; waiter.style.transform = `translateX(-112%) translateY(${(1 - down) * 24 - lift * 4}%) rotate(${Math.sin(t * 1.3 + i) * (lift >= 1 ? 1.5 : 0)}deg)`;
+        hand.style.transform = `translateY(${(1 - down) * -140}vh) rotate(${(1 - down) * -8 + Math.sin(t * 1.5 + i) * (lift >= 1 ? 2 : 0)}deg)`;
         cl.style.transform = `translate(${lift * 38}%, ${-lift * 120}%) rotate(${lift * 16 + wob * .6}deg)`;
         // under kupan: rätten reser sig, ångan stiger, det gnistrar – och menykortet viks upp
         const rev = seg(p, a + .02, a + .12), serve = pl.querySelector(".serve"), steam = pl.querySelector(".steam"), sp = $$(".spark i", pl), menu = pl.querySelector(".menu");
         serve.style.transform = `translateX(-50%) scale(${.6 + .4 * ease(rev) + Math.sin(rev * Math.PI) * .08})`;
-        serve.style.setProperty("--rev", ease(seg(p, a + .02, a + .2)).toFixed(3));
+        serve.style.setProperty("--rev", seg(p, a + .02, a + .21).toFixed(3));
         serve.style.opacity = rev > 0 ? 1 : 0;
         steam.style.opacity = seg(p, a + .02, a + .06) * (.65 + Math.sin(t * 2 + i) * .15);
         const burst = seg(p, a + .03, a + .11);
@@ -524,8 +534,8 @@
     html: `
       <i class="wall"></i><div class="floor"></div>
       <h2 class="chap"><span class="md">##</span>${lines([`${C.work.h} <span class="hl-human">(${C.work.sub.toLowerCase()})</span>`])}</h2>
-      <div class="bubbles">${C.work.paths.map((w, i) => `<a class="bubble" href="${w.href}"><h3>${w.t}</h3><p>${esc(w.p)}</p><span class="go">read more →</span></a>`).join("")}</div>
-      <div class="gold gold--rope" aria-hidden="true"><i class="bar"></i><i class="bar"></i><i class="bar"></i><span class="gold-tag">profit?</span></div>
+      <div class="bubbles">${C.work.paths.map((w, i) => `<a class="bubble" href="${w.href}"><h3>${w.t}</h3><p>${esc(w.p)}</p><span class="go">${tr("read more →")}</span></a>`).join("")}</div>
+      <div class="gold gold--rope" aria-hidden="true"><i class="bar"></i><i class="bar"></i><i class="bar"></i><span class="gold-tag">${tr("profit?")}</span></div>
       <div class="queue"><div class="walker w1"><img src="${C.fig}statue-venus.webp" alt=""><i class="plinth"></i></div><div class="walker w2"><img src="${C.fig}statue-justitia.webp" alt=""><i class="plinth"></i></div></div>
       <svg class="rope" viewBox="0 0 1000 220" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
         <g class="post"><rect x="96" y="40" width="16" height="170" rx="6" fill="#c9a24a"/><circle cx="104" cy="34" r="16" fill="#e2bd5c"/><rect x="70" y="200" width="68" height="14" rx="6" fill="#a8822e"/></g>
@@ -577,7 +587,7 @@
             ${[["g1"], ["g2"], ["g3"], ["g4"]].map(([c]) => `<svg class="gear ${c}" viewBox="-110 -110 220 220" aria-hidden="true"><path d="${gearPath(100, 80, 16)}"/><circle r="30"/><circle r="9" class="hub"/></svg>`).join("")}
             <img class="crank" src="${C.fig}emp-tophand.webp" alt="">
           </div>
-          <div class="lab-cards">${C.lab.items.map((l, i) => `<a class="lcard" href="${l.href}" style="--a:${tilt[i + 2]}deg"><span class="n">${i + 1}</span><b>${l.t}</b><p>${esc(l.p)}</p></a>`).join("")}</div>
+          <div class="lab-cards">${C.lab.items.map((l, i) => `<a class="lcard" href="${l.href}" style="--a:${tilt[i + 2]}deg"><b>${l.t}</b><p>${esc(l.p)}</p></a>`).join("")}</div>
         </div>
       </div>`,
     init(el) { this.cam = $(".labcam", el); this.lead = $(".lead", el); this.lab = $(".lab", el); this.ch = $$(".mgiant .ch", el); this.cards = $$(".lcard", el); this.g = $$(".gear", el); this.crank = $(".crank", el); },
@@ -605,19 +615,18 @@
   });
 
   // 14a. "Du ser ett CV. Vi ser en berättelse." – Intervjuomaten
-  const slips = ["deltog i", "ansvarade för", "avvikelser", "leverantörer", "uppföljning", "kunder", "metoder", "verktyg", "beslut", "resultat", "processer", "dokumentation", "projekt", "förbättring", "samordning", "kvalitet"];
-  const story = ["Hon fick olika personer att", "röra sig åt samma håll,", "följde upp leverantörerna", "– och avvikelserna blev färre."];
+  const slips = ["took part in", "responsible for", "deviations", "suppliers", "follow-up", "clients", "methods", "tools", "decisions", "results", "processes", "documentation", "projects", "improvement", "coordination", "quality"].map(tr);
   scene({
     id: "story", t: "intervjuomaten", hud: "light", len: 3.6, wipe: "circle", card: { glyph: "¶", room: "#f7eaad" },
     html: `
       <i class="wall"></i>
       <p class="lab"><span class="md">##</span>intervjuomaten · missprym.tech</p>
       <div class="pile">${slips.map((w, i) => `<span class="slip" style="--i:${i}">${w}</span>`).join("")}</div>
-      <p class="st-a">${lines(["You may only see", "a CV."])}</p>
+      <p class="st-a">${lines([tr("You may only see"), tr("a CV.")])}</p>
       <svg class="story-line" viewBox="0 0 800 400" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M10 380 L80 300 L130 350 L190 320 L240 355 L300 120 L350 260 L400 180 L450 280 L510 110 L560 220 L610 160 L670 330 L720 110 L760 170 L795 20"/><circle cx="795" cy="20" r="7"/></svg>
-      <p class="st-b">${lines(["We see a <span class='hl-human'>story.</span>"])}</p>
-      <div class="story-card"><span class="md">&gt;</span> ${story.map(esc).join(" ")}<p>Intervjuomaten får hjälpa kandidaten att minnas. Den får aldrig hitta på.</p><a class="cta" href="https://missprym.tech/intervjuomaten/">Testa Intervjuomaten →</a></div>`,
-    init(el) { this.sl = $$(".slip", el); this.a = $(".st-a", el); this.b = $(".st-b", el); this.card = $(".story-card", el); this.lab = $(".lab", el); },
+      <p class="st-b">${lines([`${tr("We see a")} <span class='hl-human'>${tr("story.")}</span>`])}</p>
+      <a class="cta story-cta" href="https://missprym.tech/intervjuomaten/">${tr("Try Intervjuomaten →")}</a>`,
+    init(el) { this.sl = $$(".slip", el); this.a = $(".st-a", el); this.b = $(".st-b", el); this.card = $(".story-cta", el); this.lab = $(".lab", el); },
     update(p, t) {
       this.lab.style.opacity = seg(p, 0, .05);
       reveal(this.a, p, .02, .14);
@@ -643,17 +652,17 @@
 
   // 14b. Agentomaten – maskinen lyssnar och skriver mailet själv
   const AG = C.agentomaten;
-  const agMail = `Till: ${AG.mail.to}\nÄmne: ${AG.mail.subject}\n\n${AG.mail.body.map(b => `– ${b}`).join("\n")}\n\n${AG.mail.note}`;
+  const agMail = `${tr("To")}: ${AG.mail.to}\n${tr("Subject")}: ${AG.mail.subject}\n\n${AG.mail.body.map(b => `– ${b}`).join("\n")}\n\n${AG.mail.note}`;
   scene({
     id: "agentomaten", t: AG.h, hud: "dark", len: 3.1, wipe: "circle", card: { glyph: "✉", room: "#0b41c2", light: true },
     html: `
       <i class="wall"></i>
       <p class="lab"><span class="md">##</span>${AG.h}</p>
-      <p class="lead ag-lead">${lines([esc(AG.lead)])}</p>
+      <div class="ag-col"><p class="lead ag-lead">${lines([esc(AG.lead)])}</p>
       <p class="ag-listen"><i class="ag-dot"></i>${AG.listen}<span class="ag-wave">${Array.from({ length: 9 }, () => "<b></b>").join("")}</span></p>
-      <p class="ag-p">${esc(AG.p)}</p>
-      <div class="ag-win"><div class="file__bar"><span class="file__name">nytt mail · agentomaten</span><span>●●●</span></div><pre class="ag-text"></pre></div>
-      <div class="ag-cta"><a class="cta" href="${AG.href}">Öppna Agentomaten →</a><a class="cta cta--ghost" href="mailto:${AG.mail.to}?subject=${encodeURIComponent(AG.mail.subject)}">Skicka till ${AG.mail.to}</a></div>`,
+      <p class="ag-p">${esc(AG.p)}</p></div>
+      <div class="ag-win"><div class="file__bar"><span class="file__name">${tr("new email · agentomaten")}</span><span>●●●</span></div><pre class="ag-text"></pre></div>
+      <div class="ag-cta"><a class="cta" href="${AG.href}">${tr("Open Agentomaten →")}</a><a class="cta cta--ghost" href="mailto:${AG.mail.to}?subject=${encodeURIComponent(AG.mail.subject)}">${tr("Send to")} ${AG.mail.to}</a></div>`,
     init(el) { this.lead = $(".ag-lead", el); this.lab = $(".lab", el); this.listen = $(".ag-listen", el); this.bars = $$(".ag-wave b", el); this.pp = $(".ag-p", el); this.win = $(".ag-win", el); this.txt = $(".ag-text", el); this.cta = $(".ag-cta", el); },
     update(p, t) {
       this.lab.style.opacity = seg(p, 0, .06);
@@ -673,12 +682,13 @@
   scene({
     id: "events", t: E.h, hud: "light", len: 2.5, wipe: "circle", card: { glyph: E.next.date, room: "#fc4109" },
     html: `
-      <p class="lab"><span class="md">##</span>${E.h} · kommande</p>
+      <p class="lab"><span class="md">##</span>${E.h} · ${tr("upcoming")}</p>
       <p class="ev-date">${lines([E.next.date])}</p>
-      <div class="ev-box"><h3>${esc(E.next.t)}</h3><p class="ev-when">${esc(E.next.when)}</p><p>${esc(E.next.p)}</p><a class="cta" href="${E.next.href}">Läs mer och anmäl dig</a></div>
-      <p class="ev-past-h">GENOMFÖRDA EVENT</p>
-      <ul class="ev-past">${E.past.map(x => `<li><span class="d">${x.date}</span><span class="t">${esc(x.t)}</span></li>`).join("")}</ul>`,
-    init(el) { this.lab = $(".lab", el); this.d = $(".ev-date", el); this.box = $(".ev-box", el); this.past = $$(".ev-past li, .ev-past-h", el); },
+      <div class="ev-box"><h3>${esc(E.next.t)}</h3><p class="ev-when">${esc(E.next.when)}</p><p>${esc(E.next.p)}</p><a class="cta" href="${E.next.href}">${tr("Read more and sign up")}</a></div>
+      <div class="ev-pw"><p class="ev-past-h">${tr("PAST EVENTS")}</p>
+      <ul class="ev-past">${E.past.map(x => `<li><button type="button" class="ev-item" aria-expanded="false"><span class="d">${x.date}</span><span class="t">${esc(x.t)}</span><span class="pl">+</span></button><p class="ev-more">${esc(x.p)} <a href="https://missprym.tech/event/">${tr("See the event →")}</a></p></li>`).join("")}</ul></div>`,
+    init(el) { this.lab = $(".lab", el); this.d = $(".ev-date", el); this.box = $(".ev-box", el); this.past = $$(".ev-past li, .ev-past-h", el);
+      $$(".ev-item", el).forEach(b => b.addEventListener("click", () => { const li = b.parentElement, open = !li.classList.contains("open"); $$(".ev-past li", el).forEach(x => { x.classList.remove("open"); x.firstElementChild.setAttribute("aria-expanded", "false"); }); li.classList.toggle("open", open); b.setAttribute("aria-expanded", open); })); },
     update(p) {
       this.lab.style.opacity = seg(p, 0, .06);
       reveal(this.d, p, .02, .2);
@@ -697,9 +707,9 @@
     id: "library", t: C.books.h, hud: "dark", len: 2.5, wipe: "circle", card: { glyph: "B", room: "#1c3d24", light: true },
     html: `
       <i class="wall"></i>
-      <figure class="painting"><video src="assets/portrait.mp4" poster="assets/portrait.jpg" muted loop playsinline preload="none" aria-label="Porträtt"></video></figure>
+      <figure class="painting"><video src="assets/portrait.mp4" poster="assets/portrait.jpg" muted loop playsinline preload="none" aria-label="${tr("Portrait")}"></video></figure>
       <div class="say"><span class="say-lab"><span class="md">##</span>${C.books.h}</span><p>${wordsOf(rich(C.books.say)).map(w => `<span class="w">${w}</span>`).join(" ")}</p></div>
-      <p class="books-p">${esc(C.books.p)} <a href="${C.books.href}">Se hyllan →</a></p>
+      <p class="books-p">${esc(C.books.p)} <a href="${C.books.href}">${tr("See the shelf →")}</a></p>
       <div class="shelf" aria-hidden="true">${spines}</div>`,
     init(el) { this.w = $$(".w", el); this.sp = $$(".spine", el); this.bp = $(".books-p", el); },
     update(p) {
@@ -714,13 +724,13 @@
   scene({
     id: "contact", t: K.h, hud: "dark", len: 2.2, wipe: "circle", card: { glyph: "@", mono: true, room: "#e65564" },
     html: `
-      <img class="c-photo" src="assets/goteborg-sunset.jpg" alt="Norra Hamngatan i solnedgång"><i class="c-tint"></i>
+      <img class="c-photo" src="assets/goteborg-sunset.jpg" alt="${tr("Norra Hamngatan at sunset")}"><i class="c-tint"></i>
       <div class="cradle" aria-hidden="true">${[0, 1, 2, 3].map(i => `<span class="pend"><i></i><b></b></span>`).join("")}</div>
       <p class="lab"><span class="md">##</span>${K.h}</p>
       <p class="c-lead">${esc(K.p)}</p>
       <a class="c-mail" href="mailto:${K.email}">${K.email}</a>
       <div class="c-row"><span><span class="md">&gt;</span>${K.address}</span><a href="${K.linkedin}">LinkedIn</a><a href="https://missprym.tech">missprym.tech</a></div>
-      <footer class="foot"><span>— Miss P Aktiebolag</span><button type="button" data-read>läs som text</button><b>MISSPRYM<span>.md</span></b></footer>`,
+      <footer class="foot"><span>— Miss P Aktiebolag</span><button type="button" data-read>${tr("read as text")}</button><b>MISSPRYM<span>.md</span></b></footer>`,
     init(el) { this.items = $$(".lab, .c-lead, .c-mail, .c-row, .foot", el); this.pend = $$(".pend", el); this.cradle = $(".cradle", el); },
     update(p, t) {
       this.items.forEach((it, i) => fadeIn(it, ease(seg(p, .02 + i * .06, .16 + i * .06))));
@@ -738,15 +748,15 @@
   { const i = S.findIndex(x => x.id === "together"); S.splice(1, 0, ...S.splice(i, 1)); }
 
   // Newtons vagga – affärsaktivism och solidarisk kapitalism: energi in → den rör många → resultat ut → det kommer tillbaka
-  const CR = [["01", "we put energy in", "business activism"], ["02", "it moves through many", "people, clients, partners"], ["03", "a result swings out", "on the other side"], ["04", "and comes back", "stronger – solidarity capitalism"]];
+  const CR = [["01", "we put energy in", "business activism"], ["02", "it moves through many", "people, clients, partners"], ["03", "a result swings out", "on the other side"], ["04", "and comes back", "stronger – solidarity capitalism"]].map(([n, a, b]) => [n, tr(a), tr(b)]);
   scene({
-    id: "cradle", t: "solidarity capitalism", hud: "dark", len: 4.2, wipe: "circle", card: { glyph: "∘∘∘", room: "#0a0806", light: true },
+    id: "cradle", t: tr("solidarity capitalism"), hud: "dark", len: 4.2, wipe: "circle", card: { glyph: "∘∘∘", room: "#0a0806", light: true },
     html: `
       <div class="ncv"><video src="assets/bulb-cradle.mp4" poster="assets/bulb-cradle.jpg" muted loop playsinline preload="none" aria-hidden="true"></video></div>
-      <p class="lab"><span class="md">##</span>business activism · solidarity capitalism</p>
-      <p class="nc-logo">Miss Prym<span>Altruism + Emergens = Profit</span></p>
-      <h2 class="nc-h">${lines(["We don't keep the energy.", "<span class='hl-human'>We pass it on.</span>"])}</h2>
-      <ol class="nc-steps">${CR.map(([n, a, b]) => `<li><span class="md">${n}</span><b>${a}</b><em>${b}</em></li>`).join("")}</ol>`,
+      <p class="lab"><span class="md">##</span>${tr("business activism · solidarity capitalism")}</p>
+      <p class="nc-logo">Miss Prym<span>${tr("Altruism + Emergence = Profit")}</span></p>
+      <h2 class="nc-h">${lines([tr("We don't keep the energy."), `<span class='hl-human'>${tr("We pass it on.")}</span>`])}</h2>
+      <ol class="nc-steps">${CR.map(([n, a, b]) => `<li><b>${a}</b><em>${b}</em></li>`).join("")}</ol>`,
     init(el) { this.v = $(".ncv", el); this.st = $$(".nc-steps li", el); this.h = $(".nc-h", el); this.lab = $(".lab", el); this.logo = $(".nc-logo", el); },
     update(p, t) {
       this.lab.style.opacity = seg(p, 0, .05);
@@ -764,59 +774,43 @@
 
 
 
-  // Reformen – bruset och riktningen, och ett budskap målat på väggen
-  const NOISE = Array.from({ length: 34 }, (_, i) => { const base = 80 - i * 1.75, n = (Math.sin(i * 12.9898) * 43758.5453 % 1) * 2 - 1; return [5 + i * 4.5, base + n * (10 + (i % 5) * 2.5)]; });
-  scene({
-    id: "reform", t: "reform the industry", hud: "dark", len: 3.8, wipe: "circle", card: { glyph: "↗", room: "#1f0303", light: true },
-    html: `
-      <p class="lab"><span class="md">##</span>reform</p>
-      <svg class="rf" viewBox="0 0 160 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-        <path class="rf-noise" pathLength="1" d="${NOISE.map((q, i) => `${i ? "L" : "M"}${q[0].toFixed(1)} ${q[1].toFixed(1)}`).join(" ")}"/>
-        <path class="rf-trend" pathLength="1" d="M5 82 L155 22"/>
-      </svg>
-      <p class="rf-a">${lines(["Every quarter, the industry", "chases the noise."])}</p>
-      <p class="rf-b">${lines(["We keep the <span class='hl-human'>direction.</span>"])}</p>
-      <div class="wallpaint"><p>${"CONSULTING SHOULD CHANGE MORE THAN INVOICES".split(" ").map((w, i) => `<span class="pw" style="--i:${i}">${w}</span>`).join(" ")}</p><i class="drips"></i></div>`,
-    init(el) { this.n = $(".rf-noise", el); this.tr = $(".rf-trend", el); this.a = $(".rf-a", el); this.b = $(".rf-b", el); this.w = $(".wallpaint", el); this.pw = $$(".pw", el); this.svg = $(".rf", el); },
-    update(p, t) {
-      this.n.style.strokeDashoffset = 1 - easeIO(seg(p, .02, .3));
-      reveal(this.a, p, .04, .16); hide(this.a, p, .38, .44);
-      this.tr.style.strokeDashoffset = 1 - easeIO(seg(p, .3, .44));
-      reveal(this.b, p, .4, .5);
-      const out = seg(p, .56, .62); this.svg.style.opacity = 1 - out; this.b.style.opacity = 1 - out;
-      this.w.style.opacity = seg(p, .58, .62);
-      this.pw.forEach((w, i) => w.style.setProperty("--k", ease(seg(p, .6 + i * .04, .66 + i * .04))));
-    }
-  });
-  { const mv = (id, after) => { const i = S.findIndex(x => x.id === id), [sc] = S.splice(i, 1), j = S.findIndex(x => x.id === after); S.splice(j + 1, 0, sc); };
-    mv("reform", "cradle"); }
 
   // ===== manifeststrukturen (som human-md: en fil som läses uppifrån) =====
-  const JOB = [["shift-1", "choose purpose over profit"], ["shift-2", "organise as a network"], ["shift-3", "empower, don't control"], ["chaos", "face the chaos together"], ["shift-4", "experiment, don't plan"], ["one-percent", "one percent, every day"], ["shift-5", "make it transparent"], ["what", "solve the real problems"], ["story", "see the story, not the CV"], ["lab", "build it, don't talk about it"]];
-  const STOP = ["selling hours instead of value", "hiding behind the process", "planning things to death", "talking about AI instead of building with it", "keeping what we learn to ourselves", "choosing profit when it costs us our humanity"];
-  const MORE = ["say no to the wrong assignment", "open-source what we build", "share the bookshelf", "experiment where people can see", "ask what the consultant actually wants", "be kind on purpose"];
+  const JOB = [["shift-1", "choose purpose over profit"], ["shift-2", "organise as a network"], ["shift-3", "empower, don't control"], ["chaos", "face the chaos together"], ["shift-4", "experiment, don't plan"], ["one-percent", "one percent, every day"], ["shift-5", "make it transparent"], ["what", "solve the real problems"], ["story", "see the story, not the CV"], ["lab", "build it, don't talk about it"]].map(([id, t]) => [id, tr(t)]);
+  const STOP = ["selling hours instead of value", "hiding behind the process", "planning things to death", "talking about AI instead of building with it", "keeping what we learn to ourselves", "choosing profit when it costs us our humanity"].map(tr);
+  const MORE = ["say no to the wrong assignment", "open-source what we build", "share the bookshelf", "experiment where people can see", "ask what the consultant actually wants", "be kind on purpose"].map(tr);
 
+  const MF = ["> a working manifesto.", "> written for ourselves first.", "> by Miss P Aktiebolag · 559455-8172,", "> a tech & engineering firm.", "> last edited at Norra Hamngatan 14."].map(tr).join("\n");
   scene({
-    id: "file", t: "what this file is", hud: "dark", len: 2.6, wipe: "circle", card: { glyph: "#", room: "#201e1f", light: true },
+    id: "file", t: tr("what this file is"), hud: "dark", len: 3.0, wipe: "fade", wipeLen: 1.5, card: { glyph: "#", room: "#201e1f", light: true },
     html: `
       <div class="mf">
-        <p class="mf-q">${lines(["&gt; a working manifesto.", "&gt; written for ourselves first.", "&gt; by Miss P Aktiebolag · 559455-8172,", "&gt; a tech &amp; engineering firm.", "&gt; last edited at Norra Hamngatan 14."])}</p>
-        <h2 class="mf-h"><span class="md">##</span> what this file is</h2>
-        <img class="cameo cm-hero" src="${C.fig}team-hero.webp" alt="">
-        <p class="mf-p">${lines(["A plain-text promise about how we behave", "when business gets difficult – and what", "we think people bring to the table now", "that the machines are getting good."])}</p>
-      </div>`,
-    init(el) { this.q = $(".mf-q", el); this.h = $(".mf-h", el); this.p = $(".mf-p", el); },
-    update(p, t) { reveal(this.q, p, .02, .3); fadeIn(this.h, ease(seg(p, .32, .42)), 12); reveal(this.p, p, .42, .8);
-      const hero = this.h.parentElement.querySelector(".cm-hero"); hero.style.transform = `translateX(${(1 - p) * 30}vw) translateY(${Math.abs(Math.sin(t * 3)) * -1.5}%)`; }
+        <p class="mf-q"><span class="mf-type"></span><i class="caret"></i></p>
+        <h2 class="mf-h"><span class="md">##</span> ${tr("what this file is")}</h2>
+        <p class="mf-p">${lines(["A plain-text promise about how we behave", "when business gets difficult – and what", "we think people bring to the table now", "that the machines are getting good."].map(tr))}</p>
+      </div>
+      <div class="mf-floor"><i class="mf-wet"></i><img class="mf-hero" src="${C.fig}team-hero.webp" alt=""></div>`,
+    init(el) { this.q = $(".mf-type", el); this.h = $(".mf-h", el); this.p = $(".mf-p", el); this.hero = $(".mf-hero", el); this.wet = $(".mf-wet", el); this.caret = $(".mf-q .caret", el); },
+    update(p, t) {
+      // filen skrivs medan man scrollar – och suddas baklänges när man scrollar upp
+      const n = Math.round(seg(p, .04, .36) * MF.length);
+      this.q.innerHTML = esc(MF.slice(0, n)).replace(/\n/g, "<br>");
+      this.caret.style.opacity = p < .4 ? (Math.sin(t * 8) > 0 ? 1 : 0) : 0;
+      fadeIn(this.h, ease(seg(p, .36, .46)), 12); reveal(this.p, p, .44, .8);
+      // han skurar golvet i takt med scrollen: fram och tillbaka med trasan, och ett blankt spår efter sig
+      const x = 1 - easeIO(seg(p, .1, .95)), scrub = Math.sin(p * 70);
+      this.hero.style.transform = `translateX(${x * 70}vw) rotate(${scrub * 1.6}deg) translateY(${Math.abs(scrub) * -2}%)`;
+      this.wet.style.transform = `scaleX(${1 - x})`;
+    }
   });
 
   scene({
-    id: "job", t: "the actual job", hud: "dark", len: 2.8, wipe: "circle", card: { glyph: "≡", room: "#201e1f", light: true },
+    id: "job", t: tr("the actual job"), hud: "dark", len: 2.8, wipe: "circle", card: { glyph: "≡", room: "#201e1f", light: true },
     html: `
       <div class="toc">
         <img class="cameo cm-peek" src="${C.fig}team-glasses.webp" alt="">
         <div class="toc-bar"><i></i><i></i><i></i><span>MISSPRYM.md — ## the actual job</span></div>
-        <ol class="toc-list">${JOB.map(([id, t], i) => `<li><a href="#${id}"><span class="ln-no">${String(i + 12).padStart(3, " ")}</span><span class="md">###</span> <b>${i + 1}.</b> ${t}</a></li>`).join("")}</ol>
+        <ol class="toc-list">${JOB.map(([id, t], i) => `<li><a href="#${id}"><span class="md">###</span> ${t}</a></li>`).join("")}</ol>
       </div>`,
     init(el) { this.li = $$(".toc-list li", el); this.box = $(".toc", el); },
     update(p, t) {
@@ -827,14 +821,14 @@
   });
 
   scene({
-    id: "lists", t: "stop doing / do more", hud: "light", len: 3.2, wipe: "circle", card: { glyph: "✕", room: "#fbf6ea" },
+    id: "lists", t: tr("stop doing / do more"), hud: "light", len: 3.2, wipe: "circle", card: { glyph: "✕", room: "#fbf6ea" },
     html: `
       <div class="lists">
-        <div class="lcol"><h3><span class="md">##</span> things we are trying to stop doing</h3><ul>${STOP.map(x => `<li><span class="st">${x}<i></i></span></li>`).join("")}</ul></div>
-        <div class="lcol"><h3><span class="md">##</span> things we are trying to do more</h3><ul>${MORE.map(x => `<li><span class="hi">${x}</span></li>`).join("")}</ul></div>
+        <div class="lcol"><h3><span class="md">##</span> ${tr("things we are trying to stop doing")}</h3><ul>${STOP.map(x => `<li><span class="st">${x}<i></i></span></li>`).join("")}</ul></div>
+        <div class="lcol"><h3><span class="md">##</span> ${tr("things we are trying to do more")}</h3><ul>${MORE.map(x => `<li><span class="hi">${x}</span></li>`).join("")}</ul></div>
       </div>
       <img class="cameo cm-dancer" src="${C.fig}team-dancer.webp" alt="">
-      <p class="lists-end">${lines(["This file will change. That's the point.", "<span class='sig'>— Miss Prym, Norra Hamngatan 14</span>"])}</p>`,
+      <p class="lists-end">${lines([tr("This file will change. That's the point."), "<span class='sig'>— Miss Prym, Norra Hamngatan 14</span>"])}</p>`,
     init(el) { this.st = $$(".st", el); this.hi = $$(".hi", el); this.lis = $$(".lcol li", el); this.end = $(".lists-end", el); this.hs = $$(".lcol h3", el); },
     update(p) {
       this.hs.forEach((h, i) => fadeIn(h, ease(seg(p, .02 + i * .3, .1 + i * .3)), 12));
@@ -849,18 +843,18 @@
   { const mv = (id, beforeId) => { const i = S.findIndex(x => x.id === id), [sc] = S.splice(i, 1), j = S.findIndex(x => x.id === beforeId); S.splice(j, 0, sc); };
     mv("file", "commitment"); mv("job", "shift-1"); mv("lists", "contact"); }
   // numrera principerna – breadcrumben visar "### 3. empower, don't control"
-  JOB.forEach(([id, t], i) => { const sc = S.find(x => x.id === id); if (sc) { sc.t = `${i + 1}. ${t}`; sc.num = true; } });
+  JOB.forEach(([id, t], i) => { const sc = S.find(x => x.id === id); if (sc) { sc.t = t; sc.num = true; } });
 
   // baksida på indexkorten: en rad ur innehållet
-  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", file: "a working manifesto. written for ourselves first.", job: JOB.map(x => x[1]).join(" · "), reform: "We keep the direction.", cradle: "Altruism + Emergens = Profit. We don't keep the energy. We pass it on.", lists: "This file will change. That's the point.", "one-percent": "Standing still vs. one percent better every day.", finale: "Be proud. Be like Prym.", story: "You may only see a CV. We see a story.", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
+  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: tr("We provide our clients with open-minded consultants…"), file: tr("a working manifesto. written for ourselves first."), job: JOB.map(x => x[1]).join(" · "), cradle: tr("We don't keep the energy.") + " " + tr("We pass it on."), lists: tr("This file will change. That's the point."), "one-percent": tr("Standing still") + " " + tr("vs.") + " " + tr("one percent better every day."), finale: tr("Be proud. Be like Prym."), story: tr("You may only see a CV. We see a story."), chaos: tr("We don't fear chaos") + ". " + tr("We face it together."), lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
   S.forEach(x => (x.back = backs[x.id] || (C.shifts[+x.id.split("-")[1] - 1] || {}).p || ""));
 
   // 18. Finalen – stumfilm: landsväg i solnedgång, två figurer mot horisonten, iris, eftertexter, The End
   const P = [0, 1, 2, 3, 4, 5, 6].map(i => { const d = Math.pow(.66, i); return { r: 50 + 40 * d, l: 50 - 40 * d, base: 56 + 40 * d, h: 34 * d }; });
   const wire = side => P.map((q, i) => { const x = side > 0 ? q.r : q.l, y = q.base - q.h + q.h * .08; if (!i) return `M${x} ${y}`; const o = P[i - 1], ox = side > 0 ? o.r : o.l, oy = o.base - o.h + o.h * .08; return `Q ${(x + ox) / 2} ${(y + oy) / 2 + 1.6 * (o.h / 34) + .3} ${x} ${y}`; }).join(" ");
-  const credits = [["Starring", C.expertise.words.slice(0, 10).join("<br>")], ["Inspired by", "Fröken Prym"], ["Directed by", "Courage"], ["Produced by", "Miss P Aktiebolag"], ["Filmed on location", "Norra Hamngatan 14, Göteborg"]];
+  const credits = [[tr("Starring"), C.expertise.words.slice(0, 10).join("<br>")], [tr("Inspired by"), tr("Miss Prym")], [tr("Directed by"), tr("Courage")], [tr("Produced by"), "Miss P Aktiebolag"], [tr("Filmed on location"), "Norra Hamngatan 14, Göteborg"]];
   scene({
-    id: "finale", t: "the end", hud: "dark", len: 5, wipe: "fade", card: { glyph: "∎", room: "#1a1a1a", light: true },
+    id: "finale", t: tr("the end"), hud: "dark", len: 5, wipe: "fade", card: { glyph: "∎", room: "#1a1a1a", light: true },
     html: `
       <div class="silent">
         <div class="frame">
@@ -877,14 +871,14 @@
           <i class="dust"></i>
         </div>
         <i class="iris"></i>
-        <div class="title-card tc1"><span class="tc-mark">MISS PRYM PICTURES</span><p>”Is it even worth trying?”</p></div>
-        <div class="title-card tc2"><span class="tc-mark">MISS PRYM PICTURES</span><p>Be proud.<br><em>Be like Prym.</em></p></div>
+        <div class="title-card tc1"><span class="tc-mark">MISS PRYM PICTURES</span><p>”${tr("Is it even worth trying?")}”</p></div>
+        <div class="title-card tc2"><span class="tc-mark">MISS PRYM PICTURES</span><p>${tr("Be proud.")}<br><em>${tr("Be like Prym.")}</em></p></div>
         <div class="title-card tc-credits"><div class="roll">${credits.map(([h, v]) => `<div class="cr"><span>${h}</span><p>${v}</p></div>`).join("")}</div></div>
         <div class="title-card tc3">
-          <p class="fin">The End<i></i></p>
+          <p class="fin">${tr("The End")}<i></i></p>
           <p class="fin-sub">MISS P AKTIEBOLAG · 559455-8172 · GÖTEBORG · ${new Date().getFullYear()}</p>
           <a class="fin-mail" href="mailto:${K.email}">${K.email}</a>
-          <div class="fin-btns"><button type="button" class="fin-btn" data-replay>↺ se igen</button><button type="button" class="fin-btn" data-read>läs som text</button></div>
+          <div class="fin-btns"><button type="button" class="fin-btn" data-replay>↺ ${tr("watch again")}</button><button type="button" class="fin-btn" data-read>${tr("read as text")}</button></div>
         </div>
         <div class="sprockets l"></div><div class="sprockets r"></div>
         <i class="flick"></i><i class="vign"></i><i class="scratch s1"></i><i class="scratch s2"></i><i class="burn"></i>
@@ -926,7 +920,7 @@
   const ring = $(".wipe-ring");
   S.forEach(s => { s.el = document.getElementById(s.id); s.init?.(s.el); });
 
-  const WIPE = .9; // skärmhöjder som en övergång tar
+  const WIPE = 1.05; // skärmhöjder som en övergång tar
   let VH = innerHeight, total = 0;
   const measure = () => {
     VH = innerHeight; total = 0;
@@ -942,17 +936,20 @@
   const crumb = $(".hud-crumb"), crumbT = $(".hud-crumb__t");
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  let clock = 0, pausedFor = 0, pausedAt = 0, lastVis = "";
+  let vel = 0, clock = 0, pausedFor = 0, pausedAt = 0, lastVis = "";
   const prog = $(".prog i");
   function render() {
     const target = scrollY;
     cur += (target - cur) * (reduced ? 1 : .1);
     if (Math.abs(target - cur) < .4) cur = target;
     const pos = cur / VH;
+    // scrollriktning och fart: bilder och text lutar och glider lite åt det håll man scrollar
+    vel += (clamp((target - cur) / VH * 6, -1, 1) - vel) * .12;
+    body.style.setProperty("--vel", vel.toFixed(3));
 
     let k = S.findIndex(s => pos < s.start + s.len); if (k < 0) k = S.length - 1;
     const s = S[k], p = clamp((pos - s.start) / s.len);
-    const wp = s.wipe ? (pos - s.start) / WIPE : 1; // 0..1 under övergången
+    const wp = s.wipe ? (pos - s.start) / (s.wipeLen || WIPE) : 1; // 0..1 under övergången
     const visible = [s];
     if (k > 0 && wp < 1) visible.push(S[k - 1]);
 
@@ -969,6 +966,10 @@
     if (visible.length > 1) S[k - 1].update?.(1, T);
 
     // övergång
+    // scenen som lämnas sjunker undan lite – djup i övergången
+    S.forEach(x => { if (x !== s) { if (x.el.style.transform) x.el.style.transform = x.el.style.filter = ""; } });
+    if (visible.length > 1) { const u = easeIO(clamp(wp)); S[k - 1].el.style.transform = `scale(${1 - u * .06}) translateY(${-u * 3}vh)`; S[k - 1].el.style.filter = `brightness(${1 - u * .35})`; }
+    s.el.style.transform = ""; s.el.style.filter = "";
     if (visible.length > 1 && s.wipe === "circle") {
       const R = Math.hypot(innerWidth, innerHeight) * 1.05, t = easeIO(clamp(wp));
       const r = t * R, ox = mx, oy = my;
@@ -995,7 +996,6 @@
       crumb.classList.toggle("is-on", s.id !== "top");
       crumbT.textContent = s.t;
       crumb.querySelector(".md").textContent = s.num ? "###" : "##";
-      $(".hud-count").textContent = `${String(k + 1).padStart(2, "0")} / ${String(S.length).padStart(2, "0")}`;
     }
 
     dot.style.transform = `translate(${dx += (mx - dx) * .2}px, ${dy += (my - dy) * .2}px)`;
@@ -1008,11 +1008,11 @@
     ...C.hero.quote.map(q => `> ${q}`), ``,
     `## ${C.commitment.h}`, ``, `${C.commitment.lead} ${C.commitment.body}`, ``, `*${plain(C.commitment.say)}*`, ``,
     `> ${C.quote.text}`, `> — ${C.quote.src}`, ``,
-    `## what we are`, ``, `Miss P Aktiebolag (559455-8172) – a tech & engineering firm. Consultants, software commitments, your own recruitment, assignments brokered – as a partner, while we work to reform our industry.`, ``,
-    `## what this file is`, ``, `A plain-text promise about how we behave when business gets difficult – and what we think people bring to the table now that the machines are getting good.`, ``,
-    `## the actual job`, ``, ...JOB.map(([, t], i) => `${i + 1}. ${t}`), ``,
+    `## ${tr("about us")}`, ``, tr("Miss P Aktiebolag (559455-8172) – a tech & engineering firm. Consultants, software commitments, your own recruitment, assignments brokered – as a partner, while we work to reform our industry."), ``,
+    `## ${tr("what this file is")}`, ``, ["A plain-text promise about how we behave", "when business gets difficult – and what", "we think people bring to the table now", "that the machines are getting good."].map(tr).join(" "), ``,
+    `## ${tr("the actual job")}`, ``, ...JOB.map(([, t]) => `- ${t}`), ``,
     `## ${C.who.h}`, ``, ...C.who.p.flatMap(p => [p, ``]),
-    ...C.shifts.flatMap((s, i) => [`### ${i + 1}. from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}`, ``, s.p, ``]),
+    ...C.shifts.flatMap((s, i) => [`### ${tr("from")} ${s.from.toLowerCase()} ${tr("to")} ${s.to.toLowerCase()}`, ``, s.p, ``]),
     `---`, ``,
     `## ${C.what.h}`, ``, ...C.what.items.map(it => `- **${it.t}.** ${it.p}`), ``,
     `## ${C.work.h}`, ``, ...C.work.paths.map(w => `- **${w.t}.** ${w.p}`), ``,
@@ -1021,8 +1021,8 @@
     `## ${E.h}`, ``, `**${E.next.t}** — ${E.next.when}`, ``, E.next.p, ``, ...E.past.map(p => `- ${p.date} · ${p.t}. ${p.p}`), ``,
     `## ${C.books.h}`, ``, `${plain(C.books.say)}`, ``, C.books.p, ``,
     `---`, ``,
-    `## business activism · solidarity capitalism`, ``, `We don't keep the energy. We pass it on.`, ``, ...CR.map(([n, a, b]) => `${+n}. ${a} – ${b}`), ``,
-    `## things we are trying to stop doing`, ``, ...STOP.map(x => `- ${x}`), ``, `## things we are trying to do more`, ``, ...MORE.map(x => `- ${x}`), ``, `This file will change. That's the point.`, ``,
+    `## ${tr("business activism · solidarity capitalism")}`, ``, `${tr("Altruism + Emergence = Profit")}. ${tr("We don't keep the energy.")} ${tr("We pass it on.")}`, ``, ...CR.map(([n, a, b]) => `- ${a} – ${b}`), ``,
+    `## ${tr("things we are trying to stop doing")}`, ``, ...STOP.map(x => `- ${x}`), ``, `## ${tr("things we are trying to do more")}`, ``, ...MORE.map(x => `- ${x}`), ``, tr("This file will change. That's the point."), ``,
     `## ${K.h}`, ``, K.p, ``, `${K.address}  `, `${K.email}  `, `${K.linkedin}`, ``,
     `— Miss P Aktiebolag`
   ].join("\n");
@@ -1043,7 +1043,7 @@
       else if (l.trim()) out += `<p>${inline(l)}</p>`;
     });
     close();
-    return out + `<p class="read__back"><a href="#top" data-unread>← tillbaka till sajten</a></p>`;
+    return out + `<p class="read__back"><a href="#top" data-unread>${tr("← back to the site")}</a></p>`;
   })();
 
   /* ================= index ================= */
@@ -1061,31 +1061,30 @@
     "shift-1": [im(F + "purpose-woman.webp", "fig"), "#ffc2e3"],
     "shift-2": [im(F + "bird-crow.webp", "fig") + `<i class="th-balloon"></i>`, "#a9b2c3"],
     "shift-3": [im(F + "emp-free.webp", "fig wide"), "#ffecaa"],
-    chaos: [word("Chaos.", "pink serif"), "#0b41c2"],
+    chaos: [word(tr("Chaos") + ".", "pink serif"), "#0b41c2"],
     "shift-4": [im(F + "exp-flasks.webp", "fig"), "#e65564"],
     "one-percent": [`<span class="th-bars">${Array.from({ length: 12 }, (_, i) => `<i style="--h:${(Math.pow(1.35, i) / Math.pow(1.35, 11) * 100).toFixed(0)}%"></i>`).join("")}</span>`, "#111111"],
     "shift-5": [im(C.img + "OTTransparency_phone.jpg", "cover"), "#b8c2ea"],
     what: [`<span class="th-cl">${cloche}</span>`, "#ffeaa6"],
     work: [im(F + "statue-justitia.webp", "fig") + `<i class="th-rope"></i>`, "#26512f"],
     lab: [`<svg class="th-gear" viewBox="-110 -110 220 220"><path d="${gearPath(100, 80, 14)}"/><circle r="30"/></svg>`, "#cf4a1a"],
-    story: [`<span class="th-slips"><i>deltog i</i><i>beslut</i><i>resultat</i></span>`, "#f7eaad"],
+    story: [`<span class="th-slips"><i>${slips[0]}</i><i>${slips[8]}</i><i>${slips[9]}</i></span>`, "#f7eaad"],
     agentomaten: [`<span class="th-mail">✉<b></b></span>`, "#0b41c2"],
     events: [word("26/11", "red serif"), "#fbf6ea"],
     library: [im("assets/portrait.jpg", "cover"), "#1c3d24"],
     contact: [im("assets/goteborg-sunset.jpg", "cover"), "#e65564"],
     file: [`<span class="th-word" style="color:#f4efe8;font-family:var(--f-mono);font-weight:400">.md</span>`, "#201e1f"],
-    job: [`<span class="th-toc">${JOB.slice(0, 5).map((x, i) => `<i>${i + 1}. ${x[1]}</i>`).join("")}</span>`, "#201e1f"],
-    lists: [`<span class="th-slips"><i style="text-decoration:line-through">planning</i><i>be kind</i></span>`, "#fbf6ea"],
+    job: [`<span class="th-toc">${JOB.slice(0, 5).map((x, i) => `<i>${x[1]}</i>`).join("")}</span>`, "#201e1f"],
+    lists: [`<span class="th-slips"><i style="text-decoration:line-through">${tr("planning")}</i><i>${tr("be kind")}</i></span>`, "#fbf6ea"],
     cradle: [im("assets/bulb-cradle.jpg", "cover"), "#050403"],
-    reform: [`<svg class="th-rf" viewBox="0 0 100 100"><path d="M5 80 L20 60 L30 85 L45 50 L55 70 L70 35 L80 55 L95 20" fill="none" stroke="#7c7588" stroke-width="3"/><path d="M5 82 L95 22" stroke="#fff" stroke-width="3"/></svg>`, "#1f0303"],
     finale: [`<span class="th-end">${im(F + "statue-justitia.webp", "sil")}${im(F + "statue-venus.webp", "sil")}</span>`, "#d8d0c2"]
   };
   $(".index__track").innerHTML = S.map((s, i) => {
     const c = s.card, th = TH[s.id];
     if (th) { c.room = th[1]; }
     const pic = th ? th[0] : c.img ? `<img src="${C.img}${c.img}" alt="" loading="lazy">` : c.fig ? `<img src="${C.fig}${c.fig}" alt="" loading="lazy" style="object-fit:contain;padding:8%">` : `<span class="icard__glyph${c.mono ? " mono" : ""}" ${c.light ? 'style="color:#f4efe8"' : ""}>${c.glyph}</span>`;
-    return `<a class="icard" href="#${s.id}" style="--a:${tilt[i]}deg;--room:${c.room}"><span class="icard__in"><span class="icard__face"><span class="icard__pic" style="--room:${c.room}">${pic}</span><span class="icard__n">${i + 1}</span><span class="icard__t">${s.t}</span></span><span class="icard__back"><span class="icard__file">## ${s.t}\n\n${esc((s.back || "").slice(0, 150))}</span></span></span><i class="icard__dot"></i></a>`;
-  }).join("") + `<a class="icard" href="#file" data-file style="--a:${tilt[17]}deg"><span class="icard__face"><span class="icard__pic" style="--room:#0b0b0b"><span class="icard__glyph mono">.md</span></span><span class="icard__n">↓</span><span class="icard__t">MISSPRYM.md — hela filen</span></span></a>`;
+    return `<a class="icard" href="#${s.id}" style="--a:${tilt[i]}deg;--room:${c.room}"><span class="icard__in"><span class="icard__face"><span class="icard__pic" style="--room:${c.room}">${pic}</span><span class="icard__t">${s.t}</span></span><span class="icard__back"><span class="icard__file">## ${s.t}\n\n${esc((s.back || "").slice(0, 150))}</span></span></span><i class="icard__dot"></i></a>`;
+  }).join("") + `<a class="icard" href="#file" data-file style="--a:${tilt[17]}deg"><span class="icard__face"><span class="icard__pic" style="--room:#0b0b0b"><span class="icard__glyph mono">.md</span></span><span class="icard__t">MISSPRYM.md — ${tr("the whole file")}</span></span></a>`;
 
   const setIndex = open => {
     body.classList.toggle("index-open", open);
@@ -1102,7 +1101,7 @@
   const closeFile = () => (fileEl.hidden = true);
   $$("[data-file]").forEach(b => b.addEventListener("click", e => { e.preventDefault(); openFile(); }));
   $$("[data-close]").forEach(b => b.addEventListener("click", closeFile));
-  $("[data-copy]").addEventListener("click", async e => { try { await navigator.clipboard.writeText(md); e.target.textContent = "copied ✓"; } catch { e.target.textContent = "kunde inte kopiera"; } setTimeout(() => (e.target.textContent = "copy"), 1600); });
+  $("[data-copy]").addEventListener("click", async e => { try { await navigator.clipboard.writeText(md); e.target.textContent = tr("copied ✓"); } catch { e.target.textContent = tr("could not copy"); } setTimeout(() => (e.target.textContent = tr("copy")), 1600); });
   $("[data-download]").addEventListener("click", () => {
     const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(new Blob([md], { type: "text/markdown" })), download: "MISSPRYM.md" });
     a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -1137,10 +1136,10 @@
     if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) return stopWatch();
     requestAnimationFrame(step);
   };
-  function stopWatch() { watching = false; watchBtn.setAttribute("aria-pressed", "false"); watchT.textContent = "watch"; }
+  function stopWatch() { watching = false; watchBtn.setAttribute("aria-pressed", "false"); watchT.textContent = tr("watch"); }
   watchBtn.addEventListener("click", () => {
     if (watching) return stopWatch();
-    watching = true; last = 0; watchBtn.setAttribute("aria-pressed", "true"); watchT.textContent = "pause";
+    watching = true; last = 0; watchBtn.setAttribute("aria-pressed", "true"); watchT.textContent = tr("pause");
     requestAnimationFrame(step);
   });
   ["wheel", "touchstart"].forEach(ev => addEventListener(ev, () => watching && stopWatch(), { passive: true }));
@@ -1159,7 +1158,7 @@
     mx = e.clientX; my = e.clientY;
     const hit = e.target.closest("a, button");
     dot.classList.toggle("is-big", !!hit);
-    dot.dataset.label = hit ? (hit.matches(".icard, [data-go]") ? "go" : hit.matches("[data-index]") ? "" : "open") : "";
+    dot.dataset.label = hit ? (hit.matches(".icard, [data-go]") ? tr("go") : hit.matches("[data-index]") ? "" : tr("open")) : "";
     const r = eye.getBoundingClientRect(), ax = mx - (r.left + r.width / 2), ay = my - (r.top + r.height / 2), d = Math.hypot(ax, ay) || 1;
     eye.style.setProperty("--ex", (ax / d * Math.min(9, d / 30)).toFixed(1) + "px");
     eye.style.setProperty("--ey", (ay / d * Math.min(4, d / 60)).toFixed(1) + "px");
@@ -1180,23 +1179,23 @@
     { id: "intervju", t: "Intervjuomaten", href: "https://missprym.tech/intervjuomaten/" },
     { id: "agent", t: "Agentomaten", href: "https://missprym.tech/agentomaten/" },
     { id: "stoic", t: "Stoicism", href: "https://missprym.tech/stoicm-service/" },
-    { id: "event", t: "Event", href: "https://missprym.tech/event/" }
+    { id: "event", t: tr("Events"), href: "https://missprym.tech/event/" }
   ];
   const API = "https://missprym.tech/uppdragsautomaten-api/api/public-assignments";
   const appEl = $(".app"), appTabs = $(".app__tabs"), appBody = $(".app__body"), appExt = $(".app__ext");
   appTabs.innerHTML = TOOLS.map(x => `<button type="button" class="app__tab" data-tool="${x.id}">${x.t}</button>`).join("");
   let assignments = null;
-  const fmtDate = d => { try { return new Date(d).toLocaleDateString("sv-SE", { day: "numeric", month: "short" }); } catch { return ""; } };
+  const fmtDate = d => { try { return new Date(d).toLocaleDateString(C.locale || "en-GB", { day: "numeric", month: "short" }); } catch { return ""; } };
   const words = q => q.toLowerCase().split(/[^a-zåäö0-9#+.]+/i).filter(w => w.length > 1);
   function renderUppdrag() {
     appBody.innerHTML = `
       <div class="ua">
         <div class="ua-side">
           <p class="lab"><span class="md">##</span>uppdragsautomaten</p>
-          <h3 class="ua-h">Beskriv vad du kan<br><em>– vi hittar uppdragen.</em></h3>
-          <textarea class="ua-q" rows="4" placeholder="T.ex. Java, Spring, Göteborg, systemarkitekt, tillgänglig mars…"></textarea>
-          <div class="ua-f">${[["all", "Alla"], ["2", "2 dygn"], ["7", "Veckan"]].map(([v, l], i) => `<button type="button" class="chip${i ? "" : " on"}" data-days="${v}">${l}</button>`).join("")}</div>
-          <p class="ua-meta">Hämtar uppdrag…</p>
+          <h3 class="ua-h">${tr("Describe what you can do")}<br><em>${tr("– we find the assignments.")}</em></h3>
+          <textarea class="ua-q" rows="4" placeholder="${tr("E.g. Java, Spring, Gothenburg, systems architect, available in March…")}"></textarea>
+          <div class="ua-f">${[["all", tr("All")], ["2", tr("48 hours")], ["7", tr("This week")]].map(([v, l], i) => `<button type="button" class="chip${i ? "" : " on"}" data-days="${v}">${l}</button>`).join("")}</div>
+          <p class="ua-meta">${tr("Fetching assignments…")}</p>
         </div>
         <div class="ua-list" aria-live="polite"></div>
       </div>`;
@@ -1211,7 +1210,7 @@
         const score = ws.reduce((n, w) => n + (hay.includes(w) ? 1 : 0), 0);
         return { a, score };
       }).filter(r => !ws.length || r.score > 0).sort((x, y) => y.score - x.score || new Date(y.a.receivedAt) - new Date(x.a.receivedAt));
-      meta.textContent = `${rows.length} aktuella behov${ws.length ? " som matchar" : ""}`;
+      meta.textContent = `${rows.length} ${tr(ws.length ? "current needs that match" : "current needs")}`;
       list.innerHTML = rows.slice(0, 60).map(({ a, score }) => `
         <article class="ua-card">
           <div class="ua-top"><span class="ua-ref">${esc(a.reference || a.id || "")}</span><span class="ua-date">${fmtDate(a.receivedAt || a.firstSeen)}</span>${ws.length ? `<span class="ua-score">${"●".repeat(Math.min(5, score))}</span>` : ""}</div>
@@ -1219,14 +1218,14 @@
           <p class="ua-loc">${esc(a.location || "")}</p>
           ${a.summary ? `<p class="ua-sum">${esc(a.summary)}</p>` : ""}
           <div class="ua-skills">${(a.skills || []).slice(0, 8).map(k => `<span>${esc(String(k))}</span>`).join("")}</div>
-          <a class="cta ua-cta" href="mailto:${K.email}?subject=${encodeURIComponent(`AGENTOMATEN – ${a.reference || a.id} – Kandidat – `)}">Intresserad →</a>
-        </article>`).join("") || `<p class="ua-empty">Inga träffar ännu – prova färre eller andra ord.</p>`;
+          <a class="cta ua-cta" href="mailto:${K.email}?subject=${encodeURIComponent(`AGENTOMATEN – ${a.reference || a.id} – ${tr("Candidate")} – `)}">${tr("Interested →")}</a>
+        </article>`).join("") || `<p class="ua-empty">${tr("No matches yet – try fewer or different words.")}</p>`;
     };
     q.addEventListener("input", draw);
     $$(".chip", appBody).forEach(c => c.addEventListener("click", () => { $$(".chip", appBody).forEach(x => x.classList.remove("on")); c.classList.add("on"); days = c.dataset.days; draw(); }));
     if (assignments) draw();
     else fetch(API).then(r => r.json()).then(j => { assignments = (j.assignments || []).filter(a => a.public !== false); draw(); })
-      .catch(() => { meta.innerHTML = `Kunde inte hämta uppdragen just nu. <a href="${TOOLS[0].href}" target="_blank" rel="noopener">Öppna Uppdragsautomaten ↗</a>`; });
+      .catch(() => { meta.innerHTML = `${tr("Could not fetch the assignments right now.")} <a href="${TOOLS[0].href}" target="_blank" rel="noopener">${tr("Open Uppdragsautomaten ↗")}</a>`; });
     setTimeout(() => q.focus(), 300);
   }
   function openTool(id) {
@@ -1250,23 +1249,11 @@
     e.preventDefault(); e.stopPropagation(); openTool(id);
   }, true);
 
-  /* ================= den röda tråden: en rälsprick per scen ================= */
-  const rail = document.createElement("nav");
-  rail.className = "rail"; rail.setAttribute("aria-label", "Scener");
-  rail.innerHTML = `<i class="rail-line"><i></i></i>` + S.map((x, i) => `<a href="#${x.id}" style="--y:${(i / (S.length - 1) * 100).toFixed(2)}%" title="${x.t}"><span>${x.t}</span></a>`).join("");
-  document.body.appendChild(rail);
-  const railDots = $$("a", rail), railFill = $(".rail-line i", rail);
-  (function railLoop() {
-    const k = active ? S.indexOf(active) : 0;
-    railDots.forEach((d, i) => { d.classList.toggle("on", i === k); d.classList.toggle("past", i < k); });
-    railFill.style.transform = `scaleY(${k / (S.length - 1)})`;
-    requestAnimationFrame(railLoop);
-  })();
   // pricken visar vägen när man står still
   let idleT = 0;
   const idle = () => { clearTimeout(idleT); body.classList.remove("idle"); idleT = setTimeout(() => body.classList.add("idle"), 2600); };
   ["scroll", "pointermove", "touchstart", "keydown"].forEach(ev => addEventListener(ev, idle, { passive: true })); idle();
-  document.body.insertAdjacentHTML("beforeend", `<div class="way" aria-hidden="true"><i></i><span>scroll</span></div>`);
+  document.body.insertAdjacentHTML("beforeend", `<div class="way" aria-hidden="true"><i></i><span>${tr("scroll")}</span></div>`);
 
   /* ================= ögat blinkar ================= */
   const lid = $(".hud-mark__blink");

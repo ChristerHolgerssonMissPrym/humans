@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MISSPRYM.md — Miss Prym</title>
+  <meta name="description" content="Miss Prym – ett öppensinnat tech- och ingenjörsföretag. Tekniskt djup, mänskligt omdöme.">
+  <meta name="theme-color" content="#201e1f">
+  <meta property="og:title" content="MISSPRYM.md — Miss Prym">
+  <meta property="og:description" content="Tekniken ska stärka organisationer utan att göra arbetet mindre mänskligt.">
+  <meta property="og:image" content="https://missprym.tech/assets/miss-prym-linkedin-preview-20260604.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Cutive+Mono&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="is-loading">
+  <a class="skip" href="#read" data-read>Hoppa till texten</a>
+
+  <!-- HUD -->
+  <header class="hud">
+    <div class="hud__l">
+      <a class="hud-mark" href="#top" aria-label="Till toppen">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <circle cx="32" cy="32" r="30" class="hud-mark__ring"/>
+          <path d="M10 32 C 20 18, 44 18, 54 32 C 44 46, 20 46, 10 32 Z" class="hud-mark__lid"/>
+          <circle cx="32" cy="32" r="8" class="hud-mark__iris"/>
+          <circle cx="32" cy="32" r="3.2" class="hud-mark__pupil"/>
+          <ellipse cx="32" cy="32" rx="23" ry="15" class="hud-mark__blink"/>
+        </svg>
+      </a>
+      <button class="pill hud-file" type="button" data-file><span>MISSPRYM<span class="md">.md</span></span><i class="hud-file__dot"></i></button>
+      <span class="pill hud-crumb"><span class="md">##</span> <span class="hud-crumb__t"></span></span>
+    </div>
+    <div class="hud__r">
+      <a class="pill hud-lang" href="index.html" hreflang="en" lang="en" title="In English">EN</a>
+      <button class="pill hud-watch" type="button" data-watch><span class="hud-watch__t">titta</span></button>
+      <button class="pill hud-index" type="button" data-index aria-expanded="false">index <span class="hud-index__i"><i></i><i></i></span></button>
+    </div>
+  </header>
+
+  <!-- Index -->
+  <nav class="index" aria-label="Index" hidden>
+    <div class="index__track"></div>
+  </nav>
+
+  <!-- .md-fil -->
+  <div class="file" role="dialog" aria-modal="true" aria-label="MISSPRYM.md" hidden>
+    <div class="file__scrim" data-close></div>
+    <div class="file__win">
+      <div class="file__bar">
+        <span class="file__name">MISSPRYM.md</span>
+        <button class="file__btn" type="button" data-copy>kopiera</button>
+        <button class="file__btn" type="button" data-download>ladda ner</button>
+        <button class="file__btn" type="button" data-close>stäng ✕</button>
+      </div>
+      <pre class="file__text" tabindex="0"></pre>
+    </div>
+  </div>
+
+  <!-- Verktygen (Uppdragsautomaten m.fl.) i sajtens egen design -->
+  <div class="app" role="dialog" aria-modal="true" aria-label="Miss Prym-verktyg" hidden>
+    <div class="app__scrim" data-app-close></div>
+    <div class="app__win">
+      <div class="app__bar">
+        <span class="app__dot"></span>
+        <nav class="app__tabs" aria-label="Verktyg"></nav>
+        <a class="app__ext" href="#" target="_blank" rel="noopener">öppna i ny flik ↗</a>
+        <button class="app__close" type="button" data-app-close aria-label="Stäng">✕</button>
+      </div>
+      <div class="app__body"></div>
+    </div>
+  </div>
+
+  <!-- Scener (byggs av app.js) -->
+  <main id="stage" aria-label="MISSPRYM.md"></main>
+  <div id="scroll" aria-hidden="true"></div>
+
+  <!-- Läsläge: hela innehållet som ren text -->
+  <article id="read" class="read"></article>
+
+  <button class="pause" type="button" aria-pressed="false" aria-label="Pausa animationer" data-pause><i></i><i></i></button>
+  <div class="grain" aria-hidden="true"></div>
+  <i class="dot" aria-hidden="true"></i>
+  <div class="prog" aria-hidden="true"><i></i></div>
+  <div class="loader" aria-hidden="true"><span class="loader-eye"><i></i></span><span class="loader-t">MISSPRYM<b>.md</b></span><span class="loader-n">00</span></div>
+
+  <script src="content.js"></script>
+  <script src="content-sv.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

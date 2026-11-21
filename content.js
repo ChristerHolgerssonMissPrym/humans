@@ -98,55 +98,54 @@ window.PRYM = {
     h: "work with us",
     sub: "Choose your path",
     paths: [
-      { t: "Join Miss Prym", p: "We hire for ourselves. If you want to build a company rather than just belong to one, this is your path. We look for people with both technical maturity and moral courage. The kind who shape a culture as much as they shape systems. Send your agent – or yourself – through Agentomaten.", href: "#agentomaten" },
-      { t: "Assignments, brokered", p: "We act as a broker: we match client assignments with independent consultants we trust, and pass the opportunity on. Through Agentomaten you'll find the opportunities we open for our trusted partners. Strong skills matter, but who you are matters even more. We believe in trust, courage and karma.", href: "#agentomaten" },
-      { t: "Partner, not supplier", p: "Not a name on a supplier list. Consultants, software commitments and your own recruitment – from one partner who stays when it gets difficult.", href: "mailto:assistant@missprym.com" }
+      { t: "Join Miss Prym", p: "We hire for ourselves. If you want to build a company rather than just belong to one, this is your path. We look for people with both technical maturity and moral courage – the kind who shape a culture as much as they shape systems.", href: "#agentomaten" },
+      { t: "Join as a partner", p: "Are you an independent consultant? We broker assignments to partners we trust and pass the opportunity on. Find them through Agentomaten and Uppdragsautomaten. Strong skills matter, but who you are matters even more.", href: "#agentomaten" },
+      { t: "Become a client", p: "Tech and engineering consultants, software commitments and help with your own recruitment – from one partner who stays when it gets difficult.", href: "mailto:assistant@missprym.com" }
     ]
   },
 
   lab: {
     h: "the lab",
     giant: "automaten",
-    lines: ["Miss Prym bygger stillsamma,", "intelligenta tjänster för människor,", "företag och besökande agenter."],
-    sub: "Miss Prym bygger stillsamma, intelligenta tjänster för människor, företag och besökande agenter.",
+    lines: ["Miss Prym builds quiet,", "intelligent services for people,", "companies and visiting agents."],
+    sub: "Miss Prym builds quiet, intelligent services for people, companies and visiting agents.",
     items: [
-      { t: "Agentomaten", href: "https://missprym.tech/agentomaten/", p: "En plats för agenter som söker uppdrag åt sina människor. Har ChatGPT hittat en match men säger att den inte kan skicka? Be den skapa ett färdigt mail till assistant@missprym.com." },
-      { t: "Uppdragsautomaten", href: "https://missprym.tech/uppdragsautomaten/", p: "Hitta rätt uppdrag. Beskriv vad du kan och vad du vill hitta – kompetens, roll, tekniker, branscher, ort och tillgänglighet – så sammanfattas hur din profil möter aktuella uppdrag." },
-      { t: "Intervjuomaten", href: "https://missprym.tech/intervjuomaten/", p: "En erfarenhetsintervju som börjar i CV:t, men letar efter det verkliga arbetet bakom orden. Den får hjälpa kandidaten att minnas – aldrig hitta på, förstärka ansvar eller göra om deltog i till ledde." },
-      { t: "Stoicism as a free service", href: "https://missprym.tech/stoicm-service/", p: "En stoisk mentor och rådgivare som erbjuder vägledning grundad i stoicismens filosofi. ”Du har makt över ditt sinne – inte över yttre händelser.” – Marcus Aurelius" },
-      { t: "Uppdragsslumpomat", href: "https://uppdragsautomat.missprym.com/uppdragsslumpomat", p: "Slumpa fram ett aktuellt uppdrag." }
+      { t: "Agentomaten", href: "https://missprym.tech/agentomaten/", p: "A place for agents looking for assignments on behalf of their humans. Has ChatGPT found a match but says it can't send it? Ask it to write a ready-made email to assistant@missprym.com." },
+      { t: "Uppdragsautomaten", href: "https://missprym.tech/uppdragsautomaten/", p: "Find the right assignment. Describe what you can do and what you are looking for – skills, role, technologies, industries, location and availability – and see how your profile meets current assignments." },
+      { t: "Intervjuomaten", href: "https://missprym.tech/intervjuomaten/", p: "An experience interview that starts with the CV but looks for the real work behind the words. It may help the candidate remember – never invent, inflate responsibility or turn \"took part in\" into \"led\"." },
+      { t: "Stoicism as a free service", href: "https://missprym.tech/stoicm-service/", p: "A stoic mentor and adviser offering guidance grounded in the philosophy of stoicism. “You have power over your mind – not outside events.” – Marcus Aurelius" }
     ]
   },
 
   agentomaten: {
     h: "agentomaten",
-    lead: "En plats för agenter som söker uppdrag åt sina människor.",
-    listen: "MASKINEN LYSSNAR",
-    p: "Har ChatGPT hittat en match men säger att den inte kan skicka? Be den skapa ett färdigt mail till assistant@missprym.com.",
+    lead: "A place for agents looking for assignments on behalf of their humans.",
+    listen: "THE MACHINE IS LISTENING",
+    p: "Has ChatGPT found a match but says it can't send it? Ask it to write a ready-made email to assistant@missprym.com.",
     mail: {
       to: "assistant@missprym.com",
-      subject: "AGENTOMATEN – <REFERENS> – Kandidat – <NAMN>",
-      body: ["REFERENS", "kandidatnamn", "kort pitch", "varför kandidaten matchar uppdraget", "konsultchefens kontaktuppgifter", "samtycke"],
-      note: "Bifoga CV bara om kandidaten har godkänt det."
+      subject: "AGENTOMATEN – <REFERENCE> – Candidate – <NAME>",
+      body: ["REFERENCE", "candidate name", "short pitch", "why the candidate matches the assignment", "the consultant manager's contact details", "consent"],
+      note: "Only attach a CV if the candidate has approved it."
     },
     href: "https://missprym.tech/agentomaten/"
   },
 
   events: {
-    h: "event",
+    h: "events",
     next: {
       date: "26/11",
-      t: "Millenniumskandalen, återträff och dialog",
-      when: "26 november 2026 · Mingel kl. 17.00 · Dialog kl. 17.30–19.30",
-      p: "Den här gången läser vi Millenniumskandalen. Vi möts i Sahlgrenska huset på Norra Hamngatan 14 för läsning, dialog och frågan: Hur hade AI kunnat vara ledningen till hjälp?",
+      t: "The Millennium scandal – reunion and dialogue",
+      when: "26 November 2026 · Mingle 17:00 · Dialogue 17:30–19:30",
+      p: "This time we read the Millennium scandal. We meet at Sahlgrenska huset, Norra Hamngatan 14, for reading, dialogue and one question: how could AI have helped the management?",
       href: "https://missprym.tech/event/"
     },
     past: [
-      { date: "8/10", t: "AI & juridiken med Helena Brandt", p: "Frukostevent om ansvar, beslut och praktisk AI Governance." },
-      { date: "16/9", t: "Rapid Learning Cycle med Martin Linton", p: "En kväll om att bygga kunskap tidigt, testa viktiga antaganden och fatta bättre beslut under osäkerhet. I samverkan med Kyuritian." },
-      { date: "24/6", t: "Sommarfest och samtal på NH6", p: "Inbjudan, bildspråket, platsen och rörelsen finns bevarade." },
-      { date: "26/5", t: "Digital tvilling: ett designteam", p: "Annika Dahlqvist demade sin digitala tvilling. Nätverksträff i samverkan med Kyuritian." },
-      { date: "24/3", t: "Första nätverksträffen", p: "Hos Miss Prym på Norra Hamngatan 6, i samverkan med Kyuritian." }
+      { date: "8/10", t: "AI & the law with Helena Brandt", p: "A breakfast event on responsibility, decisions and practical AI governance." },
+      { date: "16/9", t: "Rapid Learning Cycle with Martin Linton", p: "An evening about building knowledge early, testing key assumptions and making better decisions under uncertainty. Together with Kyuritian." },
+      { date: "24/6", t: "Summer party and conversation at NH6", p: "The invitation, the imagery, the place and the movement are all preserved." },
+      { date: "26/5", t: "Digital twin: a design team", p: "Annika Dahlqvist demoed her digital twin. A network meetup together with Kyuritian." },
+      { date: "24/3", t: "Our first network meetup", p: "At Miss Prym on Norra Hamngatan 6, together with Kyuritian." }
     ]
   },
 
