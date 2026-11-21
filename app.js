@@ -123,7 +123,7 @@
     id: "expertise", t: "our expertise", hud: "light", len: 3.4, wipe: "circle", card: { glyph: "∗", room: "#ffabc8" },
     html: `
       <i class="wall"></i>
-      <div class="crowd">${Array.from({ length: 7 }, (_, i) => `<img class="dude" src="${C.fig}puppet-man.webp" alt="" style="--x:${8 + i * 13.4}%;--f:${i % 2 ? -1 : 1}">`).join("")}</div>
+      <div class="crowd">${["puppet-man", "statue-justitia", "bird-owl", "purpose-woman", "bird-crow", "statue-venus", "bird-robin"].map((n, i) => `<img class="dude d-${n}" src="${C.fig}${n}.webp" alt="" style="--x:${6 + i * 13.6}%;--f:${i % 2 ? -1 : 1}">`).join("")}</div>
       <div class="cloth"></div>
       <p class="lead lead--ink l1">${lines(C.expertise.lead)}</p>
       <p class="lead lead--ink l2">${lines(C.expertise.after.map(rich))}</p>
@@ -725,8 +725,63 @@
 
   { const i = S.findIndex(x => x.id === "together"); S.splice(1, 0, ...S.splice(i, 1)); }
 
+  // ===== manifeststrukturen (som human-md: en fil som läses uppifrån) =====
+  const JOB = [["shift-1", "choose purpose over profit"], ["shift-2", "organise as a network"], ["shift-3", "empower, don't control"], ["chaos", "face the chaos together"], ["shift-4", "experiment, don't plan"], ["one-percent", "one percent, every day"], ["shift-5", "make it transparent"], ["what", "solve the real problems"], ["story", "see the story, not the CV"], ["lab", "build it, don't talk about it"]];
+  const STOP = ["selling hours instead of value", "hiding behind the process", "planning things to death", "talking about AI instead of building with it", "keeping what we learn to ourselves", "choosing profit when it costs us our humanity"];
+  const MORE = ["say no to the wrong assignment", "open-source what we build", "share the bookshelf", "experiment where people can see", "ask what the consultant actually wants", "be kind on purpose"];
+
+  scene({
+    id: "file", t: "what this file is", hud: "dark", len: 2.6, wipe: "circle", card: { glyph: "#", room: "#201e1f", light: true },
+    html: `
+      <div class="mf">
+        <p class="mf-q">${lines(["&gt; a working manifesto.", "&gt; written for ourselves first.", "&gt; last edited at Norra Hamngatan 14."])}</p>
+        <h2 class="mf-h"><span class="md">##</span> what this file is</h2>
+        <p class="mf-p">${lines(["A plain-text promise about how we behave", "when business gets difficult – and what", "we think people bring to the table now", "that the machines are getting good."])}</p>
+      </div>`,
+    init(el) { this.q = $(".mf-q", el); this.h = $(".mf-h", el); this.p = $(".mf-p", el); },
+    update(p) { reveal(this.q, p, .02, .3); fadeIn(this.h, ease(seg(p, .32, .42)), 12); reveal(this.p, p, .42, .8); }
+  });
+
+  scene({
+    id: "job", t: "the actual job", hud: "dark", len: 2.8, wipe: "circle", card: { glyph: "≡", room: "#201e1f", light: true },
+    html: `
+      <div class="toc">
+        <div class="toc-bar"><i></i><i></i><i></i><span>MISSPRYM.md — ## the actual job</span></div>
+        <ol class="toc-list">${JOB.map(([id, t], i) => `<li><a href="#${id}"><span class="ln-no">${String(i + 12).padStart(3, " ")}</span><span class="md">###</span> <b>${i + 1}.</b> ${t}</a></li>`).join("")}</ol>
+      </div>`,
+    init(el) { this.li = $$(".toc-list li", el); this.box = $(".toc", el); },
+    update(p, t) {
+      const kb = ease(seg(p, 0, .12)); this.box.style.opacity = kb; this.box.style.transform = `translate(-50%, calc(-50% + ${(1 - kb) * 30}px))`;
+      const n = this.li.length;
+      this.li.forEach((l, i) => { const k = seg(p, .1 + i * .06, .16 + i * .06); l.style.opacity = k; l.style.transform = `translateX(${(1 - ease(k)) * 20}px)`; l.classList.toggle("cur", k > 0 && k < 1); });
+    }
+  });
+
+  scene({
+    id: "lists", t: "stop doing / do more", hud: "light", len: 3.2, wipe: "circle", card: { glyph: "✕", room: "#fbf6ea" },
+    html: `
+      <div class="lists">
+        <div class="lcol"><h3><span class="md">##</span> things we are trying to stop doing</h3><ul>${STOP.map(x => `<li><span class="st">${x}<i></i></span></li>`).join("")}</ul></div>
+        <div class="lcol"><h3><span class="md">##</span> things we are trying to do more</h3><ul>${MORE.map(x => `<li><span class="hi">${x}</span></li>`).join("")}</ul></div>
+      </div>
+      <p class="lists-end">${lines(["This file will change. That's the point.", "<span class='sig'>— Miss Prym, Norra Hamngatan 14</span>"])}</p>`,
+    init(el) { this.st = $$(".st", el); this.hi = $$(".hi", el); this.lis = $$(".lcol li", el); this.end = $(".lists-end", el); this.hs = $$(".lcol h3", el); },
+    update(p) {
+      this.hs.forEach((h, i) => fadeIn(h, ease(seg(p, .02 + i * .3, .1 + i * .3)), 12));
+      this.st.forEach((x, i) => { const k = seg(p, .06 + i * .04, .1 + i * .04); x.parentElement.style.opacity = k > 0 ? 1 : 0; x.style.setProperty("--k", easeIO(seg(p, .1 + i * .04, .16 + i * .04))); });
+      this.hi.forEach((x, i) => { const k = seg(p, .36 + i * .04, .4 + i * .04); x.parentElement.style.opacity = k > 0 ? 1 : 0; x.style.setProperty("--k", easeIO(seg(p, .4 + i * .04, .46 + i * .04))); });
+      reveal(this.end, p, .7, .86);
+    }
+  });
+
+  // ordning: filen först, innehållsförteckningen före principerna, listorna före kontakt
+  { const mv = (id, beforeId) => { const i = S.findIndex(x => x.id === id), [sc] = S.splice(i, 1), j = S.findIndex(x => x.id === beforeId); S.splice(j, 0, sc); };
+    mv("file", "commitment"); mv("job", "shift-1"); mv("lists", "contact"); }
+  // numrera principerna – breadcrumben visar "### 3. empower, don't control"
+  JOB.forEach(([id, t], i) => { const sc = S.find(x => x.id === id); if (sc) { sc.t = `${i + 1}. ${t}`; sc.num = true; } });
+
   // baksida på indexkorten: en rad ur innehållet
-  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", "one-percent": "Standing still vs. one percent better every day.", finale: "Be proud. Be like Prym.", story: "You may only see a CV. We see a story.", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
+  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", file: "a working manifesto. written for ourselves first.", job: JOB.map(x => x[1]).join(" · "), lists: "This file will change. That's the point.", "one-percent": "Standing still vs. one percent better every day.", finale: "Be proud. Be like Prym.", story: "You may only see a CV. We see a story.", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
   S.forEach(x => (x.back = backs[x.id] || (C.shifts[+x.id.split("-")[1] - 1] || {}).p || ""));
 
   // 18. Finalen – stumfilm: landsväg i solnedgång, två figurer mot horisonten, iris, eftertexter, The End
@@ -868,6 +923,7 @@
       body.dataset.hud = s.hud;
       crumb.classList.toggle("is-on", s.id !== "top");
       crumbT.textContent = s.t;
+      crumb.querySelector(".md").textContent = s.num ? "###" : "##";
       $(".hud-count").textContent = `${String(k + 1).padStart(2, "0")} / ${String(S.length).padStart(2, "0")}`;
     }
 
@@ -881,6 +937,8 @@
     ...C.hero.quote.map(q => `> ${q}`), ``,
     `## ${C.commitment.h}`, ``, `${C.commitment.lead} ${C.commitment.body}`, ``, `*${plain(C.commitment.say)}*`, ``,
     `> ${C.quote.text}`, `> — ${C.quote.src}`, ``,
+    `## what this file is`, ``, `A plain-text promise about how we behave when business gets difficult – and what we think people bring to the table now that the machines are getting good.`, ``,
+    `## the actual job`, ``, ...JOB.map(([, t], i) => `${i + 1}. ${t}`), ``,
     `## ${C.who.h}`, ``, ...C.who.p.flatMap(p => [p, ``]),
     ...C.shifts.flatMap((s, i) => [`### ${i + 1}. from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}`, ``, s.p, ``]),
     `---`, ``,
@@ -891,6 +949,7 @@
     `## ${E.h}`, ``, `**${E.next.t}** — ${E.next.when}`, ``, E.next.p, ``, ...E.past.map(p => `- ${p.date} · ${p.t}. ${p.p}`), ``,
     `## ${C.books.h}`, ``, `${plain(C.books.say)}`, ``, C.books.p, ``,
     `---`, ``,
+    `## things we are trying to stop doing`, ``, ...STOP.map(x => `- ${x}`), ``, `## things we are trying to do more`, ``, ...MORE.map(x => `- ${x}`), ``, `This file will change. That's the point.`, ``,
     `## ${K.h}`, ``, K.p, ``, `${K.address}  `, `${K.email}  `, `${K.linkedin}`, ``,
     `— Miss P Aktiebolag`
   ].join("\n");
@@ -941,6 +1000,9 @@
     events: [word("26/11", "red serif"), "#fbf6ea"],
     library: [im("assets/portrait.jpg", "cover"), "#1c3d24"],
     contact: [im("assets/goteborg-sunset.jpg", "cover"), "#e65564"],
+    file: [`<span class="th-word" style="color:#f4efe8;font-family:var(--f-mono);font-weight:400">.md</span>`, "#201e1f"],
+    job: [`<span class="th-toc">${JOB.slice(0, 5).map((x, i) => `<i>${i + 1}. ${x[1]}</i>`).join("")}</span>`, "#201e1f"],
+    lists: [`<span class="th-slips"><i style="text-decoration:line-through">planning</i><i>be kind</i></span>`, "#fbf6ea"],
     finale: [`<span class="th-end">${im(F + "statue-justitia.webp", "sil")}${im(F + "statue-venus.webp", "sil")}</span>`, "#d8d0c2"]
   };
   $(".index__track").innerHTML = S.map((s, i) => {
