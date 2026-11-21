@@ -740,87 +740,29 @@
   // Newtons vagga – affärsaktivism och solidarisk kapitalism: energi in → den rör många → resultat ut → det kommer tillbaka
   const CR = [["01", "we put energy in", "business activism"], ["02", "it moves through many", "people, clients, partners"], ["03", "a result swings out", "on the other side"], ["04", "and comes back", "stronger – solidarity capitalism"]];
   scene({
-    id: "cradle", t: "solidarity capitalism", hud: "dark", len: 4.2, wipe: "circle", card: { glyph: "∘∘∘", room: "#ee6058" },
+    id: "cradle", t: "solidarity capitalism", hud: "dark", len: 4.2, wipe: "circle", card: { glyph: "∘∘∘", room: "#0a0806", light: true },
     html: `
+      <div class="ncv"><video src="assets/bulb-cradle.mp4" poster="assets/bulb-cradle.jpg" muted loop playsinline preload="none" aria-hidden="true"></video></div>
       <p class="lab"><span class="md">##</span>business activism · solidarity capitalism</p>
+      <p class="nc-logo">Miss Prym<span>Altruism + Emergens = Profit</span></p>
       <h2 class="nc-h">${lines(["We don't keep the energy.", "<span class='hl-human'>We pass it on.</span>"])}</h2>
-      <div class="nc">
-        <p class="nc-logo">Miss Prym<span>Altruism + Emergens = Profit</span></p>
-        <i class="nc-bar"></i>
-        ${[0, 1, 2, 3, 4].map(i => `<span class="nc-p" style="--i:${i}"><i class="nc-s"></i><b class="nc-b">${["", "", "", "", ""][i]}</b></span>`).join("")}
-        <i class="nc-wave"></i>
-        <i class="nc-base"></i>
-      </div>
       <ol class="nc-steps">${CR.map(([n, a, b]) => `<li><span class="md">${n}</span><b>${a}</b><em>${b}</em></li>`).join("")}</ol>`,
-    init(el) { this.q = n => $(n, el); this.p = $$(".nc-p", el); this.st = $$(".nc-steps li", el); this.h = $(".nc-h", el); this.lab = $(".lab", el); this.wave = $(".nc-wave", el); },
+    init(el) { this.v = $(".ncv", el); this.st = $$(".nc-steps li", el); this.h = $(".nc-h", el); this.lab = $(".lab", el); this.logo = $(".nc-logo", el); },
     update(p, t) {
       this.lab.style.opacity = seg(p, 0, .05);
-      reveal(this.h, p, .02, .12);
-      // fas: 0 dra ut vänster kula → 1 släpp, slag → 2 vågen går genom → 3 höger kula svänger ut → 4 kommer tillbaka; sedan i loop
-      const ph = seg(p, .14, .3), loopOn = p > .3;
-      let a0 = 0, a4 = 0, wave = -1;
-      if (!loopOn) { a0 = -52 * ease(ph); }
-      else {
-        // enkel symmetrisk modell
-        const ang = Math.sin(t * 2.1) * 52;
-        a0 = Math.min(0, ang); a4 = Math.max(0, ang);
-        wave = Math.abs(ang) < 6 ? 1 - Math.abs(ang) / 6 : 0;
-      }
-      this.p.forEach((e, i) => e.style.transform = `rotate(${i === 0 ? a0 : i === 4 ? a4 : 0}deg)`);
-      this.wave.style.opacity = loopOn ? wave : 0;
-      // stegen tänds i takt med rörelsen
-      const k = seg(p, .3, .7);
-      this.st.forEach((l, i) => { const on = k * 4 > i; l.classList.toggle("on", on); });
-      const cur = loopOn ? (a0 < -4 ? 0 : Math.abs(a0) + Math.abs(a4) < 6 ? 1 : a4 > 4 && Math.sin(t * 2.4 + Math.PI / 2) > 0 ? 2 : 3) : -1;
-      this.st.forEach((l, i) => l.classList.toggle("now", p > .7 && i === cur));
+      // filmen tänds upp ur mörkret och zoomar sakta in
+      const on = ease(seg(p, 0, .18));
+      this.v.style.opacity = on; this.v.style.transform = `translate(-50%, -50%) scale(${1.08 - on * .08 + seg(p, .2, 1) * .06})`;
+      fadeIn(this.logo, ease(seg(p, .08, .2)));
+      reveal(this.h, p, .2, .32);
+      const k = seg(p, .34, .8);
+      this.st.forEach((l, i) => { l.classList.toggle("on", k * 4 > i); l.classList.toggle("now", Math.min(3, Math.floor(k * 4)) === i && k > 0); });
     }
   });
+
   { const i = S.findIndex(x => x.id === "cradle"), [sc] = S.splice(i, 1), j = S.findIndex(x => x.id === "work"); S.splice(j, 0, sc); }
 
-  // Vad vi är – tech- & ingenjörsbyrå: fem sätt vi arbetar med kunderna, och att vi vill reformera branschen
-  const ROLES = [
-    ["consultants", "Tech & engineering consultants", "Developers, architects, quality, sourcing, supply chain – people who solve real problems inside your team.", "team-hero"],
-    ["software", "Software commitments", "We take on whole deliveries: from architecture to final, verified code.", "team-glasses"],
-    ["recruitment", "Your own recruitment", "We help you find and hire the right people for your own organisation – transparent and competence-based.", "team-blond"],
-    ["broker", "Assignment broker", "We match assignments with independent consultants we trust, and pass the opportunity on.", "team-cap"],
-    ["partner", "Partner", "Not a supplier on a list. A partner who stays when it gets difficult.", "team-dancer"]
-  ];
-  scene({
-    id: "we-are", t: "what we are", hud: "light", len: 4.4, wipe: "circle", card: { glyph: "5", room: "#f7eaad" },
-    html: `
-      <i class="wall"></i>
-      <p class="lab"><span class="md">##</span>what we are · Miss P Aktiebolag · 559455-8172</p>
-      <h2 class="wa-h">${lines(["A tech & engineering firm", "<span class='hl-human'>– with five ways in.</span>"])}</h2>
-      <div class="wa-doors">${ROLES.map(([id, t, d, f], i) => `<article class="door d-${id}" style="--i:${i}">
-        <div class="door-fr"><img src="${C.fig}${f}.webp" alt=""><div class="door-leaf"><span class="door-n">0${i + 1}</span><i class="knob"></i></div></div>
-        <div class="door-tx"><span class="door-k">0${i + 1} / 05</span><h3>${t}</h3><p>${d}</p></div></article>`).join("")}</div>
-      <p class="wa-foot">${lines(["…while we work to <b>reform our industry</b>."])}</p>`,
-    init(el) { this.h = $(".wa-h", el); this.d = $$(".door", el); this.f = $(".wa-foot", el); this.lab = $(".lab", el);
-      this.leaf = this.d.map(d => $(".door-leaf", d)); this.img = this.d.map(d => $("img", d)); this.tx = this.d.map(d => $(".door-tx", d)); },
-    update(p, t) {
-      const port = innerHeight > innerWidth;
-      this.lab.style.opacity = seg(p, 0, .05);
-      reveal(this.h, p, .02, .12);
-      this.d.forEach((e, i) => {
-        let show, open;
-        if (port) {
-          // mobil: en dörr i taget – glider in, öppnas, glider ut
-          const a = .12 + i * .15, inn = easeIO(seg(p, a, a + .05)), out = easeIO(seg(p, a + .14, a + .18));
-          open = ease(seg(p, a + .03, a + .09));
-          e.style.opacity = inn > 0 && out < 1 ? 1 : 0;
-          e.style.transform = `translateX(${(1 - inn) * 110 - out * 110}%) rotate(${(1 - inn) * 6 - out * 6}deg)`;
-        } else {
-          const a = .12 + i * .1; show = ease(seg(p, a, a + .08)); open = ease(seg(p, a + .06, a + .16));
-          e.style.opacity = show > 0 ? 1 : 0;
-          e.style.transform = `translateY(${(1 - show) * 60}px)`;
-        }
-        this.leaf[i].style.transform = `perspective(900px) rotateY(${-open * 108}deg)`;
-        this.img[i].style.transform = `translateY(${(1 - open) * 18}%) scale(${.9 + open * .1})`;
-        this.tx[i].style.opacity = open; this.tx[i].style.transform = `translateY(${(1 - open) * 14}px)`;
-      });
-      reveal(this.f, p, port ? .88 : .7, port ? .95 : .82);
-    }
-  });
+
 
   // Reformen – bruset och riktningen, och ett budskap målat på väggen
   const NOISE = Array.from({ length: 34 }, (_, i) => { const base = 80 - i * 1.75, n = (Math.sin(i * 12.9898) * 43758.5453 % 1) * 2 - 1; return [5 + i * 4.5, base + n * (10 + (i % 5) * 2.5)]; });
@@ -847,7 +789,7 @@
     }
   });
   { const mv = (id, after) => { const i = S.findIndex(x => x.id === id), [sc] = S.splice(i, 1), j = S.findIndex(x => x.id === after); S.splice(j + 1, 0, sc); };
-    mv("we-are", "together"); mv("reform", "cradle"); }
+    mv("reform", "cradle"); }
 
   // ===== manifeststrukturen (som human-md: en fil som läses uppifrån) =====
   const JOB = [["shift-1", "choose purpose over profit"], ["shift-2", "organise as a network"], ["shift-3", "empower, don't control"], ["chaos", "face the chaos together"], ["shift-4", "experiment, don't plan"], ["one-percent", "one percent, every day"], ["shift-5", "make it transparent"], ["what", "solve the real problems"], ["story", "see the story, not the CV"], ["lab", "build it, don't talk about it"]];
@@ -858,7 +800,7 @@
     id: "file", t: "what this file is", hud: "dark", len: 2.6, wipe: "circle", card: { glyph: "#", room: "#201e1f", light: true },
     html: `
       <div class="mf">
-        <p class="mf-q">${lines(["&gt; a working manifesto.", "&gt; written for ourselves first.", "&gt; last edited at Norra Hamngatan 14."])}</p>
+        <p class="mf-q">${lines(["&gt; a working manifesto.", "&gt; written for ourselves first.", "&gt; by Miss P Aktiebolag · 559455-8172,", "&gt; a tech &amp; engineering firm.", "&gt; last edited at Norra Hamngatan 14."])}</p>
         <h2 class="mf-h"><span class="md">##</span> what this file is</h2>
         <img class="cameo cm-hero" src="${C.fig}team-hero.webp" alt="">
         <p class="mf-p">${lines(["A plain-text promise about how we behave", "when business gets difficult – and what", "we think people bring to the table now", "that the machines are getting good."])}</p>
@@ -910,7 +852,7 @@
   JOB.forEach(([id, t], i) => { const sc = S.find(x => x.id === id); if (sc) { sc.t = `${i + 1}. ${t}`; sc.num = true; } });
 
   // baksida på indexkorten: en rad ur innehållet
-  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", file: "a working manifesto. written for ourselves first.", job: JOB.map(x => x[1]).join(" · "), "we-are": "A tech & engineering firm – with five ways in.", reform: "We keep the direction.", cradle: "We don't keep the energy. We pass it on.", lists: "This file will change. That's the point.", "one-percent": "Standing still vs. one percent better every day.", finale: "Be proud. Be like Prym.", story: "You may only see a CV. We see a story.", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
+  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", file: "a working manifesto. written for ourselves first.", job: JOB.map(x => x[1]).join(" · "), reform: "We keep the direction.", cradle: "Altruism + Emergens = Profit. We don't keep the energy. We pass it on.", lists: "This file will change. That's the point.", "one-percent": "Standing still vs. one percent better every day.", finale: "Be proud. Be like Prym.", story: "You may only see a CV. We see a story.", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
   S.forEach(x => (x.back = backs[x.id] || (C.shifts[+x.id.split("-")[1] - 1] || {}).p || ""));
 
   // 18. Finalen – stumfilm: landsväg i solnedgång, två figurer mot horisonten, iris, eftertexter, The End
@@ -1066,7 +1008,7 @@
     ...C.hero.quote.map(q => `> ${q}`), ``,
     `## ${C.commitment.h}`, ``, `${C.commitment.lead} ${C.commitment.body}`, ``, `*${plain(C.commitment.say)}*`, ``,
     `> ${C.quote.text}`, `> — ${C.quote.src}`, ``,
-    `## what we are`, ``, `Miss P Aktiebolag (559455-8172) – a tech & engineering firm.`, ``, ...ROLES.map(([, t, d]) => `- **${t}.** ${d}`), ``, `…while we work to reform our industry.`, ``,
+    `## what we are`, ``, `Miss P Aktiebolag (559455-8172) – a tech & engineering firm. Consultants, software commitments, your own recruitment, assignments brokered – as a partner, while we work to reform our industry.`, ``,
     `## what this file is`, ``, `A plain-text promise about how we behave when business gets difficult – and what we think people bring to the table now that the machines are getting good.`, ``,
     `## the actual job`, ``, ...JOB.map(([, t], i) => `${i + 1}. ${t}`), ``,
     `## ${C.who.h}`, ``, ...C.who.p.flatMap(p => [p, ``]),
@@ -1134,8 +1076,7 @@
     file: [`<span class="th-word" style="color:#f4efe8;font-family:var(--f-mono);font-weight:400">.md</span>`, "#201e1f"],
     job: [`<span class="th-toc">${JOB.slice(0, 5).map((x, i) => `<i>${i + 1}. ${x[1]}</i>`).join("")}</span>`, "#201e1f"],
     lists: [`<span class="th-slips"><i style="text-decoration:line-through">planning</i><i>be kind</i></span>`, "#fbf6ea"],
-    cradle: [`<span class="th-cradle">${[0,1,2,3,4].map(i => `<i style="--i:${i}"></i>`).join("")}</span>`, "#ee6058"],
-    "we-are": [`<span class="th-word" style="color:#d9646a">5</span>`, "#f7eaad"],
+    cradle: [im("assets/bulb-cradle.jpg", "cover"), "#050403"],
     reform: [`<svg class="th-rf" viewBox="0 0 100 100"><path d="M5 80 L20 60 L30 85 L45 50 L55 70 L70 35 L80 55 L95 20" fill="none" stroke="#7c7588" stroke-width="3"/><path d="M5 82 L95 22" stroke="#fff" stroke-width="3"/></svg>`, "#1f0303"],
     finale: [`<span class="th-end">${im(F + "statue-justitia.webp", "sil")}${im(F + "statue-venus.webp", "sil")}</span>`, "#d8d0c2"]
   };

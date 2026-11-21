@@ -88,9 +88,9 @@ window.PRYM = {
   what: {
     h: "what we do",
     items: [
-      { t: "Consultants", p: "We provide our clients with open-minded consultants who value thoughtful design and real-world problem-solving. Our diverse skills drive business development, ensuring effective solutions through transparent processes." },
-      { t: "Capability", p: "We are an open-minded tech and engineering company built on technical depth, human judgement and solidarity. We provide consultants, recruitment services and learning programmes that help our clients build capability and solve real-world problems." },
-      { t: "Recruitment", p: "Our recruitment services are tailored to your needs. From identifying strong candidates to managing the hiring process, we streamline recruitment and help you secure the right talent efficiently." }
+      { t: "Tech & engineering consultants", p: "Developers, architects, quality, sourcing, supply chain. We provide our clients with open-minded consultants who value thoughtful design and real-world problem-solving. Our diverse skills drive business development, ensuring effective solutions through transparent processes." },
+      { t: "Software commitments", p: "We take on whole deliveries – from architecture to final, verified code. A tech and engineering company built on technical depth, human judgement and solidarity, helping clients build capability and solve real-world problems." },
+      { t: "Your own recruitment", p: "We help you hire for your own organisation, tailored to your needs. From identifying strong candidates to managing the hiring process, we streamline recruitment and help you secure the right talent efficiently." }
     ]
   },
 
@@ -99,8 +99,8 @@ window.PRYM = {
     sub: "Choose your path",
     paths: [
       { t: "Join Miss Prym", p: "We hire for ourselves. If you want to build a company rather than just belong to one, this is your path. We look for people with both technical maturity and moral courage. The kind who shape a culture as much as they shape systems. Send your agent – or yourself – through Agentomaten.", href: "#agentomaten" },
-      { t: "Partner With Prym", p: "We collaborate with independent consultants on client assignments. Through Agentomaten you'll find the opportunities we open for our trusted partners. Strong skills matter, but who you are matters even more. We believe in trust, courage and karma.", href: "#agentomaten" },
-      { t: "Recruitment Services", p: "We help external clients hire the right technical talent. Transparent, precise and grounded in competence based selection.", href: "mailto:assistant@missprym.com" }
+      { t: "Assignments, brokered", p: "We act as a broker: we match client assignments with independent consultants we trust, and pass the opportunity on. Through Agentomaten you'll find the opportunities we open for our trusted partners. Strong skills matter, but who you are matters even more. We believe in trust, courage and karma.", href: "#agentomaten" },
+      { t: "Partner, not supplier", p: "Not a name on a supplier list. Consultants, software commitments and your own recruitment – from one partner who stays when it gets difficult.", href: "mailto:assistant@missprym.com" }
     ]
   },
 
