@@ -1223,24 +1223,6 @@
     e.preventDefault(); e.stopPropagation(); openTool(id);
   }, true);
 
-  /* ================= följeslagaren: en av oss följer med genom hela filen ================= */
-  const guide = document.createElement("div");
-  guide.className = "guide"; guide.innerHTML = `<span class="g-say"></span><img src="${C.fig}team-guide.webp" alt="">`;
-  document.body.appendChild(guide);
-  const gSay = guide.firstElementChild, gImg = guide.lastElementChild;
-  const SAY = { together: "Scrolla vidare – vi har mycket att visa.", file: "Det här är vår fil. Läs den uppifrån.", job: "Tio saker vi faktiskt gör.", "shift-1": "Guldet? Nej tack.", chaos: "Kaos? Vi tar det tillsammans.", "one-percent": "En procent om dagen räcker.", what: "Lyft på locket!", cradle: "Energin vi ger kommer tillbaka.", work: "Kliv förbi repet.", lab: "Under golvet finns maskineriet.", story: "Du ser ett CV. Vi ser dig.", agentomaten: "Skicka din agent hit.", lists: "Den här listan blir aldrig klar.", contact: "Säg hej – vi svarar." };
-  const hideOn = new Set(["top", "who", "finale", "what", "lists"]);
-  let gLast = null, gDir = 1, gY = scrollY, sayT = 0;
-  (function gLoop() {
-    const dy = scrollY - gY; gY = scrollY; if (Math.abs(dy) > 1) gDir = dy > 0 ? 1 : -1;
-    const tt = performance.now() / 1000, moving = Math.abs(dy) > 1;
-    const show = active && !hideOn.has(active.id) && !body.classList.contains("index-open") && !document.documentElement.classList.contains("reading") && appEl.hidden;
-    guide.classList.toggle("g-on", !!show);
-    gImg.style.transform = `scaleX(${gDir}) translateY(${moving ? -Math.abs(Math.sin(tt * 9)) * 4 : Math.sin(tt * 1.5) * 1.2}%) rotate(${moving ? Math.sin(tt * 9) * 3 : 0}deg)`;
-    if (active && active !== gLast) { gLast = active; const t = SAY[active.id]; gSay.textContent = t || ""; guide.classList.toggle("g-talk", !!t); clearTimeout(sayT); sayT = setTimeout(() => guide.classList.remove("g-talk"), 3800); }
-    requestAnimationFrame(gLoop);
-  })();
-
   /* ================= den röda tråden: en rälsprick per scen ================= */
   const rail = document.createElement("nav");
   rail.className = "rail"; rail.setAttribute("aria-label", "Scener");

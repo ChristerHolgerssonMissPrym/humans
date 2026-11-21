@@ -1309,16 +1309,6 @@ body.app-open { overflow: hidden; }
 .toc { overflow: visible !important; }
 @media (orientation: portrait) { .L-file .cm-hero { height: 16vh; } .cm-dancer { height: 16vh; right: 2vw; bottom: 2vh; } .cm-peek { height: 28%; top: -24%; right: -2%; } }
 
-/* ===== följeslagaren ===== */
-.guide { position: fixed; right: 2.2vw; bottom: 0; z-index: 58; height: min(34vh, 300px); pointer-events: none; transform: translateY(105%); transition: transform .8s var(--ease); }
-.guide.g-on { transform: none; }
-.guide img { height: 100%; width: auto; transform-origin: 50% 100%; filter: drop-shadow(0 10px 16px rgba(0,0,0,.25)); }
-.g-say { position: absolute; right: 70%; top: 2%; width: max-content; max-width: 16em; padding: .6em .9em .7em; background: #fffdf6; color: var(--ink); border: 1px solid var(--ink); border-radius: 18px; font-family: var(--f-serif); font-style: italic; font-size: clamp(15px, 1.2vw, 19px); line-height: 1.2; opacity: 0; transform: translateY(8px) scale(.96); transform-origin: 100% 100%; transition: opacity .35s, transform .45s var(--ease); }
-.g-say::after { content: ""; position: absolute; right: 18px; bottom: -8px; width: 14px; height: 14px; background: #fffdf6; border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink); transform: rotate(45deg); }
-.guide.g-talk .g-say { opacity: 1; transform: none; }
-html.reading .guide { display: none; }
-@media (orientation: portrait) { .guide { height: 17vh; right: 1vw; } .g-say { font-size: 13px; max-width: 12em; } }
-
 /* ===== den röda tråden ===== */
 .rail { position: fixed; right: 14px; top: 50%; height: min(56vh, 520px); transform: translateY(-50%); z-index: 59; width: 14px; }
 .rail-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 1.5px; margin-left: -.75px; background: rgba(128,128,128,.35); }
