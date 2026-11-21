@@ -202,45 +202,39 @@
     }
   });
 
-  // 6. Who we are – långt bord som panoreras, Christer rullar in
+  // 6. Who we are – vi som jobbar på Miss Prym. Kameran åker längs salen (som bordet i human-md) och stannar vid var och en.
+  // Stopp i bildkoordinater (0–1): x, y, zoom
+  const STOPS = [[.08, .42, 2.2], [.22, .55, 2.4], [.36, .22, 2.6], [.48, .38, 2.3], [.54, .3, 2.6], [.66, .38, 2.4], [.74, .35, 2.3], [.82, .3, 2.4], [.92, .32, 2.4], [.86, .66, 2.4], [.62, .72, 2.1]];
   scene({
-    id: "who", t: C.who.h, hud: "light", len: 4.2, wipe: "circle", card: { glyph: "W", room: "#c7963c" },
+    id: "who", t: C.who.h, hud: "dark", len: 5.4, wipe: "circle", card: { glyph: "W", room: "#2a2622" },
     html: `
-      <i class="wall"></i><div class="cloth"></div>
-      <div class="strip"><div class="team">${C.expertise.words.map((w, i) => { const c = ["#d9646a", "#f7eaad", "#b9bee9", "#f0bad9", "#3a4650", "#f2cd5c", "#69b488", "#cb9cf8", "#5d9dc5", "#fc4109"][i]; return `<span class="mate" style="--c:${c};--fg:${["#3a4650", "#d9646a", "#fc4109"].includes(c) ? "#f4efe8" : "#201e1f"}"><b>${w}</b><i class="eyes"><i></i><i></i></i></span>`; }).join("")}<svg class="team-net" aria-hidden="true"><path pathLength="1"/></svg></div>${C.shifts.map((s, i) => `<figure class="easel" style="--a:${tilt[i + 4]}deg;--room:${s.room}"><img src="${C.img}${s.img}" alt="" loading="lazy"><span>${i + 1}</span><b>from ${s.from.toLowerCase()} to ${s.to.toLowerCase()}</b></figure>`).join("")}</div>
-      <h2 class="chap"><span class="md">##</span>${lines([rich(C.who.head)])}</h2>
-      <div class="cap-wrap">${C.who.p.map(t => `<p class="cap">${esc(t)}</p>`).join("")}</div>`,
-    init(el) { this.chap = $(".chap", el); this.strip = $(".strip", el); this.caps = $$(".cap", el); this.mates = $$(".mate", el); this.net = $(".team-net path", el); this.team = $(".team", el); this.easels = $$(".easel", el); },
+      <div class="hall">
+        <div class="pano"><img src="assets/team.jpg" alt="Vi som jobbar på Miss Prym, i barockdräkter i en sal med utsikt över Göteborg"></div>
+        <video class="hall-film" src="assets/team-krakan.mp4" poster="assets/team-krakan.jpg" muted loop playsinline preload="none" aria-label="Vi som jobbar på Miss Prym"></video>
+        <i class="hall-shade"></i>
+      </div>
+      <h2 class="chap chap--hall"><span class="md">##</span>${lines([rich(C.who.head)])}</h2>
+      <div class="cap-wrap">${C.who.p.map(t => `<p class="cap">${esc(t)}</p>`).join("")}</div>
+      <p class="hall-sign">${lines(["This is us<span class='nl-dot'></span>"])}</p>`,
+    init(el) { this.chap = $(".chap", el); this.pano = $(".pano", el); this.caps = $$(".cap", el); this.sign = $(".hall-sign", el); this.shade = $(".hall-shade", el); },
     update(p, t) {
-      reveal(this.chap, p, .03, .12);
-      const max = this.strip.scrollWidth - innerWidth;
-      const x = -easeIO(seg(p, .08, 1)) * max;
-      this.strip.style.transform = `translateX(${x}px)`;
-      // hela laget rullar in ett i taget och binds ihop till ett nätverk
-      const r = (this.mates[0]?.offsetWidth || 120) / 2;
-      this.mates.forEach((m, i) => {
-        const k = easeIO(seg(p, .01 + i * .012, .1 + i * .012)), dx = (1 - k) * innerWidth * 1.1;
-        const bob = k >= 1 ? Math.sin(t * 1.4 + i) * 3 : 0;
-        m.style.transform = `translate(${dx}px, ${bob}px) rotate(${dx / r * 57.3}deg)`;
-        const e = m.lastElementChild, br = m.getBoundingClientRect(), ex = clamp((mx - br.left - br.width / 2) / innerWidth * 6, -1, 1), ey = clamp((my - br.top - br.height / 2) / innerHeight * 6, -1, 1);
-        if (k >= 1) e.style.transform = `translate(${ex * 4}px, ${ey * 3}px)`;
-        e.classList.toggle("blink", (Math.floor(t * .7 + i * 1.7) % 5 === 0) && (t * .7 + i * 1.7) % 1 < .08);
-      });
-      const nk = seg(p, .14, .24);
-      if (this.mates.length && nk > 0) {
-        const tb = this.team.getBoundingClientRect();
-        // en mjuk tråd som hänger mellan figurerna – en lös båge under varje par, som garn
-        const pts = this.mates.map(m => { const b = m.getBoundingClientRect(); return [b.left - tb.left + b.width / 2, b.top - tb.top + b.height * .9]; });
-        this.net.setAttribute("d", pts.map((q, i) => { if (!i) return `M${q[0]} ${q[1]}`; const o = pts[i - 1], sag = 18 + Math.sin(t * 1.2 + i) * 4; return `C ${o[0] + (q[0] - o[0]) * .35} ${o[1] + sag}, ${o[0] + (q[0] - o[0]) * .65} ${q[1] + sag}, ${q[0]} ${q[1]}`; }).join(" "));
-        this.net.style.strokeDashoffset = 1 - nk;
-      } else this.net.style.strokeDashoffset = 1;
-      this.easels.forEach((e, i) => (e.style.transform = `rotate(${tilt[i + 4] + Math.sin(t * 1.3 + i) * .8}deg)`));
+      reveal(this.chap, p, .02, .1);
+      this.chap.style.opacity = 1 - seg(p, .8, .86);
       const n = this.caps.length;
-      this.caps.forEach((c, i) => {
-        const a = .14 + i * .27, b = a + .27;
-        const kk = ease(seg(p, a, a + .05)) * (i === n - 1 ? 1 : 1 - easeIO(seg(p, b - .04, b)));
-        fadeIn(c, kk);
-      });
+      this.caps.forEach((c, i) => { const a = .08 + i * .22, b = a + .22; fadeIn(c, ease(seg(p, a, a + .04)) * (i === n - 1 ? 1 - seg(p, .74, .78) : 1 - easeIO(seg(p, b - .03, b)))); });
+      if (portrait()) return;
+      // kameran: helbild → glid från person till person → tillbaka till helbild
+      const W = innerWidth, H = innerHeight, iw = 1756, ih = 896, base = Math.max(W / iw, H / ih);
+      const k = seg(p, .1, .8), f = k * (STOPS.length - 1), i0 = Math.min(STOPS.length - 2, Math.floor(f)), u = easeIO(f - i0);
+      let [x, y, z] = STOPS[i0].map((v, j) => v + (STOPS[i0 + 1][j] - v) * u);
+      const intro = 1 - easeIO(seg(p, .02, .12)), outro = easeIO(seg(p, .8, .9));
+      const blend = Math.max(intro, outro);
+      x = x + (.5 - x) * blend; y = y + (.5 - y) * blend; z = z + (1 - z) * blend;
+      const sc = base * z, tx = W / 2 - x * iw * sc, ty = H / 2 - y * ih * sc;
+      this.pano.style.transform = `translate(${Math.min(0, Math.max(W - iw * sc, tx))}px, ${Math.min(0, Math.max(H - ih * sc, ty))}px) scale(${sc})`;
+      this.shade.style.opacity = .55 - outro * .35 - (1 - intro) * .2;
+      reveal(this.sign, p, .88, .96);
+      this.sign.style.opacity = seg(p, .86, .9);
     }
   });
 
@@ -931,7 +925,7 @@
     expertise: [im(F + "puppet-man.webp", "fig"), "#ffabc8"],
     human: [im("assets/prym-give.jpg", "cover"), "#3a4650"],
     prym: [im("assets/street-lamps.jpg", "cover duo"), "#0b41c2"],
-    who: [`<span class="th-team">${["#d9646a", "#f7eaad", "#b9bee9", "#f0bad9", "#3a4650"].map(c => `<i style="--c:${c}"><b></b></i>`).join("")}</span>`, "#f7eaad"],
+    who: [im("assets/team-thumb.jpg", "cover"), "#2a2622"],
     "shift-1": [im(F + "purpose-woman.webp", "fig"), "#ffc2e3"],
     "shift-2": [im(F + "bird-crow.webp", "fig") + `<i class="th-balloon"></i>`, "#a9b2c3"],
     "shift-3": [im(F + "emp-free.webp", "fig wide"), "#ffecaa"],
