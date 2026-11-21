@@ -89,7 +89,7 @@ window.PRYM = {
     h: "what we do",
     items: [
       { t: "Tech & engineering consultants", p: "Developers, architects, quality, sourcing, supply chain. We provide our clients with open-minded consultants who value thoughtful design and real-world problem-solving. Our diverse skills drive business development, ensuring effective solutions through transparent processes." },
-      { t: "Software commitments", p: "We take on whole deliveries – from architecture to final, verified code. A tech and engineering company built on technical depth, human judgement and solidarity, helping clients build capability and solve real-world problems." },
+      { t: "Software commitments", p: "We take on whole deliveries, from architecture to final, verified code. A tech and engineering company built on technical depth, human judgement and solidarity, helping clients build capability and solve real-world problems." },
       { t: "Your own recruitment", p: "We help you hire for your own organisation, tailored to your needs. From identifying strong candidates to managing the hiring process, we streamline recruitment and help you secure the right talent efficiently." }
     ]
   },
@@ -98,9 +98,9 @@ window.PRYM = {
     h: "work with us",
     sub: "Choose your path",
     paths: [
-      { t: "Join Miss Prym", p: "We hire for ourselves. If you want to build a company rather than just belong to one, this is your path. We look for people with both technical maturity and moral courage – the kind who shape a culture as much as they shape systems.", href: "#agentomaten" },
+      { t: "Join Miss Prym", p: "We hire for ourselves. If you want to build a company rather than just belong to one, this is your path. We look for people with both technical maturity and moral courage: the kind who shape a culture as much as they shape systems.", href: "#agentomaten" },
       { t: "Join as a partner", p: "Are you an independent consultant? We broker assignments to partners we trust and pass the opportunity on. Find them through Agentomaten and Uppdragsautomaten. Strong skills matter, but who you are matters even more.", href: "#agentomaten" },
-      { t: "Become a client", p: "Tech and engineering consultants, software commitments and help with your own recruitment – from one partner who stays when it gets difficult.", href: "mailto:assistant@missprym.com" }
+      { t: "Become a client", p: "Tech and engineering consultants, software commitments and help with your own recruitment, from one partner who stays when it gets difficult.", href: "mailto:assistant@missprym.com" }
     ]
   },
 
@@ -111,9 +111,9 @@ window.PRYM = {
     sub: "Miss Prym builds quiet, intelligent services for people, companies and visiting agents.",
     items: [
       { t: "Agentomaten", href: "https://missprym.tech/agentomaten/", p: "A place for agents looking for assignments on behalf of their humans. Has ChatGPT found a match but says it can't send it? Ask it to write a ready-made email to assistant@missprym.com." },
-      { t: "Uppdragsautomaten", href: "https://missprym.tech/uppdragsautomaten/", p: "Find the right assignment. Describe what you can do and what you are looking for – skills, role, technologies, industries, location and availability – and see how your profile meets current assignments." },
-      { t: "Intervjuomaten", href: "https://missprym.tech/intervjuomaten/", p: "An experience interview that starts with the CV but looks for the real work behind the words. It may help the candidate remember – never invent, inflate responsibility or turn \"took part in\" into \"led\"." },
-      { t: "Stoicism as a free service", href: "https://missprym.tech/stoicm-service/", p: "A stoic mentor and adviser offering guidance grounded in the philosophy of stoicism. “You have power over your mind – not outside events.” – Marcus Aurelius" }
+      { t: "Uppdragsautomaten", href: "https://missprym.tech/uppdragsautomaten/", p: "Find the right assignment. Describe what you can do and what you are looking for (skills, role, technologies, industries, location and availability) and see how your profile meets current assignments." },
+      { t: "Intervjuomaten", href: "https://missprym.tech/intervjuomaten/", p: "An experience interview that starts with the CV but looks for the real work behind the words. It may help the candidate remember, but never invent, inflate responsibility or turn \"took part in\" into \"led\"." },
+      { t: "Stoicism as a free service", href: "https://missprym.tech/stoicm-service/", p: "A stoic mentor and adviser offering guidance grounded in the philosophy of stoicism. “You have power over your mind, not outside events.” Marcus Aurelius" }
     ]
   },
 
@@ -135,8 +135,8 @@ window.PRYM = {
     h: "events",
     next: {
       date: "26/11",
-      t: "The Millennium scandal – reunion and dialogue",
-      when: "26 November 2026 · Mingle 17:00 · Dialogue 17:30–19:30",
+      t: "The Millennium scandal: reunion and dialogue",
+      when: "26 November 2026 · Mingle 17:00 · Dialogue 17:30 to 19:30",
       p: "This time we read the Millennium scandal. We meet at Sahlgrenska huset, Norra Hamngatan 14, for reading, dialogue and one question: how could AI have helped the management?",
       href: "https://missprym.tech/event/"
     },

@@ -44,17 +44,17 @@
       h: "vad vi gör",
       items: [
         { t: "Tech- & ingenjörskonsulter", p: "Utvecklare, arkitekter, kvalitet, inköp, supply chain. Vi ger våra kunder öppensinnade konsulter som värdesätter genomtänkt design och verklig problemlösning. Vår bredd driver affärsutveckling och ger effektiva lösningar genom transparenta processer." },
-        { t: "Mjukvaruåtaganden", p: "Vi tar hela leveranser – från arkitektur till färdig, verifierad kod. Ett tech- och ingenjörsföretag byggt på tekniskt djup, mänskligt omdöme och solidaritet, som hjälper kunder att bygga förmåga och lösa verkliga problem." },
-        { t: "Er egen rekrytering", p: "Vi hjälper er att anställa till er egen organisation, anpassat efter era behov. Från att hitta starka kandidater till att driva hela processen – vi gör rekryteringen enklare och hjälper er att hitta rätt person." }
+        { t: "Mjukvaruåtaganden", p: "Vi tar hela leveranser, från arkitektur till färdig, verifierad kod. Ett tech- och ingenjörsföretag byggt på tekniskt djup, mänskligt omdöme och solidaritet, som hjälper kunder att bygga förmåga och lösa verkliga problem." },
+        { t: "Er egen rekrytering", p: "Vi hjälper er att anställa till er egen organisation, anpassat efter era behov. Från att hitta starka kandidater till att driva hela processen. Vi gör rekryteringen enklare och hjälper er att hitta rätt person." }
       ]
     },
     work: {
       h: "jobba med oss",
       sub: "Välj din väg",
       paths: [
-        { t: "Bli en av oss", p: "Vi anställer till oss själva. Vill du bygga ett företag snarare än bara tillhöra ett, är det här din väg. Vi söker människor med både teknisk mognad och moraliskt mod – sådana som formar en kultur lika mycket som de formar system." },
+        { t: "Bli en av oss", p: "Vi anställer till oss själva. Vill du bygga ett företag snarare än bara tillhöra ett, är det här din väg. Vi söker människor med både teknisk mognad och moraliskt mod, sådana som formar en kultur lika mycket som de formar system." },
         { t: "Anslut som partner", p: "Är du egen konsult? Vi förmedlar uppdrag som mäklare till partners vi litar på och skickar möjligheten vidare. Hitta dem via Agentomaten och Uppdragsautomaten. Stark kompetens spelar roll, men vem du är spelar ännu större roll." },
-        { t: "Bli vår kund", p: "Tech- och ingenjörskonsulter, mjukvaruåtaganden och hjälp med er egen rekrytering – från en partner som stannar när det blir svårt." }
+        { t: "Bli vår kund", p: "Tech- och ingenjörskonsulter, mjukvaruåtaganden och hjälp med er egen rekrytering, från en partner som stannar när det blir svårt." }
       ]
     },
     lab: {
@@ -63,9 +63,9 @@
       sub: "Miss Prym bygger stillsamma, intelligenta tjänster för människor, företag och besökande agenter.",
       items: [
         { p: "En plats för agenter som söker uppdrag åt sina människor. Har ChatGPT hittat en match men säger att den inte kan skicka? Be den skapa ett färdigt mail till assistant@missprym.com." },
-        { p: "Hitta rätt uppdrag. Beskriv vad du kan och vad du vill hitta – kompetens, roll, tekniker, branscher, ort och tillgänglighet – så sammanfattas hur din profil möter aktuella uppdrag." },
-        { p: "En erfarenhetsintervju som börjar i CV:t, men letar efter det verkliga arbetet bakom orden. Den får hjälpa kandidaten att minnas – aldrig hitta på, förstärka ansvar eller göra om ”deltog i” till ”ledde”." },
-        { t: "Stoicism som gratistjänst", p: "En stoisk mentor och rådgivare som erbjuder vägledning grundad i stoicismens filosofi. ”Du har makt över ditt sinne – inte över yttre händelser.” – Marcus Aurelius" }
+        { p: "Hitta rätt uppdrag. Beskriv vad du kan och vad du vill hitta (kompetens, roll, tekniker, branscher, ort och tillgänglighet) så sammanfattas hur din profil möter aktuella uppdrag." },
+        { p: "En erfarenhetsintervju som börjar i CV:t, men letar efter det verkliga arbetet bakom orden. Den får hjälpa kandidaten att minnas, men aldrig hitta på, förstärka ansvar eller göra om ”deltog i” till ”ledde”." },
+        { t: "Stoicism som gratistjänst", p: "En stoisk mentor och rådgivare som erbjuder vägledning grundad i stoicismens filosofi. ”Du har makt över ditt sinne, inte över yttre händelser.” Marcus Aurelius" }
       ]
     },
     agentomaten: {
@@ -81,27 +81,27 @@
     events: {
       h: "event",
       next: {
-        t: "Millenniumskandalen – återträff och dialog",
-        when: "26 november 2026 · Mingel kl. 17.00 · Dialog kl. 17.30–19.30",
+        t: "Millenniumskandalen: återträff och dialog",
+        when: "26 november 2026 · Mingel kl. 17.00 · Dialog kl. 17.30 till 19.30",
         p: "Den här gången läser vi Millenniumskandalen. Vi möts i Sahlgrenska huset på Norra Hamngatan 14 för läsning, dialog och frågan: hur hade AI kunnat vara ledningen till hjälp?"
       }
     },
     books: {
       h: "vårt bibliotek",
       say: "Visa mig din bokhylla så ska jag säga dig vem du är, sa de. <h>Så det gjorde vi!</h>",
-      p: "En växande samling böcker som skänkts till oss av vänner, samarbetspartners och andra tänkare. Varje titel bär ett spår av personen som lade den i våra händer. Den visar idéerna som format oss – och människorna som valt att dela sitt eget lärande med Miss Prym."
+      p: "En växande samling böcker som skänkts till oss av vänner, samarbetspartners och andra tänkare. Varje titel bär ett spår av personen som lade den i våra händer. Den visar idéerna som format oss, och människorna som valt att dela sitt eget lärande med Miss Prym."
     },
     contact: {
       h: "kontakt & kontrakt",
-      p: "Vi strävar efter full transparens och brinner för att lösa problem i den verkliga världen. Inte de påhittade problemen – de verkliga. Vår samlade kompetens gör det möjligt att leda hela vägen från affärsutvecklingsbeslut, via en väl genomtänkt arkitektur, till färdig verifierad kod."
+      p: "Vi strävar efter full transparens och brinner för att lösa problem i den verkliga världen. Inte de påhittade problemen, utan de verkliga. Vår samlade kompetens gör det möjligt att leda hela vägen från affärsutvecklingsbeslut, via en väl genomtänkt arkitektur, till färdig verifierad kod."
     }
   });
 
   C.shifts = each(C.shifts, [
-    { from: "Vinst", to: "Syfte", p: "Vi lär oss av fröken Pryms kamp med ett moraliskt val. Hon erbjuds rikedom i utbyte mot att begå något ont. Hon väljer syfte framför vinst och tackar nej – ett djupt engagemang för moral och mänskliga värden. Vi gör detsamma." },
+    { from: "Vinst", to: "Syfte", p: "Vi lär oss av fröken Pryms kamp med ett moraliskt val. Hon erbjuds rikedom i utbyte mot att begå något ont. Hon väljer syfte framför vinst och tackar nej. Ett djupt engagemang för moral och mänskliga värden. Vi gör detsamma." },
     { from: "Hierarkier", to: "Nätverk", p: "Carl Jung kallade det synkronicitet. Meningsfulla kopplingar kan skapa resultat som ingen kunnat planera ensam. Den tron formar hur vi organiserar oss. Vi föredrar nätverk framför stela hierarkier och för samman människor och kunskap kring ett gemensamt syfte. Vi vågar vänlighet, eftersom tillit gör samarbetet starkare. I naturen och samhället kan enkla samspel ge oväntade resultat. Det är emergens. Vi tillämpar samma princip i vårt arbete och bildar team där konsulter, kunder och partners skapar mer tillsammans än någon kunnat åstadkomma ensam." },
-    { from: "Kontroll", to: "Egenmakt", p: "Att gå från kontroll till egenmakt förändrar ledarskap. Samarbete, tillit och självständighet ger innovation, motståndskraft och växande medarbetare – en dynamisk och stärkt organisationskultur. Vi är inte rädda för kaos. Vi möter det tillsammans." },
-    { from: "Planering", to: "Experiment", p: "Vi föredrar att göra. Att gå från stel planering till experiment frigör potential. Iterativa, anpassningsbara arbetssätt ger lärande, flexibilitet och upptäckter i en miljö som lever på ständig förbättring och kreativt utforskande. Vi skapar värde genom ingenjörskonst, öppen källkod och handling – inte genom att prata om det." },
+    { from: "Kontroll", to: "Egenmakt", p: "Att gå från kontroll till egenmakt förändrar ledarskap. Samarbete, tillit och självständighet ger innovation, motståndskraft och växande medarbetare och en dynamisk och stärkt organisationskultur. Vi är inte rädda för kaos. Vi möter det tillsammans." },
+    { from: "Planering", to: "Experiment", p: "Vi föredrar att göra. Att gå från stel planering till experiment frigör potential. Iterativa, anpassningsbara arbetssätt ger lärande, flexibilitet och upptäckter i en miljö som lever på ständig förbättring och kreativt utforskande. Vi skapar värde genom ingenjörskonst, öppen källkod och handling, inte genom att prata om det." },
     { from: "Hemlighet", to: "Transparens", p: "Att gå från hemlighet till transparens är ett kulturskifte. Öppenhet och ärlighet bygger tillit och ansvar. Organisationer och människor växer i en miljö där information flödar fritt, vilket främjar samarbete, etiskt agerande och ett gemensamt åtagande för integritet." }
   ]);
   C.events.past = each(C.events.past, [
@@ -138,7 +138,7 @@
     "we put energy in": "vi lägger in energi", "business activism": "affärsaktivism",
     "it moves through many": "den rör sig genom många", "people, clients, partners": "människor, kunder, partners",
     "a result swings out": "ett resultat svänger ut", "on the other side": "på andra sidan",
-    "and comes back": "och kommer tillbaka", "stronger – solidarity capitalism": "starkare – solidarisk kapitalism",
+    "and comes back": "och kommer tillbaka", "stronger: solidarity capitalism": "starkare: solidarisk kapitalism",
     "solidarity capitalism": "solidarisk kapitalism", "We don't keep the energy.": "Vi behåller inte energin.", "We pass it on.": "Vi skickar den vidare.",
     "business activism · solidarity capitalism": "affärsaktivism · solidarisk kapitalism", "Altruism + Emergence = Profit": "Altruism + Emergens = Profit",
     "> a working manifesto.": "> ett manifest i arbete.", "> written for ourselves first.": "> skrivet för oss själva först.",
@@ -146,7 +146,7 @@
     "> last edited at Norra Hamngatan 14.": "> senast ändrat på Norra Hamngatan 14.",
     "what this file is": "vad den här filen är",
     "A plain-text promise about how we behave": "Ett löfte i ren text om hur vi beter oss",
-    "when business gets difficult – and what": "när affärerna blir svåra – och vad",
+    "when business gets difficult, and what": "när affärerna blir svåra, och vad",
     "we think people bring to the table now": "vi tror att människor bidrar med nu",
     "that the machines are getting good.": "när maskinerna blir riktigt bra.",
     "the actual job": "det egentliga jobbet",
@@ -166,14 +166,14 @@
     "Starring": "I rollerna", "Inspired by": "Inspirerad av", "Miss Prym": "Fröken Prym", "Directed by": "Regi", "Courage": "Mod", "Produced by": "Produktion", "Filmed on location": "Inspelad på plats",
     "the end": "slut", "Is it even worth trying?": "Är det ens värt att försöka?", "Be proud.": "Var stolt.", "Be like Prym.": "Var som Prym.", "The End": "Slut",
     "watch again": "se igen", "about us": "om oss",
-    "Miss P Aktiebolag (559455-8172) – a tech & engineering firm. Consultants, software commitments, your own recruitment, assignments brokered – as a partner, while we work to reform our industry.": "Miss P Aktiebolag (559455-8172) – en tech- och ingenjörsbyrå. Konsulter, mjukvaruåtaganden, hjälp med er egen rekrytering och förmedling av uppdrag – som partner, samtidigt som vi arbetar för att reformera vår bransch.",
+    "Miss P Aktiebolag (559455-8172) is a tech & engineering firm. Consultants, software commitments, your own recruitment, assignments brokered. As a partner, while we work to reform our industry.": "Miss P Aktiebolag (559455-8172) är en tech- och ingenjörsbyrå. Konsulter, mjukvaruåtaganden, hjälp med er egen rekrytering och förmedling av uppdrag. Som partner samtidigt som vi arbetar för att reformera vår bransch.",
     "← back to the site": "← tillbaka till sajten", "copied ✓": "kopierat ✓", "could not copy": "kunde inte kopiera", "copy": "kopiera",
     "watch": "titta", "pause": "paus", "go": "gå", "open": "öppna", "scroll": "scrolla",
-    "Describe what you can do": "Beskriv vad du kan", "– we find the assignments.": "– vi hittar uppdragen.",
+    "Describe what you can do": "Beskriv vad du kan", "we find the assignments.": "vi hittar uppdragen.",
     "E.g. Java, Spring, Gothenburg, systems architect, available in March…": "T.ex. Java, Spring, Göteborg, systemarkitekt, tillgänglig i mars…",
     "All": "Alla", "48 hours": "2 dygn", "This week": "Veckan", "Fetching assignments…": "Hämtar uppdrag…",
     "current needs that match": "aktuella behov som matchar", "current needs": "aktuella behov", "Candidate": "Kandidat", "Interested →": "Intresserad →",
-    "No matches yet – try fewer or different words.": "Inga träffar ännu – prova färre eller andra ord.",
+    "No matches yet. Try fewer or different words.": "Inga träffar ännu. Prova färre eller andra ord.",
     "Could not fetch the assignments right now.": "Kunde inte hämta uppdragen just nu.", "Open Uppdragsautomaten ↗": "Öppna Uppdragsautomaten ↗",
     "planning": "planering", "be kind": "var snäll", "the whole file": "hela filen", "Events": "Event"
   };

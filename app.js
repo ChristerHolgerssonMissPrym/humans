@@ -190,7 +190,7 @@
       <i class="wall"></i>
       <video class="bgfilm" src="assets/street-lamps.mp4" poster="assets/street-lamps.jpg" muted loop playsinline preload="none" aria-hidden="true"></video><i class="bgtint"></i>
       <div class="frags">${C.quote.frags.map(f => `<p class="frag">${esc(f)}</p>`).join("")}<p class="frag frag-end">${esc(C.quote.end)}<i class="p"></i></p></div>
-      <blockquote class="q-cite"><p>”${esc(C.quote.text)}”</p><cite>— ${esc(C.quote.src)}</cite></blockquote>`,
+      <blockquote class="q-cite"><p>”${esc(C.quote.text)}”</p><cite>${esc(C.quote.src)}</cite></blockquote>`,
     init(el) { this.f = $$(".frag", el); this.c = $(".q-cite", el); },
     update(p) {
       const n = this.f.length;
@@ -652,7 +652,7 @@
 
   // 14b. Agentomaten – maskinen lyssnar och skriver mailet själv
   const AG = C.agentomaten;
-  const agMail = `${tr("To")}: ${AG.mail.to}\n${tr("Subject")}: ${AG.mail.subject}\n\n${AG.mail.body.map(b => `– ${b}`).join("\n")}\n\n${AG.mail.note}`;
+  const agMail = `${tr("To")}: ${AG.mail.to}\n${tr("Subject")}: ${AG.mail.subject}\n\n${AG.mail.body.map(b => `· ${b}`).join("\n")}\n\n${AG.mail.note}`;
   scene({
     id: "agentomaten", t: AG.h, hud: "dark", len: 3.1, wipe: "circle", card: { glyph: "✉", room: "#0b41c2", light: true },
     html: `
@@ -730,7 +730,7 @@
       <p class="c-lead">${esc(K.p)}</p>
       <a class="c-mail" href="mailto:${K.email}">${K.email}</a>
       <div class="c-row"><span><span class="md">&gt;</span>${K.address}</span><a href="${K.linkedin}">LinkedIn</a><a href="https://missprym.tech">missprym.tech</a></div>
-      <footer class="foot"><span>— Miss P Aktiebolag</span><button type="button" data-read>${tr("read as text")}</button><b>MISSPRYM<span>.md</span></b></footer>`,
+      <footer class="foot"><span>Miss P Aktiebolag</span><button type="button" data-read>${tr("read as text")}</button><b>MISSPRYM<span>.md</span></b></footer>`,
     init(el) { this.items = $$(".lab, .c-lead, .c-mail, .c-row, .foot", el); this.pend = $$(".pend", el); this.cradle = $(".cradle", el); },
     update(p, t) {
       this.items.forEach((it, i) => fadeIn(it, ease(seg(p, .02 + i * .06, .16 + i * .06))));
@@ -748,7 +748,7 @@
   { const i = S.findIndex(x => x.id === "together"); S.splice(1, 0, ...S.splice(i, 1)); }
 
   // Newtons vagga – affärsaktivism och solidarisk kapitalism: energi in → den rör många → resultat ut → det kommer tillbaka
-  const CR = [["01", "we put energy in", "business activism"], ["02", "it moves through many", "people, clients, partners"], ["03", "a result swings out", "on the other side"], ["04", "and comes back", "stronger – solidarity capitalism"]].map(([n, a, b]) => [n, tr(a), tr(b)]);
+  const CR = [["01", "we put energy in", "business activism"], ["02", "it moves through many", "people, clients, partners"], ["03", "a result swings out", "on the other side"], ["04", "and comes back", "stronger: solidarity capitalism"]].map(([n, a, b]) => [n, tr(a), tr(b)]);
   scene({
     id: "cradle", t: tr("solidarity capitalism"), hud: "dark", len: 4.2, wipe: "circle", card: { glyph: "∘∘∘", room: "#0a0806", light: true },
     html: `
@@ -787,7 +787,7 @@
       <div class="mf">
         <p class="mf-q"><span class="mf-type"></span><i class="caret"></i></p>
         <h2 class="mf-h"><span class="md">##</span> ${tr("what this file is")}</h2>
-        <p class="mf-p">${lines(["A plain-text promise about how we behave", "when business gets difficult – and what", "we think people bring to the table now", "that the machines are getting good."].map(tr))}</p>
+        <p class="mf-p">${lines(["A plain-text promise about how we behave", "when business gets difficult, and what", "we think people bring to the table now", "that the machines are getting good."].map(tr))}</p>
       </div>
       <div class="mf-floor"><i class="mf-wet"></i><img class="mf-hero" src="${C.fig}team-hero.webp" alt=""></div>`,
     init(el) { this.q = $(".mf-type", el); this.h = $(".mf-h", el); this.p = $(".mf-p", el); this.hero = $(".mf-hero", el); this.wet = $(".mf-wet", el); this.caret = $(".mf-q .caret", el); },
@@ -809,7 +809,7 @@
     html: `
       <div class="toc">
         <img class="cameo cm-peek" src="${C.fig}team-glasses.webp" alt="">
-        <div class="toc-bar"><i></i><i></i><i></i><span>MISSPRYM.md — ## the actual job</span></div>
+        <div class="toc-bar"><i></i><i></i><i></i><span>MISSPRYM.md · ## the actual job</span></div>
         <ol class="toc-list">${JOB.map(([id, t], i) => `<li><a href="#${id}"><span class="md">###</span> ${t}</a></li>`).join("")}</ol>
       </div>`,
     init(el) { this.li = $$(".toc-list li", el); this.box = $(".toc", el); },
@@ -828,7 +828,7 @@
         <div class="lcol"><h3><span class="md">##</span> ${tr("things we are trying to do more")}</h3><ul>${MORE.map(x => `<li><span class="hi">${x}</span></li>`).join("")}</ul></div>
       </div>
       <img class="cameo cm-dancer" src="${C.fig}team-dancer.webp" alt="">
-      <p class="lists-end">${lines([tr("This file will change. That's the point."), "<span class='sig'>— Miss Prym, Norra Hamngatan 14</span>"])}</p>`,
+      <p class="lists-end">${lines([tr("This file will change. That's the point."), "<span class='sig'>Miss Prym, Norra Hamngatan 14</span>"])}</p>`,
     init(el) { this.st = $$(".st", el); this.hi = $$(".hi", el); this.lis = $$(".lcol li", el); this.end = $(".lists-end", el); this.hs = $$(".lcol h3", el); },
     update(p) {
       this.hs.forEach((h, i) => fadeIn(h, ease(seg(p, .02 + i * .3, .1 + i * .3)), 12));
@@ -1007,24 +1007,24 @@
     `# MISSPRYM.md`, ``,
     ...C.hero.quote.map(q => `> ${q}`), ``,
     `## ${C.commitment.h}`, ``, `${C.commitment.lead} ${C.commitment.body}`, ``, `*${plain(C.commitment.say)}*`, ``,
-    `> ${C.quote.text}`, `> — ${C.quote.src}`, ``,
-    `## ${tr("about us")}`, ``, tr("Miss P Aktiebolag (559455-8172) – a tech & engineering firm. Consultants, software commitments, your own recruitment, assignments brokered – as a partner, while we work to reform our industry."), ``,
-    `## ${tr("what this file is")}`, ``, ["A plain-text promise about how we behave", "when business gets difficult – and what", "we think people bring to the table now", "that the machines are getting good."].map(tr).join(" "), ``,
+    `> ${C.quote.text}`, `> ${C.quote.src}`, ``,
+    `## ${tr("about us")}`, ``, tr("Miss P Aktiebolag (559455-8172) is a tech & engineering firm. Consultants, software commitments, your own recruitment, assignments brokered. As a partner, while we work to reform our industry."), ``,
+    `## ${tr("what this file is")}`, ``, ["A plain-text promise about how we behave", "when business gets difficult, and what", "we think people bring to the table now", "that the machines are getting good."].map(tr).join(" "), ``,
     `## ${tr("the actual job")}`, ``, ...JOB.map(([, t]) => `- ${t}`), ``,
     `## ${C.who.h}`, ``, ...C.who.p.flatMap(p => [p, ``]),
     ...C.shifts.flatMap((s, i) => [`### ${tr("from")} ${s.from.toLowerCase()} ${tr("to")} ${s.to.toLowerCase()}`, ``, s.p, ``]),
     `---`, ``,
     `## ${C.what.h}`, ``, ...C.what.items.map(it => `- **${it.t}.** ${it.p}`), ``,
     `## ${C.work.h}`, ``, ...C.work.paths.map(w => `- **${w.t}.** ${w.p}`), ``,
-    `## ${C.lab.h}`, ``, C.lab.sub, ``, ...C.lab.items.map(l => `- **${l.t}** (${l.href}) — ${l.p}`), ``,
+    `## ${C.lab.h}`, ``, C.lab.sub, ``, ...C.lab.items.map(l => `- **${l.t}** (${l.href}): ${l.p}`), ``,
     `## ${AG.h}`, ``, AG.lead, ``, AG.p, ``, ...agMail.split("\n"), ``, `${AG.href}`, ``,
-    `## ${E.h}`, ``, `**${E.next.t}** — ${E.next.when}`, ``, E.next.p, ``, ...E.past.map(p => `- ${p.date} · ${p.t}. ${p.p}`), ``,
+    `## ${E.h}`, ``, `**${E.next.t}**, ${E.next.when}`, ``, E.next.p, ``, ...E.past.map(p => `- ${p.date} · ${p.t}. ${p.p}`), ``,
     `## ${C.books.h}`, ``, `${plain(C.books.say)}`, ``, C.books.p, ``,
     `---`, ``,
-    `## ${tr("business activism · solidarity capitalism")}`, ``, `${tr("Altruism + Emergence = Profit")}. ${tr("We don't keep the energy.")} ${tr("We pass it on.")}`, ``, ...CR.map(([n, a, b]) => `- ${a} – ${b}`), ``,
+    `## ${tr("business activism · solidarity capitalism")}`, ``, `${tr("Altruism + Emergence = Profit")}. ${tr("We don't keep the energy.")} ${tr("We pass it on.")}`, ``, ...CR.map(([n, a, b]) => `- ${a}: ${b}`), ``,
     `## ${tr("things we are trying to stop doing")}`, ``, ...STOP.map(x => `- ${x}`), ``, `## ${tr("things we are trying to do more")}`, ``, ...MORE.map(x => `- ${x}`), ``, tr("This file will change. That's the point."), ``,
     `## ${K.h}`, ``, K.p, ``, `${K.address}  `, `${K.email}  `, `${K.linkedin}`, ``,
-    `— Miss P Aktiebolag`
+    `Miss P Aktiebolag`
   ].join("\n");
 
   const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\*(.+?)\*/g, "<em>$1</em>")
@@ -1084,7 +1084,7 @@
     if (th) { c.room = th[1]; }
     const pic = th ? th[0] : c.img ? `<img src="${C.img}${c.img}" alt="" loading="lazy">` : c.fig ? `<img src="${C.fig}${c.fig}" alt="" loading="lazy" style="object-fit:contain;padding:8%">` : `<span class="icard__glyph${c.mono ? " mono" : ""}" ${c.light ? 'style="color:#f4efe8"' : ""}>${c.glyph}</span>`;
     return `<a class="icard" href="#${s.id}" style="--a:${tilt[i]}deg;--room:${c.room}"><span class="icard__in"><span class="icard__face"><span class="icard__pic" style="--room:${c.room}">${pic}</span><span class="icard__t">${s.t}</span></span><span class="icard__back"><span class="icard__file">## ${s.t}\n\n${esc((s.back || "").slice(0, 150))}</span></span></span><i class="icard__dot"></i></a>`;
-  }).join("") + `<a class="icard" href="#file" data-file style="--a:${tilt[17]}deg"><span class="icard__face"><span class="icard__pic" style="--room:#0b0b0b"><span class="icard__glyph mono">.md</span></span><span class="icard__t">MISSPRYM.md — ${tr("the whole file")}</span></span></a>`;
+  }).join("") + `<a class="icard" href="#file" data-file style="--a:${tilt[17]}deg"><span class="icard__face"><span class="icard__pic" style="--room:#0b0b0b"><span class="icard__glyph mono">.md</span></span><span class="icard__t">MISSPRYM.md · ${tr("the whole file")}</span></span></a>`;
 
   const setIndex = open => {
     body.classList.toggle("index-open", open);
@@ -1192,7 +1192,7 @@
       <div class="ua">
         <div class="ua-side">
           <p class="lab"><span class="md">##</span>uppdragsautomaten</p>
-          <h3 class="ua-h">${tr("Describe what you can do")}<br><em>${tr("– we find the assignments.")}</em></h3>
+          <h3 class="ua-h">${tr("Describe what you can do")}<br><em>${tr("we find the assignments.")}</em></h3>
           <textarea class="ua-q" rows="4" placeholder="${tr("E.g. Java, Spring, Gothenburg, systems architect, available in March…")}"></textarea>
           <div class="ua-f">${[["all", tr("All")], ["2", tr("48 hours")], ["7", tr("This week")]].map(([v, l], i) => `<button type="button" class="chip${i ? "" : " on"}" data-days="${v}">${l}</button>`).join("")}</div>
           <p class="ua-meta">${tr("Fetching assignments…")}</p>
@@ -1219,7 +1219,7 @@
           ${a.summary ? `<p class="ua-sum">${esc(a.summary)}</p>` : ""}
           <div class="ua-skills">${(a.skills || []).slice(0, 8).map(k => `<span>${esc(String(k))}</span>`).join("")}</div>
           <a class="cta ua-cta" href="mailto:${K.email}?subject=${encodeURIComponent(`AGENTOMATEN – ${a.reference || a.id} – ${tr("Candidate")} – `)}">${tr("Interested →")}</a>
-        </article>`).join("") || `<p class="ua-empty">${tr("No matches yet – try fewer or different words.")}</p>`;
+        </article>`).join("") || `<p class="ua-empty">${tr("No matches yet. Try fewer or different words.")}</p>`;
     };
     q.addEventListener("input", draw);
     $$(".chip", appBody).forEach(c => c.addEventListener("click", () => { $$(".chip", appBody).forEach(x => x.classList.remove("on")); c.classList.add("on"); days = c.dataset.days; draw(); }));
