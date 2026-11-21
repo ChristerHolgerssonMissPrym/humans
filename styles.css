@@ -1260,3 +1260,88 @@ body.app-open { overflow: hidden; }
   .L-shift .fig { height: 46%; }
   .glass-wrap { height: 34vh !important; bottom: 18vh !important; }
 }
+
+/* ===== kuporna lyfts av oss ===== */
+.cl-hand { display: none !important; }
+.waiter { position: absolute; left: 50%; bottom: calc(min(22vw, 34vh) * .16); height: calc(min(22vw, 34vh) * 1.15); width: auto; max-width: none; z-index: 0; transform-origin: 50% 100%; will-change: transform; filter: drop-shadow(0 8px 10px rgba(60,40,10,.18)); }
+.plate .dish { position: relative; z-index: 1; }
+.plate .serve, .plate .spark, .plate .cl, .plate .steam, .plate .menu { z-index: 2; }
+.L-what .plates { overflow: visible; }
+
+/* ===== Newtons vagga ===== */
+.L-cradle { background: radial-gradient(120% 90% at 50% 0%, #4a5866, #2c3640 70%); color: #f4efe8; }
+.nc-h { position: absolute; left: var(--pad); top: var(--top); margin: 0; font-weight: 300; font-size: var(--fs-say); letter-spacing: -.04em; line-height: 1.02; }
+.nc-h .hl-human { color: var(--mp-yellow); }
+.nc { position: absolute; right: 8vw; top: 22vh; width: min(40vw, 62vh); height: 54vh; }
+.nc-bar { position: absolute; left: -4%; right: -4%; top: 0; height: 10px; border-radius: 5px; background: linear-gradient(#e2c27a, #a9822f); box-shadow: 0 6px 10px rgba(0,0,0,.3); }
+.nc-base { position: absolute; left: -8%; right: -8%; bottom: -6%; height: 14px; border-radius: 7px; background: linear-gradient(#e2c27a, #a9822f); }
+.nc-p { position: absolute; top: 6px; left: calc(10% + var(--i) * 16%); width: 16%; height: 78%; transform-origin: 50% 0; }
+.nc-s { position: absolute; left: 50%; top: 0; bottom: 18%; width: 1.5px; background: rgba(244,239,232,.75); }
+.nc-b { position: absolute; left: 50%; bottom: 0; width: 100%; aspect-ratio: 1; transform: translate(-50%, 0); border-radius: 50%; background: radial-gradient(circle at 34% 30%, #fff 0, #f7eaad 18%, #f2cd5c 45%, #a9822f 100%); box-shadow: 0 10px 18px rgba(0,0,0,.35); }
+.nc-p:nth-child(2) .nc-b { background: radial-gradient(circle at 34% 30%, #fff 0, #ffc2c5 18%, #fc4109 50%, #8a1f05 100%); }
+.nc-wave { position: absolute; left: 10%; right: 10%; bottom: 0; height: calc(16% * 3); aspect-ratio: auto; border-radius: 999px; box-shadow: 0 0 0 0 rgba(242,205,92,.0), 0 0 50px 10px rgba(242,205,92,.55); opacity: 0; pointer-events: none; }
+.nc-steps { position: absolute; left: var(--pad); bottom: 9vh; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 18em)); gap: 2.4vh 3vw; }
+.nc-steps li { opacity: .25; transition: opacity .5s, transform .5s var(--ease); }
+.nc-steps li.on { opacity: .8; }
+.nc-steps li.now { opacity: 1; transform: translateX(6px); }
+.nc-steps li.now b { color: var(--mp-yellow); }
+.nc-steps .md { display: block; font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; color: var(--accent); margin-bottom: .3em; }
+.nc-steps b { display: block; font-size: clamp(18px, 1.7vw, 30px); letter-spacing: -.02em; font-weight: 700; line-height: 1.1; }
+.nc-steps em { display: block; font-family: var(--f-serif); font-size: clamp(16px, 1.3vw, 22px); opacity: .8; margin-top: .2em; }
+@media (orientation: portrait) {
+  .nc-h { font-size: 9vw; }
+  .nc { left: 12vw; right: 12vw; width: auto; top: calc(var(--top) + 26vw); height: 30vh; }
+  .nc-steps { grid-template-columns: 1fr 1fr; bottom: 5vh; right: var(--pad); gap: 1.6vh 4vw; }
+  .nc-steps b { font-size: 15px; } .nc-steps em { font-size: 13px; }
+}
+.th-cradle { position: relative; width: 74%; height: 60%; border-top: calc(3 * var(--u)) solid #e2c27a; }
+.th-cradle i { position: absolute; top: 0; left: calc(8% + var(--i) * 17%); width: 15%; height: 100%; }
+.th-cradle i::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 30%; width: 1px; background: #f4efe8; }
+.th-cradle i::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; aspect-ratio: 1; border-radius: 50%; background: #f2cd5c; }
+
+/* ===== vi i texterna ===== */
+.cameo { position: absolute; pointer-events: none; will-change: transform; filter: drop-shadow(0 10px 14px rgba(0,0,0,.25)); }
+.cm-hero { right: -2vw; bottom: -38vh; height: 24vh; }
+.mf { overflow: visible; }
+.L-file .cm-hero { position: fixed; right: 6vw; bottom: 4vh; top: auto; }
+.cm-dancer { right: 3vw; bottom: 4vh; height: 30vh; }
+.cm-peek { position: absolute; right: -8%; top: -36%; height: 40%; transform: rotate(8deg); }
+.toc { overflow: visible !important; }
+@media (orientation: portrait) { .L-file .cm-hero { height: 16vh; } .cm-dancer { height: 16vh; right: 2vw; bottom: 2vh; } .cm-peek { height: 28%; top: -24%; right: -2%; } }
+
+/* ===== följeslagaren ===== */
+.guide { position: fixed; right: 2.2vw; bottom: 0; z-index: 58; height: min(34vh, 300px); pointer-events: none; transform: translateY(105%); transition: transform .8s var(--ease); }
+.guide.g-on { transform: none; }
+.guide img { height: 100%; width: auto; transform-origin: 50% 100%; filter: drop-shadow(0 10px 16px rgba(0,0,0,.25)); }
+.g-say { position: absolute; right: 70%; top: 2%; width: max-content; max-width: 16em; padding: .6em .9em .7em; background: #fffdf6; color: var(--ink); border: 1px solid var(--ink); border-radius: 18px; font-family: var(--f-serif); font-style: italic; font-size: clamp(15px, 1.2vw, 19px); line-height: 1.2; opacity: 0; transform: translateY(8px) scale(.96); transform-origin: 100% 100%; transition: opacity .35s, transform .45s var(--ease); }
+.g-say::after { content: ""; position: absolute; right: 18px; bottom: -8px; width: 14px; height: 14px; background: #fffdf6; border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink); transform: rotate(45deg); }
+.guide.g-talk .g-say { opacity: 1; transform: none; }
+html.reading .guide { display: none; }
+@media (orientation: portrait) { .guide { height: 17vh; right: 1vw; } .g-say { font-size: 13px; max-width: 12em; } }
+
+/* ===== den röda tråden ===== */
+.rail { position: fixed; right: 14px; top: 50%; height: min(56vh, 520px); transform: translateY(-50%); z-index: 59; width: 14px; }
+.rail-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 1.5px; margin-left: -.75px; background: rgba(128,128,128,.35); }
+.rail-line i { position: absolute; inset: 0; background: var(--accent); transform-origin: 50% 0; transform: scaleY(0); transition: transform .5s var(--ease); }
+.rail a { position: absolute; left: 50%; top: var(--y); width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: rgba(150,150,150,.8); transition: transform .3s var(--ease), background-color .3s; }
+.rail a.past { background: var(--accent); }
+.rail a.on { background: var(--accent); transform: scale(2); box-shadow: 0 0 0 3px rgba(252,65,9,.25); }
+.rail a span { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; background: #111; color: #fff; padding: 4px 8px; border-radius: 6px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.rail a:hover span, .rail a.on:hover span { opacity: 1; }
+.rail a.on span { transform: translateY(-50%) scale(.5); transform-origin: 100% 50%; }
+html.reading .rail, body.index-open .rail { display: none; }
+@media (max-width: 760px) { .rail { right: 6px; height: 40vh; } .rail a span { display: none; } }
+.way { position: fixed; left: 50%; bottom: 3.2vh; z-index: 57; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; opacity: 0; transition: opacity .6s; pointer-events: none; }
+.way i { width: 14px; height: 14px; border-radius: 50%; background: var(--accent); animation: way 1.6s var(--ease) infinite; box-shadow: 0 0 0 0 rgba(252,65,9,.5); }
+.way span { font-family: var(--f-mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
+@keyframes way { 0% { transform: translateY(-10px); box-shadow: 0 0 0 0 rgba(252,65,9,.5); } 60% { transform: translateY(8px); box-shadow: 0 0 0 12px rgba(252,65,9,0); } 100% { transform: translateY(-10px); } }
+body.idle .way { opacity: 1; }
+body.idle .dot { transform-origin: center; }
+html.reading .way, body.index-open .way { display: none; }
+
+.waiter { height: calc(min(22vw, 34vh) * .82) !important; }
+.L-what .plates { bottom: 24vh; }
+@media (orientation: portrait) { .waiter { height: 22vw !important; } .nc { top: calc(var(--top) + 36vw) !important; } .cm-dancer { height: 12vh !important; } }
+.nc { top: 32vh; height: 46vh; }
+.L-file .cm-hero { right: auto; left: 30vw; }
+@media (orientation: portrait) { .L-file .cm-hero { left: 4vw; } }

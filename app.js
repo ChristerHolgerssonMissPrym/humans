@@ -476,7 +476,8 @@
         <i class="dish"></i>
         <img class="serve" src="${C.fig}${["puppet-man.webp", "exp-flasks.webp", "bird-robin.webp"][i]}" alt="">
         <span class="spark">${Array.from({ length: 8 }, () => "<i></i>").join("")}</span>
-        <span class="cl">${cloche}<img class="cl-hand" src="${C.fig}emp-tophand.webp" alt=""></span>
+        <img class="waiter" src="${C.fig}team-${["cap", "blond", "glasses"][i]}.webp" alt="">
+        <span class="cl">${cloche}</span>
         <div class="menu"><span class="menu-h"><span class="md">###</span> ${it.t.toLowerCase()}</span><p>${esc(it.p)}</p></div>
       </div>`).join("")}</div>`,
     init(el) { this.chap = $(".chap", el); this.pl = $$(".plate", el); },
@@ -488,11 +489,12 @@
         pl.style.transform = `translateY(${(1 - inK) * 60}vh)`;
         const a = .26 + i * .22, lift = easeIO(seg(p, a, a + .1));
         const wob = lift > 0 && lift < 1 ? Math.sin(lift * Math.PI * 3) * 4 : 0;
-        const cl = pl.querySelector(".cl"), hand = pl.querySelector(".cl-hand");
+        const cl = pl.querySelector(".cl"), waiter = pl.querySelector(".waiter");
         // handen kommer ner, greppar knoppen och lyfter kupan
         const down = ease(seg(p, a - .1, a - .01));
-        hand.style.transform = `translateY(${(1 - down) * -140}vh) rotate(${(1 - down) * -8 + Math.sin(t * 1.5 + i) * (lift >= 1 ? 2 : 0)}deg)`;
-        cl.style.transform = `translate(${lift * 10}%, ${-lift * 190}%) rotate(${lift * 8 + wob * .6}deg)`;
+        // en av oss reser sig bakom bordet, lyfter kupan högt och ler
+        waiter.style.transform = `translateX(-50%) translateY(${(1 - down) * 100 - lift * 6}%) rotate(${Math.sin(t * 1.3 + i) * (lift >= 1 ? 1.5 : 0)}deg)`;
+        cl.style.transform = `translate(${lift * 38}%, ${-lift * 120}%) rotate(${lift * 16 + wob * .6}deg)`;
         // under kupan: rätten reser sig, ångan stiger, det gnistrar – och menykortet viks upp
         const rev = seg(p, a + .02, a + .12), serve = pl.querySelector(".serve"), steam = pl.querySelector(".steam"), sp = $$(".spark i", pl), menu = pl.querySelector(".menu");
         serve.style.transform = `translateX(-50%) translateY(${(1 - ease(rev)) * 30}%) scale(${.5 + .5 * ease(rev) + Math.sin(rev * Math.PI) * .12})`;
@@ -725,6 +727,45 @@
 
   { const i = S.findIndex(x => x.id === "together"); S.splice(1, 0, ...S.splice(i, 1)); }
 
+  // Newtons vagga – affärsaktivism och solidarisk kapitalism: energi in → den rör många → resultat ut → det kommer tillbaka
+  const CR = [["01", "we put energy in", "business activism"], ["02", "it moves through many", "people, clients, partners"], ["03", "a result swings out", "on the other side"], ["04", "and comes back", "stronger – solidarity capitalism"]];
+  scene({
+    id: "cradle", t: "solidarity capitalism", hud: "dark", len: 4.2, wipe: "circle", card: { glyph: "∘∘∘", room: "#3a4650", light: true },
+    html: `
+      <p class="lab"><span class="md">##</span>business activism · solidarity capitalism</p>
+      <h2 class="nc-h">${lines(["We don't keep the energy.", "<span class='hl-human'>We pass it on.</span>"])}</h2>
+      <div class="nc">
+        <i class="nc-bar"></i>
+        ${[0, 1, 2, 3, 4].map(i => `<span class="nc-p" style="--i:${i}"><i class="nc-s"></i><b class="nc-b">${["", "", "", "", ""][i]}</b></span>`).join("")}
+        <i class="nc-wave"></i>
+        <i class="nc-base"></i>
+      </div>
+      <ol class="nc-steps">${CR.map(([n, a, b]) => `<li><span class="md">${n}</span><b>${a}</b><em>${b}</em></li>`).join("")}</ol>`,
+    init(el) { this.q = n => $(n, el); this.p = $$(".nc-p", el); this.st = $$(".nc-steps li", el); this.h = $(".nc-h", el); this.lab = $(".lab", el); this.wave = $(".nc-wave", el); },
+    update(p, t) {
+      this.lab.style.opacity = seg(p, 0, .05);
+      reveal(this.h, p, .02, .12);
+      // fas: 0 dra ut vänster kula → 1 släpp, slag → 2 vågen går genom → 3 höger kula svänger ut → 4 kommer tillbaka; sedan i loop
+      const ph = seg(p, .14, .3), loopOn = p > .3;
+      let a0 = 0, a4 = 0, wave = -1;
+      if (!loopOn) { a0 = -38 * ease(ph); }
+      else {
+        // enkel symmetrisk modell
+        const ang = Math.sin(t * 2.4) * 38;
+        a0 = Math.min(0, ang); a4 = Math.max(0, ang);
+        wave = Math.abs(ang) < 6 ? 1 - Math.abs(ang) / 6 : 0;
+      }
+      this.p.forEach((e, i) => e.style.transform = `rotate(${i === 0 ? a0 : i === 4 ? a4 : 0}deg)`);
+      this.wave.style.opacity = loopOn ? wave : 0;
+      // stegen tänds i takt med rörelsen
+      const k = seg(p, .3, .7);
+      this.st.forEach((l, i) => { const on = k * 4 > i; l.classList.toggle("on", on); });
+      const cur = loopOn ? (a0 < -4 ? 0 : Math.abs(a0) + Math.abs(a4) < 6 ? 1 : a4 > 4 && Math.sin(t * 2.4 + Math.PI / 2) > 0 ? 2 : 3) : -1;
+      this.st.forEach((l, i) => l.classList.toggle("now", p > .7 && i === cur));
+    }
+  });
+  { const i = S.findIndex(x => x.id === "cradle"), [sc] = S.splice(i, 1), j = S.findIndex(x => x.id === "work"); S.splice(j, 0, sc); }
+
   // ===== manifeststrukturen (som human-md: en fil som läses uppifrån) =====
   const JOB = [["shift-1", "choose purpose over profit"], ["shift-2", "organise as a network"], ["shift-3", "empower, don't control"], ["chaos", "face the chaos together"], ["shift-4", "experiment, don't plan"], ["one-percent", "one percent, every day"], ["shift-5", "make it transparent"], ["what", "solve the real problems"], ["story", "see the story, not the CV"], ["lab", "build it, don't talk about it"]];
   const STOP = ["selling hours instead of value", "hiding behind the process", "planning things to death", "talking about AI instead of building with it", "keeping what we learn to ourselves", "choosing profit when it costs us our humanity"];
@@ -736,16 +777,19 @@
       <div class="mf">
         <p class="mf-q">${lines(["&gt; a working manifesto.", "&gt; written for ourselves first.", "&gt; last edited at Norra Hamngatan 14."])}</p>
         <h2 class="mf-h"><span class="md">##</span> what this file is</h2>
+        <img class="cameo cm-hero" src="${C.fig}team-hero.webp" alt="">
         <p class="mf-p">${lines(["A plain-text promise about how we behave", "when business gets difficult – and what", "we think people bring to the table now", "that the machines are getting good."])}</p>
       </div>`,
     init(el) { this.q = $(".mf-q", el); this.h = $(".mf-h", el); this.p = $(".mf-p", el); },
-    update(p) { reveal(this.q, p, .02, .3); fadeIn(this.h, ease(seg(p, .32, .42)), 12); reveal(this.p, p, .42, .8); }
+    update(p, t) { reveal(this.q, p, .02, .3); fadeIn(this.h, ease(seg(p, .32, .42)), 12); reveal(this.p, p, .42, .8);
+      const hero = this.h.parentElement.querySelector(".cm-hero"); hero.style.transform = `translateX(${(1 - p) * 30}vw) translateY(${Math.abs(Math.sin(t * 3)) * -1.5}%)`; }
   });
 
   scene({
     id: "job", t: "the actual job", hud: "dark", len: 2.8, wipe: "circle", card: { glyph: "≡", room: "#201e1f", light: true },
     html: `
       <div class="toc">
+        <img class="cameo cm-peek" src="${C.fig}team-glasses.webp" alt="">
         <div class="toc-bar"><i></i><i></i><i></i><span>MISSPRYM.md — ## the actual job</span></div>
         <ol class="toc-list">${JOB.map(([id, t], i) => `<li><a href="#${id}"><span class="ln-no">${String(i + 12).padStart(3, " ")}</span><span class="md">###</span> <b>${i + 1}.</b> ${t}</a></li>`).join("")}</ol>
       </div>`,
@@ -764,6 +808,7 @@
         <div class="lcol"><h3><span class="md">##</span> things we are trying to stop doing</h3><ul>${STOP.map(x => `<li><span class="st">${x}<i></i></span></li>`).join("")}</ul></div>
         <div class="lcol"><h3><span class="md">##</span> things we are trying to do more</h3><ul>${MORE.map(x => `<li><span class="hi">${x}</span></li>`).join("")}</ul></div>
       </div>
+      <img class="cameo cm-dancer" src="${C.fig}team-dancer.webp" alt="">
       <p class="lists-end">${lines(["This file will change. That's the point.", "<span class='sig'>— Miss Prym, Norra Hamngatan 14</span>"])}</p>`,
     init(el) { this.st = $$(".st", el); this.hi = $$(".hi", el); this.lis = $$(".lcol li", el); this.end = $(".lists-end", el); this.hs = $$(".lcol h3", el); },
     update(p) {
@@ -771,6 +816,7 @@
       this.st.forEach((x, i) => { const k = seg(p, .06 + i * .04, .1 + i * .04); x.parentElement.style.opacity = k > 0 ? 1 : 0; x.style.setProperty("--k", easeIO(seg(p, .1 + i * .04, .16 + i * .04))); });
       this.hi.forEach((x, i) => { const k = seg(p, .36 + i * .04, .4 + i * .04); x.parentElement.style.opacity = k > 0 ? 1 : 0; x.style.setProperty("--k", easeIO(seg(p, .4 + i * .04, .46 + i * .04))); });
       reveal(this.end, p, .7, .86);
+      const d = this.end.parentElement.querySelector(".cm-dancer"), k = ease(seg(p, .6, .78)); d.style.transform = `translateX(${(1 - k) * 60}vw) rotate(${(1 - k) * 12}deg)`;
     }
   });
 
@@ -781,7 +827,7 @@
   JOB.forEach(([id, t], i) => { const sc = S.find(x => x.id === id); if (sc) { sc.t = `${i + 1}. ${t}`; sc.num = true; } });
 
   // baksida på indexkorten: en rad ur innehållet
-  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", file: "a working manifesto. written for ourselves first.", job: JOB.map(x => x[1]).join(" · "), lists: "This file will change. That's the point.", "one-percent": "Standing still vs. one percent better every day.", finale: "Be proud. Be like Prym.", story: "You may only see a CV. We see a story.", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
+  const backs = { top: C.hero.quote.join(" "), commitment: C.commitment.lead, expertise: C.expertise.words.join(", "), human: plain(C.commitment.say), prym: C.quote.text, who: C.who.p[0], what: C.what.items.map(x => x.t).join(" · "), work: C.work.paths.map(x => x.t).join(" · "), together: "We provide our clients with open-minded consultants", file: "a working manifesto. written for ourselves first.", job: JOB.map(x => x[1]).join(" · "), cradle: "We don't keep the energy. We pass it on.", lists: "This file will change. That's the point.", "one-percent": "Standing still vs. one percent better every day.", finale: "Be proud. Be like Prym.", story: "You may only see a CV. We see a story.", chaos: "We don't fear chaos. We face it together.", lab: C.lab.sub, agentomaten: C.agentomaten.lead, events: E.next.t, library: C.books.p, contact: K.email };
   S.forEach(x => (x.back = backs[x.id] || (C.shifts[+x.id.split("-")[1] - 1] || {}).p || ""));
 
   // 18. Finalen – stumfilm: landsväg i solnedgång, två figurer mot horisonten, iris, eftertexter, The End
@@ -949,6 +995,7 @@
     `## ${E.h}`, ``, `**${E.next.t}** — ${E.next.when}`, ``, E.next.p, ``, ...E.past.map(p => `- ${p.date} · ${p.t}. ${p.p}`), ``,
     `## ${C.books.h}`, ``, `${plain(C.books.say)}`, ``, C.books.p, ``,
     `---`, ``,
+    `## business activism · solidarity capitalism`, ``, `We don't keep the energy. We pass it on.`, ``, ...CR.map(([n, a, b]) => `${+n}. ${a} – ${b}`), ``,
     `## things we are trying to stop doing`, ``, ...STOP.map(x => `- ${x}`), ``, `## things we are trying to do more`, ``, ...MORE.map(x => `- ${x}`), ``, `This file will change. That's the point.`, ``,
     `## ${K.h}`, ``, K.p, ``, `${K.address}  `, `${K.email}  `, `${K.linkedin}`, ``,
     `— Miss P Aktiebolag`
@@ -1003,6 +1050,7 @@
     file: [`<span class="th-word" style="color:#f4efe8;font-family:var(--f-mono);font-weight:400">.md</span>`, "#201e1f"],
     job: [`<span class="th-toc">${JOB.slice(0, 5).map((x, i) => `<i>${i + 1}. ${x[1]}</i>`).join("")}</span>`, "#201e1f"],
     lists: [`<span class="th-slips"><i style="text-decoration:line-through">planning</i><i>be kind</i></span>`, "#fbf6ea"],
+    cradle: [`<span class="th-cradle">${[0,1,2,3,4].map(i => `<i style="--i:${i}"></i>`).join("")}</span>`, "#3a4650"],
     finale: [`<span class="th-end">${im(F + "statue-justitia.webp", "sil")}${im(F + "statue-venus.webp", "sil")}</span>`, "#d8d0c2"]
   };
   $(".index__track").innerHTML = S.map((s, i) => {
@@ -1174,6 +1222,42 @@
     if (!id) return;
     e.preventDefault(); e.stopPropagation(); openTool(id);
   }, true);
+
+  /* ================= följeslagaren: en av oss följer med genom hela filen ================= */
+  const guide = document.createElement("div");
+  guide.className = "guide"; guide.innerHTML = `<span class="g-say"></span><img src="${C.fig}team-guide.webp" alt="">`;
+  document.body.appendChild(guide);
+  const gSay = guide.firstElementChild, gImg = guide.lastElementChild;
+  const SAY = { together: "Scrolla vidare – vi har mycket att visa.", file: "Det här är vår fil. Läs den uppifrån.", job: "Tio saker vi faktiskt gör.", "shift-1": "Guldet? Nej tack.", chaos: "Kaos? Vi tar det tillsammans.", "one-percent": "En procent om dagen räcker.", what: "Lyft på locket!", cradle: "Energin vi ger kommer tillbaka.", work: "Kliv förbi repet.", lab: "Under golvet finns maskineriet.", story: "Du ser ett CV. Vi ser dig.", agentomaten: "Skicka din agent hit.", lists: "Den här listan blir aldrig klar.", contact: "Säg hej – vi svarar." };
+  const hideOn = new Set(["top", "who", "finale", "what", "lists"]);
+  let gLast = null, gDir = 1, gY = scrollY, sayT = 0;
+  (function gLoop() {
+    const dy = scrollY - gY; gY = scrollY; if (Math.abs(dy) > 1) gDir = dy > 0 ? 1 : -1;
+    const tt = performance.now() / 1000, moving = Math.abs(dy) > 1;
+    const show = active && !hideOn.has(active.id) && !body.classList.contains("index-open") && !document.documentElement.classList.contains("reading") && appEl.hidden;
+    guide.classList.toggle("g-on", !!show);
+    gImg.style.transform = `scaleX(${gDir}) translateY(${moving ? -Math.abs(Math.sin(tt * 9)) * 4 : Math.sin(tt * 1.5) * 1.2}%) rotate(${moving ? Math.sin(tt * 9) * 3 : 0}deg)`;
+    if (active && active !== gLast) { gLast = active; const t = SAY[active.id]; gSay.textContent = t || ""; guide.classList.toggle("g-talk", !!t); clearTimeout(sayT); sayT = setTimeout(() => guide.classList.remove("g-talk"), 3800); }
+    requestAnimationFrame(gLoop);
+  })();
+
+  /* ================= den röda tråden: en rälsprick per scen ================= */
+  const rail = document.createElement("nav");
+  rail.className = "rail"; rail.setAttribute("aria-label", "Scener");
+  rail.innerHTML = `<i class="rail-line"><i></i></i>` + S.map((x, i) => `<a href="#${x.id}" style="--y:${(i / (S.length - 1) * 100).toFixed(2)}%" title="${x.t}"><span>${x.t}</span></a>`).join("");
+  document.body.appendChild(rail);
+  const railDots = $$("a", rail), railFill = $(".rail-line i", rail);
+  (function railLoop() {
+    const k = active ? S.indexOf(active) : 0;
+    railDots.forEach((d, i) => { d.classList.toggle("on", i === k); d.classList.toggle("past", i < k); });
+    railFill.style.transform = `scaleY(${k / (S.length - 1)})`;
+    requestAnimationFrame(railLoop);
+  })();
+  // pricken visar vägen när man står still
+  let idleT = 0;
+  const idle = () => { clearTimeout(idleT); body.classList.remove("idle"); idleT = setTimeout(() => body.classList.add("idle"), 2600); };
+  ["scroll", "pointermove", "touchstart", "keydown"].forEach(ev => addEventListener(ev, idle, { passive: true })); idle();
+  document.body.insertAdjacentHTML("beforeend", `<div class="way" aria-hidden="true"><i></i><span>scroll</span></div>`);
 
   /* ================= ögat blinkar ================= */
   const lid = $(".hud-mark__blink");
